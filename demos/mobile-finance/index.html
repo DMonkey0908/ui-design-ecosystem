@@ -6,20 +6,19 @@
     <!-- viewport-fit=cover is what makes env(safe-area-inset-*) report real
          values; without it every inset is zero. -->
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Accounts - Brindle</title>
+    <title>Home - Brindle</title>
 
     <!-- Restored before the first paint (core/03-layout.md): which tab the
-         user left, so the right stack is the one that is visible when the
-         stylesheets land. Every read has its own try/catch - storage can
-         throw outright. -->
+         user left, so the right stack is the visible one when the stylesheets
+         land. Every read has its own try/catch - storage can throw outright. -->
     <script>
         (function () {
-            var tab = 'accounts';
+            var tab = 'home';
             try {
-                var m = /^#\/(accounts|cards|payments|you)\b/.exec(location.hash);
+                var m = /^#\/(home|analytics|cards|you)\b/.exec(location.hash);
                 if (m) tab = m[1];
                 else {
-                    var r = JSON.parse(localStorage.getItem('brindle.route') || 'null');
+                    var r = JSON.parse(localStorage.getItem('brindle2.route') || 'null');
                     if (r && r.tab) tab = r.tab;
                 }
             } catch (_e) { }
@@ -34,24 +33,22 @@
 
 <body>
 
-    <!-- Icons. Inline, so nothing is fetched. -->
+    <!-- Icons. Inline, so nothing is fetched. All drawn for this demo. -->
     <svg class="sprite" aria-hidden="true" focusable="false">
-        <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 8h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 9h1.5a2.5 2.5 0 0 1 0 5H16M8 3v2M12 3v2" /></symbol>
-        <symbol id="i-train" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="3" /><path d="M5 11h14M9 21l-1.5-4M15 21l1.5-4M9 14h.01M15 14h.01" /></symbol>
-        <symbol id="i-in" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></symbol>
-        <symbol id="i-basket" viewBox="0 0 24 24"><path d="M4 9h16l-1.6 9a2 2 0 0 1-2 1.7H7.6a2 2 0 0 1-2-1.7zM9 9l3-5 3 5" /></symbol>
-        <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4" /></symbol>
-        <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z" /></symbol>
-        <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4zM14 7v10" /></symbol>
-        <symbol id="i-health" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" /><path d="M12 8v8M8 12h8" /></symbol>
-        <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM10 20v-6h4v6" /></symbol>
-        <symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="12" cy="7" rx="7" ry="3" /><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5" /></symbol>
-        <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M17 8V5H6a2 2 0 0 0 0 4h13a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V7M16 14h.01" /></symbol>
-        <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></symbol>
         <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" /></symbol>
         <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></symbol>
         <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></symbol>
         <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16h.01" /></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15zM10 21h4" /></symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" /><path d="M4 10h16M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01" /></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></symbol>
+        <symbol id="i-donut" viewBox="0 0 24 24"><path d="M12 4a8 8 0 1 0 8 8M12 4a8 8 0 0 1 8 8h-8z" /></symbol>
+        <symbol id="i-list" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="6" rx="2" /><rect x="4" y="13" width="16" height="6" rx="2" /></symbol>
+        <symbol id="i-delete" viewBox="0 0 24 24"><path d="M9 6h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5-6zM12 10l4 4M16 10l-4 4" /></symbol>
+        <symbol id="i-wave" viewBox="0 0 24 24"><path d="M8 9a4.5 4.5 0 0 1 0 6M11.5 6.5a8.5 8.5 0 0 1 0 11M15 4a12.5 12.5 0 0 1 0 16" /></symbol>
+        <!-- An invented card-scheme mark: a ring with a moon in it. -->
+        <symbol id="i-scheme" viewBox="0 0 40 24"><circle cx="14" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.4" /><circle cx="26" cy="12" r="10" fill="currentColor" stroke="none" opacity="0.9" /></symbol>
     </svg>
 
     <div class="device" id="device">
@@ -59,7 +56,7 @@
         <!-- Demo scaffolding, not part of the app: a stand-in for the system
              status bar, drawn only where the insets are being simulated. -->
         <div class="status-bar" aria-hidden="true">
-            <span class="fig" id="statusTime">9:41</span>
+            <span id="statusTime">9:41</span>
             <span class="status-glyphs">
                 <svg viewBox="0 0 18 12" width="18" height="12"><rect x="0" y="8" width="3" height="4" rx="1" /><rect x="5" y="5" width="3" height="7" rx="1" /><rect x="10" y="2.5" width="3" height="9.5" rx="1" /><rect x="15" y="0" width="3" height="12" rx="1" /></svg>
                 <svg viewBox="0 0 27 12" width="27" height="12"><rect x="0.5" y="0.5" width="23" height="11" rx="3.5" fill="none" stroke="currentColor" opacity="0.4" /><rect x="2" y="2" width="16" height="8" rx="2" /><rect x="25" y="4" width="2" height="4" rx="1" opacity="0.4" /></svg>
@@ -71,16 +68,25 @@
              screens deep and coming back finds it two screens deep. -->
         <div class="stacks" id="stacks">
 
-            <!-- ── Accounts ─────────────────────────────────────────────── -->
-            <div class="stack" data-tab="accounts">
-                <div class="page" data-root data-title="Accounts">
+            <!-- ── Home ─────────────────────────────────────────────────── -->
+            <div class="stack" data-tab="home">
+                <div class="page" data-root data-title="Home">
                     <div class="scroller">
                         <div class="page-inner">
                             <header class="nav-bar">
-                                <div class="nav-row">
-                                    <span></span>
-                                    <h1 class="nav-title" data-i18n="accounts.title" tabindex="-1">Accounts</h1>
-                                    <span></span>
+                                <div class="nav-row is-identity">
+                                    <div class="who">
+                                        <span class="mark is-avatar" data-mark="1" aria-hidden="true">ME</span>
+                                        <h1 class="who-text" tabindex="-1">
+                                            <span class="who-hello" data-i18n="home.welcome">Welcome,</span>
+                                            <span class="who-name">Morgan Ellery</span>
+                                        </h1>
+                                    </div>
+                                    <!-- One contextual action, and not the primary one. -->
+                                    <button class="round-btn" type="button" id="bellBtn" aria-haspopup="dialog">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bell" /></svg>
+                                        <span class="round-dot" id="bellDot" aria-hidden="true" hidden></span>
+                                    </button>
                                 </div>
                             </header>
 
@@ -96,27 +102,122 @@
                                      after the action. -->
                                 <div id="notices"></div>
 
-                                <section class="balance screen" aria-labelledby="balanceLabel">
-                                    <div class="balance-head">
-                                        <h2 class="balance-label" id="balanceLabel" data-i18n="accounts.total">Total balance</h2>
-                                        <button class="btn-text" type="button" id="privacyBtn" data-i18n="accounts.hide">Hide</button>
+                                <!-- What the screen is about, where the eye lands.
+                                     The reference puts its two actions here too;
+                                     the one the screen is for is pinned at the
+                                     bottom instead, where the thumb is. -->
+                                <section class="hero screen" aria-labelledby="balanceLabel">
+                                    <div class="hero-head">
+                                        <h2 class="hero-label" id="balanceLabel" data-i18n="home.balance">Balance</h2>
+                                        <button class="btn-text is-small" type="button" id="privacyBtn" data-i18n="home.hide">Hide</button>
                                     </div>
-                                    <p class="balance-figure fig" id="totalBalance"></p>
-                                    <p class="balance-meta" id="balanceMeta"></p>
+                                    <div class="hero-row">
+                                        <p class="hero-figure" id="totalBalance"></p>
+                                        <button class="chip is-action" type="button" id="addBtn" aria-haspopup="dialog">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-plus" /></svg>
+                                            <span data-i18n="home.add">Add money</span>
+                                        </button>
+                                    </div>
+                                    <p class="hero-meta" id="balanceMeta"></p>
                                 </section>
 
-                                <h2 class="section-header" id="acctHeading" data-i18n="accounts.yours">Your accounts</h2>
-                                <ul class="list" id="accountRows" aria-labelledby="acctHeading"></ul>
+                                <!-- The cards. Swiping is the shortcut; the two
+                                     buttons under it are the route you can see. -->
+                                <section class="carousel" aria-labelledby="cardsHeading">
+                                    <h2 class="sr-only" id="cardsHeading" data-i18n="home.cards">Your cards</h2>
+                                    <ul class="cards" id="cardList"></ul>
+                                    <div class="pager">
+                                        <button class="pager-btn" type="button" id="cardPrev">
+                                            <svg class="is-flipped" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron" /></svg>
+                                        </button>
+                                        <span class="pager-dots" id="cardDots" aria-hidden="true"></span>
+                                        <span class="sr-only" id="cardPos" aria-live="polite"></span>
+                                        <button class="pager-btn" type="button" id="cardNext">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron" /></svg>
+                                        </button>
+                                    </div>
+                                </section>
 
-                                <div id="txRegion" aria-live="off"></div>
+                                <div class="section-head">
+                                    <h2 id="recentHeading" data-i18n="home.recent">Recent transactions</h2>
+                                    <a class="link" href="#/home/all" id="viewAll" data-i18n="home.viewAll">View all</a>
+                                </div>
+                                <div id="txRegion"></div>
                             </main>
 
                             <!-- The primary action, in the reachable arc. It
                                  opens a sheet, so it is a button and not a tab. -->
-                            <div class="action-bar">
+                            <div class="action-bar pinned-action is-above-tab-bar">
                                 <button class="btn btn-primary" type="button" id="sendBtn" aria-haspopup="dialog"
                                     data-i18n="send.open">Send money</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Analytics ────────────────────────────────────────────── -->
+            <div class="stack" data-tab="analytics">
+                <div class="page" data-root data-title="Analytics">
+                    <div class="scroller">
+                        <div class="page-inner">
+                            <header class="nav-bar">
+                                <div class="nav-row">
+                                    <span></span>
+                                    <h1 class="nav-title" data-i18n="analytics.title" tabindex="-1">Analytics</h1>
+                                    <button class="round-btn is-end" type="button" id="periodBtn" aria-haspopup="dialog">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calendar" /></svg>
+                                    </button>
+                                </div>
+                            </header>
+
+                            <main class="page-body">
+                                <div class="offline-banner" role="status" hidden>
+                                    <span class="ring" aria-hidden="true"></span>
+                                    <span class="offline-text"></span>
+                                </div>
+
+                                <div class="segmented screen" role="tablist" id="anTabs" aria-label="Analytics view">
+                                    <button class="chip" type="button" role="tab" id="seg-expenses" data-seg="expenses"
+                                        aria-controls="anPanel" data-i18n="analytics.expenses">Expenses</button>
+                                    <button class="chip" type="button" role="tab" id="seg-income" data-seg="income"
+                                        aria-controls="anPanel" data-i18n="analytics.income">Income</button>
+                                    <button class="chip" type="button" role="tab" id="seg-limits" data-seg="limits"
+                                        aria-controls="anPanel" data-i18n="analytics.limits">Limits</button>
+                                </div>
+
+                                <div role="tabpanel" id="anPanel" tabindex="-1">
+                                    <section class="hero screen" aria-labelledby="anLabel">
+                                        <div class="hero-row">
+                                            <div class="hero-stack">
+                                                <h2 class="hero-label" id="anLabel"></h2>
+                                                <p class="hero-figure" id="anTotal"></p>
+                                            </div>
+                                            <!-- Labelled, not icon-only: these sit
+                                                 in content, where nobody was taught
+                                                 what a glyph means. -->
+                                            <div class="toggle" id="anView" role="group" aria-label="Show as">
+                                                <button type="button" data-view="chart">
+                                                    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-donut" /></svg>
+                                                    <span data-i18n="analytics.chart">Chart</span>
+                                                </button>
+                                                <button type="button" data-view="list">
+                                                    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-list" /></svg>
+                                                    <span data-i18n="analytics.list">List</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p class="hero-meta" id="anMeta"></p>
+                                    </section>
+
+                                    <div id="anBody"></div>
+
+                                    <div class="section-head">
+                                        <h2 id="anTxHeading"></h2>
+                                    </div>
+                                    <div id="anTx"></div>
+                                </div>
+                            </main>
                         </div>
                     </div>
                 </div>
@@ -149,38 +250,6 @@
                 </div>
             </div>
 
-            <!-- ── Payments ─────────────────────────────────────────────── -->
-            <div class="stack" data-tab="payments">
-                <div class="page" data-root data-title="Payments">
-                    <div class="scroller">
-                        <div class="page-inner">
-                            <header class="nav-bar">
-                                <div class="nav-row">
-                                    <span></span>
-                                    <p class="nav-title is-collapsing" data-i18n="payments.title" aria-hidden="true">Payments</p>
-                                    <span></span>
-                                </div>
-                            </header>
-                            <main class="page-body">
-                                <h1 class="large-title" data-i18n="payments.title" tabindex="-1">Payments</h1>
-                                <div class="offline-banner" role="status" hidden>
-                                    <span class="ring" aria-hidden="true"></span>
-                                    <span class="offline-text"></span>
-                                </div>
-                                <h2 class="section-header" id="upHeading" data-i18n="payments.upcoming">Upcoming</h2>
-                                <ul class="list" id="upcomingRows" aria-labelledby="upHeading"></ul>
-                                <p class="section-footer" data-i18n="payments.upcomingFooter">Upcoming payments
-                                    leave Everyday on the morning they are due.</p>
-                                <h2 class="section-header" id="payeeHeading" data-i18n="payments.payees">Payees</h2>
-                                <ul class="list" id="payeeRows" aria-labelledby="payeeHeading"></ul>
-                                <p class="section-footer" data-i18n="payments.payeesFooter">To pay one of them,
-                                    use Send money on the Accounts tab.</p>
-                            </main>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- ── You ──────────────────────────────────────────────────── -->
             <div class="stack" data-tab="you">
                 <div class="page is-grouped" data-root data-title="You">
@@ -203,11 +272,11 @@
                                 <dl class="list group kv-list" aria-labelledby="detailsHeading">
                                     <div class="row kv"><dt data-i18n="you.name">Name</dt><dd>Morgan Ellery</dd></div>
                                     <div class="row kv"><dt data-i18n="you.email">Email</dt><dd class="break">morgan@ellery.example</dd></div>
-                                    <div class="row kv"><dt data-i18n="you.phone">Phone</dt><dd class="fig">07700 900143</dd></div>
+                                    <div class="row kv"><dt data-i18n="you.phone">Phone</dt><dd>07700 900143</dd></div>
                                 </dl>
 
                                 <h2 class="section-header" id="privacyHeading" data-i18n="you.privacy">Privacy</h2>
-                                <ul class="list group" aria-labelledby="privacyHeading">
+                                <ul class="list group no-icons" aria-labelledby="privacyHeading">
                                     <li>
                                         <label class="row pressable">
                                             <span class="row-body"><span class="row-headline is-plain"
@@ -227,16 +296,25 @@
 
         <!-- ══ TAB BAR ═════════════════════════════════════════════════════
              Four destinations, each labelled, each a place and not an action.
-             Selected is a filled icon and a heavier label as well as a tint. -->
+             Selected is a filled icon and a heavier label as well as a tint.
+             The reference has no visible navigation; the pack does not ship
+             a screen without one. -->
         <nav class="tab-bar" id="tabBar" aria-label="Main">
-            <a class="tab" href="#/accounts" data-tab="accounts">
+            <a class="tab" href="#/home" data-tab="home">
                 <span class="tab-icon">
                     <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM10 20v-6h4v6" /></svg>
                     <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 3.3 10.8V19a1.7 1.7 0 0 0 1.7 1.7h4.3V14h5.4v6.7H19a1.7 1.7 0 0 0 1.7-1.7v-8.2z" /></svg>
-                    <span class="tab-badge fig" id="accountsBadge" aria-hidden="true" hidden></span>
+                    <span class="tab-badge" id="homeBadge" aria-hidden="true" hidden></span>
                 </span>
-                <span class="tab-label" data-i18n="tab.accounts">Accounts</span>
-                <span class="sr-only" id="accountsBadgeName"></span>
+                <span class="tab-label" data-i18n="tab.home">Home</span>
+                <span class="sr-only" id="homeBadgeName"></span>
+            </a>
+            <a class="tab" href="#/analytics" data-tab="analytics">
+                <span class="tab-icon">
+                    <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5H12z" /><path d="M15 3.6A8.5 8.5 0 0 1 20.4 9H15z" /></svg>
+                    <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.2 2.8a9.3 9.3 0 1 0 10 10h-10z" /><path d="M13.6 2.2v8.2h8.2a9.3 9.3 0 0 0-8.2-8.2z" /></svg>
+                </span>
+                <span class="tab-label" data-i18n="tab.analytics">Analytics</span>
             </a>
             <a class="tab" href="#/cards" data-tab="cards">
                 <span class="tab-icon">
@@ -244,13 +322,6 @@
                     <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.3 8.6V7A2.7 2.7 0 0 1 5 4.3h14A2.7 2.7 0 0 1 21.7 7v1.6zM2.3 11.2h19.4V17a2.7 2.7 0 0 1-2.7 2.7H5A2.7 2.7 0 0 1 2.3 17z" /></svg>
                 </span>
                 <span class="tab-label" data-i18n="tab.cards">Cards</span>
-            </a>
-            <a class="tab" href="#/payments" data-tab="payments">
-                <span class="tab-icon">
-                    <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3l-7 18-4-7-7-4zM21 3L10 14" /></svg>
-                    <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 2.4 2 9.6l6.4 3.4zM21.6 2.4 11 15.6l3.4 6.4z" /></svg>
-                </span>
-                <span class="tab-label" data-i18n="tab.payments">Payments</span>
             </a>
             <a class="tab" href="#/you" data-tab="you">
                 <span class="tab-icon">
@@ -261,48 +332,50 @@
             </a>
         </nav>
 
-        <!-- ══ SHEET ═══════════════════════════════════════════════════════
-             Rises from the edge the thumb is at. The confirm is at the bottom,
-             inside it. -->
         <div class="scrim" id="scrim"></div>
 
-        <section class="sheet" id="sendSheet" role="dialog" aria-modal="true" aria-labelledby="sendTitle" hidden>
-            <div class="sheet-drag" id="sheetDrag">
+        <!-- ══ SEND MONEY ══════════════════════════════════════════════════
+             A task that covers, not a place: a full-height sheet over the
+             tabs, dismissed rather than backed out of. The confirm is at the
+             bottom, inside it. -->
+        <section class="sheet is-large" id="sendSheet" role="dialog" aria-modal="true" aria-labelledby="sendTitle" hidden>
+            <div class="sheet-drag">
                 <div class="grabber" aria-hidden="true"></div>
                 <div class="sheet-head">
-                    <button class="btn-text" type="button" id="sendCancel" data-i18n="send.cancel">Cancel</button>
+                    <button class="btn-text" type="button" data-sheet-close data-i18n="send.cancel">Cancel</button>
                     <h2 class="sheet-title" id="sendTitle" tabindex="-1" data-i18n="send.title">Send money</h2>
                     <!-- Clearing a draft is rare and destructive, so it sits
                          where the hand is not. -->
-                    <button class="btn-text is-end" type="button" id="sendClear" data-i18n="send.clear" hidden>Clear</button>
+                    <button class="btn-text is-end is-danger" type="button" id="sendClear" data-i18n="send.clear" hidden>Clear</button>
                 </div>
             </div>
 
             <form id="sendForm" novalidate>
-                <div class="sheet-body" id="sheetBody">
+                <div class="sheet-body">
                     <div class="field">
-                        <label class="field-label" for="fPayee" data-i18n="send.to">To</label>
-                        <div class="select-wrap">
-                            <select id="fPayee" name="payee" aria-describedby="fPayeeErr"></select>
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-down" /></svg>
-                        </div>
-                        <p class="field-error" id="fPayeeErr" hidden></p>
+                        <p class="field-label" id="toLabel" data-i18n="send.to">To</p>
+                        <div class="people" id="people" role="radiogroup" aria-labelledby="toLabel" aria-describedby="peopleErr"></div>
+                        <p class="field-error screen" id="peopleErr" hidden></p>
                     </div>
 
-                    <div class="field">
-                        <label class="field-label" for="fAmount" data-i18n="send.amount">Amount</label>
-                        <div class="affix-wrap">
-                            <span class="affix" id="fAmountAffix" aria-hidden="true">£</span>
-                            <!-- Keyboard type per field: a decimal pad, not QWERTY. -->
+                    <div class="field screen">
+                        <label class="field-label is-centred" for="fAmount" data-i18n="send.amount">Amount</label>
+                        <!-- A real field. The keys below edit it, a hardware
+                             keyboard types into it, and tapping it raises the
+                             system's own decimal pad. -->
+                        <div class="amount-field">
+                            <span class="amount-symbol" id="fAmountAffix" aria-hidden="true">£</span>
                             <input id="fAmount" name="amount" type="text" inputmode="decimal"
-                                autocomplete="transaction-amount" enterkeyhint="next" placeholder="0.00"
-                                class="fig" aria-describedby="fAmountHelp fAmountErr">
+                                autocomplete="transaction-amount" enterkeyhint="send" placeholder="0.00"
+                                aria-describedby="fAmountHelp fAmountErr">
                         </div>
-                        <p class="field-help" id="fAmountHelp"></p>
-                        <p class="field-error" id="fAmountErr" hidden></p>
+                        <p class="field-help is-centred" id="fAmountHelp"></p>
+                        <p class="field-error is-centred" id="fAmountErr" hidden></p>
                     </div>
 
-                    <div class="field">
+                    <div class="chips screen" id="chips" role="group" aria-label="Quick amounts"></div>
+
+                    <div class="field screen">
                         <label class="field-label" for="fFrom" data-i18n="send.from">From</label>
                         <div class="select-wrap">
                             <select id="fFrom" name="from"></select>
@@ -310,11 +383,11 @@
                         </div>
                     </div>
 
-                    <div class="field">
-                        <label class="field-label" for="fRef" data-i18n="send.reference">Reference (optional)</label>
-                        <input id="fRef" name="reference" type="text" maxlength="18" autocomplete="off"
-                            autocapitalize="sentences" enterkeyhint="send">
-                    </div>
+                    <!-- Out of the tab order on purpose: with a keyboard you
+                         type in the field, and twelve extra stops before Send
+                         would be the cost of the keypad. Still real buttons,
+                         so a screen reader's swipe reaches every one. -->
+                    <div class="keypad screen" id="keypad" role="group" aria-label="Number pad"></div>
                 </div>
 
                 <div class="sheet-foot pinned-action">
@@ -325,6 +398,24 @@
                     </button>
                 </div>
             </form>
+        </section>
+
+        <!-- ══ A SHORT SHEET ═══════════════════════════════════════════════
+             Notifications, the month picker and account details share it. It
+             fits its content, so the screen behind stays visible. -->
+        <section class="sheet" id="infoSheet" role="dialog" aria-modal="true" aria-labelledby="infoTitle" hidden>
+            <div class="sheet-drag">
+                <div class="grabber" aria-hidden="true"></div>
+                <div class="sheet-head">
+                    <span></span>
+                    <h2 class="sheet-title" id="infoTitle" tabindex="-1"></h2>
+                    <span></span>
+                </div>
+            </div>
+            <div class="sheet-body" id="infoBody"></div>
+            <div class="sheet-foot pinned-action">
+                <button class="btn btn-secondary" type="button" data-sheet-close data-i18n="sheet.done">Done</button>
+            </div>
         </section>
 
         <!-- Something already done, carrying an undo. -->
@@ -359,9 +450,10 @@
         </div>
         <h3>Worth trying</h3>
         <ul>
-            <li>Go offline, send money, come back online.</li>
-            <li>Send to <b>Old Flat Deposit</b>: it is refused, online and after queueing.</li>
-            <li>Type in the sheet, close it, reload: the draft is still there.</li>
+            <li>Swipe the cards, or use the two arrows under them.</li>
+            <li>Analytics: step round the ring with the arrow keys, then switch to List.</li>
+            <li>Send money with the keys, the chips, or by typing in the amount.</li>
+            <li>Send to <b>Oskar</b>: it is refused, online and after queueing offline.</li>
             <li>Open a payment, switch tab, come back, reload.</li>
         </ul>
     </aside>

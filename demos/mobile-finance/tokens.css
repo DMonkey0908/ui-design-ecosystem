@@ -20,59 +20,105 @@
        Two values, always. A brand colour picked against white disappears
        against the dark theme's near-black, and dark mode is not optional on
        a device people hold in bed. */
-    --accent: #5a31c4;
-    --accent-pressed: #46249c;
+    --accent: #0c232a;
+    --accent-pressed: #24434c;
     --on-accent: #ffffff;
 
     /* ----- Surfaces ---------------------------------------------------- */
     --bg: #ffffff;
-    --bg-grouped: #f2f2f7;
+    --bg-grouped: #eff5f5;
     --surface: #ffffff;
     --surface-raised: #ffffff;
 
     /* ----- Text -------------------------------------------------------- */
-    --text: #0b0b0f;
-    --text-secondary: #5b5b66;
-    --text-tertiary: #6e6e79;
+    --text: #0c232a;
+    --text-secondary: #46595f;
+    --text-tertiary: #566b71;
 
     /* ----- Lines and fills ---------------------------------------------
        Two different jobs, two different requirements. --separator is
        structural and may be a hairline; --border-control is the only thing
        identifying a bordered control, so it clears 3:1. */
-    --separator: #d8d8de;
-    --border-control: #8b8b96;
-    --fill-quiet: #f2f2f7;
-    --pressed-overlay: rgba(0, 0, 0, 0.06);
-    --scrim: rgba(0, 0, 0, 0.30);
+    --separator: #d5e0e1;
+    --border-control: #778b90;
+    --fill-quiet: #ecf3f3;
+    --pressed-overlay: rgba(12, 35, 42, 0.08);
+    --scrim: rgba(12, 35, 42, 0.36);
+
+    /* ----- Chrome tint --------------------------------------------------
+       The translucent bar. Its opaque fallback is --bg. The alpha is as low
+       as it goes: label text still clears 4.5:1 with the darkest content
+       this palette has scrolled underneath and no blur at all. */
+    --chrome-bg: rgba(255, 255, 255, 0.88);
+
+    /* ----- Inverse - the snackbar ---------------------------------------
+       A surface in the other theme's colours, so its action needs the other
+       theme's accent. --accent on --inverse-surface is 2.7:1. */
+    --inverse-surface: #0c232a;
+    --on-inverse: #eef6f5;
+    --accent-on-inverse: #29bfbd;
 
     /* ----- Semantic ---------------------------------------------------- */
-    --success: #1a7f45;
-    --warning: #986400;
-    --danger: #c7212f;
-    --info: #5b5b66;
+    --success: #14713c;
+    --warning: #855800;
+    --danger: #b81d2b;
+    --info: #46595f;
 
-    /* ----- Additions for the Brindle demo ------------------------------
-       Not in the pack file. Added here, and in tokens.json, because a
-       colour no token covers gets a token rather than a literal.
-       --chrome-bg is the translucent bar tint; its opaque fallback is --bg.
-       The inverse trio is the snackbar: an accent on an inverted surface
-       needs the OTHER theme accent value, or it fails contrast. */
-    --chrome-bg: rgba(255, 255, 255, 0.88);
-    --hover-overlay: rgba(0, 0, 0, 0.03);
-    --inverse-surface: #1c1c1e;
-    --on-inverse: #f2f2f7;
-    --accent-on-inverse: #b3a1ff;
-    --shadow-float: rgba(0, 0, 0, 0.16);
-    --demo-backdrop: #e4e4ea;
+    /* ----- Brindle additions ---------------------------------------------
+       Not in the pack's file; in tokens.json under the same names. --brand
+       is the reference teal and is 2.2:1 on white, so it is a fill and a
+       graphic, never text: --accent-text and --accent-ring are that hue
+       darkened until they clear 4.5:1 and 3:1 on every surface, wash
+       included. The card and series colours are objects and data, so most
+       of them do not change with the theme. */
+    --brand: #29bfbd;
+    --on-brand: #0c232a;
+    --accent-text: #0a6f6c;
+    --accent-ring: #12908d;
+    --wash-a: #d2f3f1;
+    --wash-b: #fffddb;
+    --sheet-wash-a: #d2f3f1;
+    --sheet-wash-b: #fffddb;
+    --hover-overlay: rgba(12, 35, 42, 0.04);
+    --shadow-float: rgba(12, 35, 42, 0.18);
+    --demo-backdrop: #c6d4d6;
+    --card-ink: #07161b;
+    --card-orb-a: #2fd0c8;
+    --card-orb-b: #2b62e3;
+    --on-card: #ffffff;
+    --on-card-muted: #b4c6c9;
+    --card-teal-a: #29bfbd;
+    --card-teal-b: #8fe3d6;
+    --card-cream: #fffddb;
+    --card-cream-edge: #e6dfa6;
+    --series-1: #29bfbd;
+    --series-2: #6a4fd0;
+    --series-3: #f0c93d;
+    --series-4: #d9552b;
+    --series-5: #a6ecc6;
+    --mark-1: #d2f3f1;
+    --mark-2: #fff1b8;
+    --mark-3: #dcf5e4;
+    --mark-4: #ffe1d2;
+    --mark-5: #e6defa;
 
-    /* ----- Type - tokens.json text.*, in rem so the user font setting
-       scales it (pack/01-surfaces.md: mobile web sizes type in rem). ---- */
+    /* League Spartan has no tabular figures. --figure-cell is the width each
+       digit is given where figures sit in a column or change in place. */
+    --font-brand: 'League Spartan', 'Avenir Next', 'Century Gothic', 'Segoe UI', system-ui, sans-serif;
+    --figure-cell: 0.6em;
+
+    /* ----- Type - tokens.json `text`, in rem so the reader's font setting
+       scales it. 16px root: 34pt is 2.125rem. Weights are unitless. ------ */
     --type-large-title: 2.125rem;
     --type-title: 1.375rem;
+    --type-headline: 1.0625rem;
     --type-body: 1.0625rem;
     --type-subhead: 0.9375rem;
     --type-footnote: 0.8125rem;
     --type-caption: 0.75rem;
+    --weight-regular: 400;
+    --weight-semibold: 600;
+    --weight-bold: 700;
 
     /* ----- Space — 4pt base. A value not here is the start of drift. ---- */
     --space-xs: 4px;
@@ -112,36 +158,64 @@
    surfaces ABOVE the base are not black - elevation is still luminance. */
 @media (prefers-color-scheme: dark) {
     :root {
-        --accent: #b3a1ff;
-        --accent-pressed: #cfc4ff;
-        --on-accent: #0b0b0f;
+        --accent: #29bfbd;
+        --accent-pressed: #6fdcda;
+        --on-accent: #0c232a;
 
         --bg: #000000;
-        --bg-grouped: #0d0d0f;
-        --surface: #1c1c1e;
-        --surface-raised: #2c2c2e;
+        --bg-grouped: #06181c;
+        --surface: #0c232a;
+        --surface-raised: #16343c;
 
-        --text: #f2f2f7;
-        --text-secondary: #a1a1aa;
-        --text-tertiary: #92929d;
+        --text: #eef6f5;
+        --text-secondary: #a3b6ba;
+        --text-tertiary: #9db1b5;
 
-        --separator: #38383c;
-        --border-control: #74747f;
-        --fill-quiet: #2c2c2e;
+        --separator: #1f3a41;
+        --border-control: #7396a0;
+        --fill-quiet: #1d3f47;
         --pressed-overlay: rgba(255, 255, 255, 0.10);
-        --scrim: rgba(0, 0, 0, 0.50);
+        --scrim: rgba(0, 0, 0, 0.56);
+        --chrome-bg: rgba(0, 0, 0, 0.82);
+
+        --inverse-surface: #eef6f5;
+        --on-inverse: #0c232a;
+        --accent-on-inverse: #0c232a;
 
         --success: #48d17e;
         --warning: #f0b429;
-        --danger: #ff6b6b;
-        --info: #a1a1aa;
+        --danger: #ff8a8a;
+        --info: #a3b6ba;
 
-        --chrome-bg: rgba(0, 0, 0, 0.82);
+        --brand: #29bfbd;
+        --on-brand: #0c232a;
+        --accent-text: #29bfbd;
+        --accent-ring: #29bfbd;
+        --wash-a: #07282b;
+        --wash-b: #1c1b0c;
+        --sheet-wash-a: rgba(0, 0, 0, 0);
+        --sheet-wash-b: rgba(0, 0, 0, 0);
         --hover-overlay: rgba(255, 255, 255, 0.05);
-        --inverse-surface: #f2f2f7;
-        --on-inverse: #0b0b0f;
-        --accent-on-inverse: #5a31c4;
         --shadow-float: rgba(0, 0, 0, 0.60);
-        --demo-backdrop: #161618;
+        --demo-backdrop: #141a1b;
+        --card-ink: #07161b;
+        --card-orb-a: #2fd0c8;
+        --card-orb-b: #2b62e3;
+        --on-card: #ffffff;
+        --on-card-muted: #b4c6c9;
+        --card-teal-a: #29bfbd;
+        --card-teal-b: #8fe3d6;
+        --card-cream: #fffddb;
+        --card-cream-edge: #e6dfa6;
+        --series-1: #29bfbd;
+        --series-2: #8b74ea;
+        --series-3: #f0c93d;
+        --series-4: #e0633a;
+        --series-5: #a6ecc6;
+        --mark-1: #0f3b3d;
+        --mark-2: #3a3212;
+        --mark-3: #143a22;
+        --mark-4: #45261a;
+        --mark-5: #2b2350;
     }
 }

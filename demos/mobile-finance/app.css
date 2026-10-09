@@ -7,6 +7,16 @@
    tokens, so it does not - the same split as sp and dp.
    ========================================================================== */
 
+/* League Spartan, vendored under the SIL Open Font License (fonts/OFL.txt).
+   One variable file, no network. `swap`, so text is never invisible. */
+@font-face {
+    font-family: 'League Spartan';
+    src: url('fonts/league-spartan-latin-wght-normal.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     /* The screen margin, widened by a side inset when there is one. */
     --screen-inset: max(var(--space-screen), var(--safe-left), var(--safe-right));
@@ -16,7 +26,7 @@
     --tabbar-h: calc(var(--tab-bar-height) + var(--safe-bottom));
     --kb: 0px;
     --dir: 1;
-    --icon-col: 40px;
+    --mark-size: 44px;
     --ease-travel: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -25,11 +35,15 @@
 }
 
 /* Stated boundaries for readers who asked for them: the structural hairline
-   takes the control-boundary value. */
+   takes the control-boundary value, and the wash goes. */
 @media (prefers-contrast: more) {
     :root {
         --separator: var(--border-control);
         --text-tertiary: var(--text-secondary);
+        --wash-a: var(--bg);
+        --wash-b: var(--bg);
+        --sheet-wash-a: var(--surface-raised);
+        --sheet-wash-b: var(--surface-raised);
     }
 }
 
@@ -44,10 +58,8 @@ body {
     height: 100%;
 }
 
-/* patterns.css sets the body size in px; in rem it follows the user's font
-   setting, which is the web's Dynamic Type. */
 body {
-    font-size: var(--type-body);
+    font-family: var(--font-brand);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -101,9 +113,29 @@ svg {
     flex-shrink: 0;
 }
 
-/* Every figure, everywhere. */
+.is-flipped {
+    transform: scaleX(-1);
+}
+
+[dir='rtl'] .is-flipped {
+    transform: none;
+}
+
+/* Figures. League Spartan has no tabular numerals - its 1 is half the width
+   of its 0 - so `font-variant-numeric` is asked for and does nothing here.
+   Instead every digit of every figure is set in a cell of one width: columns
+   of amounts line up, and a balance that changes does not shuffle sideways.
+   app.js writes the cells; a hidden copy carries the plain text for a
+   screen reader. */
 .fig {
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.d {
+    display: inline-block;
+    width: var(--figure-cell);
+    text-align: center;
 }
 
 .break {
@@ -171,7 +203,7 @@ svg {
         inset: 0 0 auto;
         z-index: 30;
         height: 47px;
-        padding: var(--space-sm) var(--space-xl) 0;
+        padding: var(--space-md) var(--space-xl) 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -220,24 +252,37 @@ svg {
     visibility: hidden;
 }
 
-html[data-tab='accounts'] .stack[data-tab='accounts'],
+html[data-tab='home'] .stack[data-tab='home'],
+html[data-tab='analytics'] .stack[data-tab='analytics'],
 html[data-tab='cards'] .stack[data-tab='cards'],
-html[data-tab='payments'] .stack[data-tab='payments'],
 html[data-tab='you'] .stack[data-tab='you'] {
     visibility: visible;
 }
 
-/* A push enters from the edge it will return to. */
+/* The wash: aqua from the leading corner, cream from the trailing one, gone
+   by a third of the way down. It is the page, not a layer over it - and
+   every text colour was checked against both corners at full strength. */
 .page {
     /* Its own stacking context, so a page underneath cannot show its sticky
        bars through the one on top. */
     isolation: isolate;
-    background: var(--bg);
+    --page-bg: var(--bg);
+    background:
+        radial-gradient(110% 46% at 0% 0%, var(--wash-a), transparent 78%),
+        radial-gradient(110% 50% at 100% 0%, var(--wash-b), transparent 78%),
+        var(--page-bg);
+    /* A push enters from the edge it will return to. */
     transition: transform var(--push-ms) var(--ease-travel);
 }
 
 .page.is-grouped {
-    background: var(--bg-grouped);
+    --page-bg: var(--bg-grouped);
+}
+
+/* The long list is a plain page. Its day headings stick on an opaque plate,
+   and a plate over the wash would be a white band across it. */
+.page[data-seg='all'] {
+    background: var(--page-bg);
 }
 
 .page.is-off {
@@ -275,14 +320,10 @@ html[data-tab='you'] .stack[data-tab='you'] {
    asked for it to be switched off. Two blurred layers on screen, never
    stacked on each other. */
 
-.nav-bar,
 .tab-bar,
-.action-bar {
+.action-bar,
+.page[data-scrolled] .nav-bar {
     background: var(--bg);
-}
-
-.is-grouped .nav-bar {
-    background: var(--bg-grouped);
 }
 
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -301,7 +342,6 @@ html[data-tab='you'] .stack[data-tab='you'] {
 
 @media (prefers-contrast: more) {
 
-    .nav-bar,
     .page[data-scrolled] .nav-bar,
     .tab-bar,
     .action-bar {
@@ -311,8 +351,8 @@ html[data-tab='you'] .stack[data-tab='you'] {
     }
 }
 
-/* Navigation bar: a title, back, nothing else. Sticky rather than fixed, so
-   the layout still knows it is there. */
+/* Navigation bar. Sticky rather than fixed, so the layout still knows it is
+   there. */
 .nav-bar {
     position: sticky;
     top: 0;
@@ -330,15 +370,21 @@ html[data-tab='you'] .stack[data-tab='you'] {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    min-height: var(--nav-bar-height);
+    gap: var(--space-sm);
+    min-height: calc(var(--nav-bar-height) + var(--space-md));
+    padding-block: var(--space-xs);
     padding-inline: max(var(--space-sm), var(--safe-left)) max(var(--space-sm), var(--safe-right));
+}
+
+.nav-row.is-identity {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-inline: var(--screen-inset);
 }
 
 .nav-title {
     font-size: var(--type-body);
     font-weight: 600;
     text-align: center;
-    padding-inline: var(--space-sm);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -355,8 +401,10 @@ html[data-tab='you'] .stack[data-tab='you'] {
 }
 
 .nav-title:focus-visible,
+.who-text:focus-visible,
 .large-title:focus-visible,
-.sheet-title:focus-visible {
+.sheet-title:focus-visible,
+[role='tabpanel']:focus-visible {
     outline-offset: -2px;
 }
 
@@ -371,7 +419,7 @@ html[data-tab='you'] .stack[data-tab='you'] {
     border: 0;
     border-radius: var(--radius-control);
     background: none;
-    color: var(--accent);
+    color: var(--accent-text);
     cursor: pointer;
 }
 
@@ -400,15 +448,80 @@ html[data-tab='you'] .stack[data-tab='you'] {
     line-height: 1.2;
 }
 
-/* Tab bar. patterns.css gives it a fixed height; here it is a minimum,
-   because a web label scales with the text and a fixed bar would clip it. */
+/* Who is signed in. A display, in the part of the screen that is one. */
+.who {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    min-width: 0;
+}
+
+.who-text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    font-size: var(--type-body);
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.who-hello {
+    font-size: var(--type-subhead);
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.who-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The round outlined button of the reference. Its fill is the page, so the
+   ring is the only thing saying it is a control: border-control, at 3:1. */
+.round-btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--target-min);
+    height: var(--target-min);
+    padding: 0;
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-pill);
+    background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.round-btn.is-end {
+    justify-self: end;
+    margin-inline-end: var(--space-sm);
+}
+
+.round-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* Unread. A dot in the brand teal - and a count in the button's name, since
+   a dot of colour says nothing to a screen reader. */
+.round-dot {
+    position: absolute;
+    inset-block-start: 9px;
+    inset-inline-end: 10px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--bg);
+    border-radius: var(--radius-pill);
+    background: var(--accent-ring);
+}
+
+/* Tab bar. Translucent, with the bottom inset as padding (patterns.css). */
 .tab-bar {
     position: absolute;
     inset: auto 0 0;
     z-index: 10;
     display: flex;
-    height: auto;
-    min-height: calc(var(--tab-bar-height) + var(--safe-bottom));
     padding-inline: var(--safe-left) var(--safe-right);
     border-top: 1px solid var(--separator);
 }
@@ -462,7 +575,7 @@ html[data-tab='you'] .stack[data-tab='you'] {
 
 .tab[aria-current='page'] {
     color: var(--accent);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .tab[aria-current='page'] .icon-on {
@@ -491,8 +604,8 @@ html[data-tab='you'] .stack[data-tab='you'] {
     line-height: 1.5;
 }
 
-/* The pinned primary action. Above the tab bar, which itself carries the
-   bottom inset - so nothing here is under the home indicator. */
+/* The pinned primary action. Its padding is patterns.css's .pinned-action
+   with .is-above-tab-bar: the tab bar under it carries the bottom inset. */
 .action-bar {
     position: sticky;
     /* Sticky offsets are measured inside the scroller's padding, and that
@@ -500,7 +613,6 @@ html[data-tab='you'] .stack[data-tab='you'] {
     bottom: 0;
     z-index: 4;
     margin-top: auto;
-    padding: var(--space-md) var(--screen-inset);
     border-top: 1px solid var(--separator);
 }
 
@@ -540,7 +652,7 @@ a.btn {
 /* Quiet fill: the fill differs from the surface, so the fill is the edge. */
 .btn-secondary {
     background: var(--fill-quiet);
-    color: var(--accent);
+    color: var(--text);
 }
 
 .btn-secondary:active:not(:disabled) {
@@ -594,26 +706,88 @@ a.btn {
     }
 }
 
-.btn-text {
+.btn-text,
+.link {
     min-width: var(--target-min);
     min-height: var(--target-min);
     padding: 0 var(--space-sm);
     border: 0;
     border-radius: var(--radius-control);
     background: none;
-    color: var(--accent);
+    color: var(--accent-text);
     font-size: var(--type-body);
+    font-weight: 600;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+}
+
+.link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-text.is-small {
+    font-size: var(--type-subhead);
 }
 
 .btn-text.is-end {
     justify-self: end;
 }
 
+.btn-text.is-danger {
+    color: var(--danger);
+}
+
+/* Chips: the pills of the reference. Outlined in border-control when off,
+   because off their fill is the page; filled when on, so on is a shape
+   change and not only a colour. */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    min-height: var(--target-min);
+    padding: var(--space-xs) var(--space-screen);
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-pill);
+    background: none;
+    font-size: var(--type-subhead);
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--state-ms) ease, color var(--state-ms) ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.chip svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2;
+}
+
+.chip[aria-selected='true'],
+.chip[aria-pressed='true'] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 600;
+}
+
+.chip.is-action {
+    flex-shrink: 0;
+    padding-inline: var(--space-md) var(--space-screen);
+    font-weight: 600;
+}
+
 .btn-text:active,
+.link:active,
 .nav-back:active,
-.tab:active {
+.round-btn:active,
+.pager-btn:active,
+.tab:active,
+.chip:not([aria-selected='true']):not([aria-pressed='true']):active,
+.key:active {
     background: var(--pressed-overlay);
 }
 
@@ -622,7 +796,11 @@ a.btn {
 
     .pressable:hover,
     .btn-text:hover,
-    .nav-back:hover {
+    .link:hover,
+    .nav-back:hover,
+    .round-btn:hover,
+    .pager-btn:hover:not(:disabled),
+    .chip:not([aria-selected='true']):not([aria-pressed='true']):hover {
         background: var(--hover-overlay);
     }
 
@@ -630,7 +808,8 @@ a.btn {
         background: var(--accent-pressed);
     }
 
-    .btn-secondary:hover:not(:disabled) {
+    .btn-secondary:hover:not(:disabled),
+    .key:hover {
         box-shadow: inset 0 0 0 100vmax var(--hover-overlay);
     }
 
@@ -638,62 +817,64 @@ a.btn {
         color: var(--text);
     }
 
-    .tab[aria-current='page']:hover {
-        color: var(--accent-pressed);
-    }
-
     .pressable:active,
     .btn-text:active,
-    .nav-back:active {
+    .link:active,
+    .nav-back:active,
+    .round-btn:active,
+    .pager-btn:active:not(:disabled) {
         background: var(--pressed-overlay);
     }
 }
 
-/* ── Balance ───────────────────────────────────────────────────────────── */
-/* What the screen is about, at the top where the eye lands. The label is
-   quieter than the value it labels. */
+/* ── The hero figure ───────────────────────────────────────────────────── */
+/* One number the screen is about, at the large-title size, with the title
+   given to the bar (pack/01-surfaces.md). The label is quieter than the
+   value it labels. */
 
-.balance {
-    padding-top: var(--space-xs);
+.hero {
+    padding-top: var(--space-sm);
     padding-bottom: var(--space-sm);
 }
 
-.balance-head {
+.hero-head,
+.hero-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-sm);
-    min-height: var(--target-min);
 }
 
-.balance-label {
-    font-size: var(--type-subhead);
+.hero-row {
+    flex-wrap: wrap;
+}
+
+.hero-stack {
+    min-width: 0;
+}
+
+.hero-label {
+    font-size: var(--type-body);
     font-weight: 400;
     color: var(--text-secondary);
 }
 
-.balance-head .btn-text {
+.hero-head .btn-text {
     margin-inline-end: calc(-1 * var(--space-sm));
-    font-size: var(--type-subhead);
+    margin-block: calc(-1 * var(--space-sm));
 }
 
-.balance-figure {
+.hero-figure {
     font-size: var(--type-large-title);
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.2;
-    overflow-wrap: anywhere;
 }
 
-.balance-meta {
+.hero-meta {
     margin-top: var(--space-xs);
     font-size: var(--type-footnote);
     color: var(--text-tertiary);
-}
-
-.hero {
-    padding-top: var(--space-md);
-    padding-bottom: var(--space-md);
 }
 
 .hero-name {
@@ -703,15 +884,252 @@ a.btn {
     overflow-wrap: anywhere;
 }
 
-.hero .balance-figure {
-    margin-top: var(--space-xs);
-}
-
 .hero .status {
     margin-top: var(--space-sm);
 }
 
+/* ── The bank cards ────────────────────────────────────────────────────── */
+/* A card here is the object in the wallet, not a container for a list item -
+   so it is drawn as one, and it looks the same in both themes. The carousel
+   is native horizontal scrolling with snap points; nothing custom to fight
+   the system's edge gestures. */
+
+.cards {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-sm);
+    padding: var(--space-xs) var(--screen-inset);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--screen-inset);
+    scrollbar-width: none;
+}
+
+.cards::-webkit-scrollbar {
+    display: none;
+}
+
+.cards li {
+    flex: 0 0 82%;
+    min-width: 0;
+    scroll-snap-align: start;
+}
+
+.bank-card {
+    position: relative;
+    display: grid;
+    /* The leading half is for words; see the plate below. */
+    grid-template-columns: 52% minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    gap: var(--space-xs) var(--space-sm);
+    /* ID-1, the real one: 85.6 by 54mm. A minimum, so large text grows it. */
+    aspect-ratio: 1.586;
+    padding: var(--space-screen);
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    /* A soft, unslatted glow behind the orb. The plate covers it too. */
+    background: radial-gradient(circle at 78% 44%, color-mix(in srgb, var(--card-orb-b) 30%, transparent), transparent 48%), var(--card-ink);
+    color: var(--on-card);
+    /* An edge in the card's own text colour, so the dark card still has one
+       on a black page. */
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 14%, transparent);
+    text-decoration: none;
+    isolation: isolate;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.bank-card:focus-visible {
+    outline-offset: 2px;
+}
+
+/* The glow: a teal-to-blue orb seen through vertical slats. The slats are a
+   mask, so only its alpha matters and no colour is spent on it. */
+.bank-card[data-art='ink']::before {
+    content: '';
+    position: absolute;
+    z-index: -2;
+    inset-block: -16%;
+    inset-inline-end: -13%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle closest-side at 50% 42%, var(--card-orb-a) 0%, var(--card-orb-a) 26%, var(--card-orb-b) 68%, transparent 100%);
+    -webkit-mask-image: repeating-linear-gradient(90deg, var(--card-ink) 0 1.5px, transparent 1.5px 4.5px);
+    mask-image: repeating-linear-gradient(90deg, var(--card-ink) 0 1.5px, transparent 1.5px 4.5px);
+}
+
+/* The plate. Everything written on the card sits in its leading half, and
+   this keeps that half the card's own ink however bright the orb is - so the
+   contrast of the text is one number, not whatever the artwork is doing. */
+.bank-card[data-art='ink']::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: linear-gradient(calc(90deg * var(--dir)), var(--card-ink) 0%, var(--card-ink) 52%, transparent 72%);
+}
+
+.bank-card[data-art='teal'] {
+    background: linear-gradient(140deg, var(--card-teal-a), var(--card-teal-b));
+    color: var(--on-brand);
+}
+
+.bank-card[data-art='cream'] {
+    background: var(--card-cream);
+    color: var(--on-brand);
+    box-shadow: inset 0 0 0 1px var(--card-cream-edge);
+}
+
+/* Rings, for the two light cards: drawn in the card's own text colour. */
+.bank-card[data-art='teal']::before,
+.bank-card[data-art='cream']::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -30% -34% -40% 46%;
+    border-radius: var(--radius-pill);
+    border: 1px solid currentColor;
+    box-shadow: 0 0 0 22px color-mix(in srgb, currentColor 5%, transparent), 0 0 0 23px color-mix(in srgb, currentColor 22%, transparent), 0 0 0 46px color-mix(in srgb, currentColor 4%, transparent), 0 0 0 47px color-mix(in srgb, currentColor 14%, transparent);
+    opacity: 0.5;
+}
+
+.card-balance {
+    font-size: var(--type-title);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.card-wave,
+.card-scheme {
+    justify-self: end;
+}
+
+.card-wave {
+    width: 24px;
+    height: 24px;
+}
+
+.card-id {
+    grid-row: 3;
+    align-self: end;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.bank-card .fig {
+    white-space: normal;
+}
+
+.card-kind {
+    font-size: var(--type-footnote);
+    color: var(--on-card-muted);
+}
+
+.bank-card:not([data-art='ink']) .card-kind {
+    color: inherit;
+}
+
+.card-number {
+    font-size: var(--type-body);
+    font-weight: 600;
+}
+
+.card-state {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--type-footnote);
+    font-weight: 600;
+}
+
+.card-state::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border: 4px solid currentColor;
+    border-radius: var(--radius-pill);
+}
+
+.card-scheme {
+    grid-row: 3;
+    align-self: end;
+    width: 40px;
+    height: 24px;
+    stroke: none;
+}
+
+/* The visible route to the next card. */
+.pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--target-gap);
+}
+
+.pager-btn {
+    display: grid;
+    place-items: center;
+    width: var(--target-min);
+    height: var(--target-min);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.pager-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.2;
+}
+
+/* At either end it is disabled, and the dots beside it say why. */
+.pager-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.pager-dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pager-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--border-control);
+    transition: width var(--state-ms) ease, background-color var(--state-ms) ease;
+}
+
+/* Current is longer as well as darker. */
+.pager-dots span.is-current {
+    width: 20px;
+    background: var(--accent);
+}
+
 /* ── Sections and rows ─────────────────────────────────────────────────── */
+
+.section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    min-height: var(--target-min);
+    margin-top: var(--space-md);
+    padding-inline: var(--screen-inset) calc(var(--screen-inset) - var(--space-sm));
+}
+
+.section-head h2 {
+    font-size: var(--type-title);
+    font-weight: 600;
+    line-height: 1.2;
+}
 
 .section-header {
     padding: var(--space-lg) var(--screen-inset) var(--space-sm);
@@ -741,7 +1159,8 @@ a.btn {
     color: var(--text-tertiary);
 }
 
-/* The row: min-height and it grows. Never a fixed height. */
+/* The row: min-height and it grows. Never a fixed height. Transactions stay
+   rows - the bank card above them is the only card on the screen. */
 .row {
     position: relative;
     display: flex;
@@ -762,13 +1181,13 @@ label.row {
     outline-offset: -2px;
 }
 
-/* Inset divider: it starts under the text, so the icons read as a column. */
+/* Inset divider: it starts under the text, so the marks read as a column. */
 li+li>.row::before,
 .row+.row::before {
     content: '';
     position: absolute;
     inset-block-start: 0;
-    inset-inline: calc(var(--screen-inset) + var(--icon-col) + var(--space-md)) 0;
+    inset-inline: calc(var(--screen-inset) + var(--mark-size) + var(--space-md)) 0;
     height: 1px;
     background: var(--separator);
 }
@@ -779,24 +1198,42 @@ li+li>label.row::before {
     inset-inline-start: var(--screen-inset);
 }
 
-.row-icon {
-    width: var(--icon-col);
-    height: var(--icon-col);
+/* A merchant or a person: a monogram on a quiet tint. Drawn, not borrowed -
+   there are no real logos or faces anywhere in this demo. */
+.mark {
+    width: var(--mark-size);
+    height: var(--mark-size);
     flex-shrink: 0;
     display: grid;
     place-items: center;
-    border-radius: var(--radius-control);
-    background: var(--fill-quiet);
-    color: var(--text-secondary);
+    border-radius: var(--radius-pill);
+    background: var(--mark-1);
+    color: var(--text);
+    font-size: var(--type-footnote);
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
-.is-grouped .row-icon {
-    background: var(--bg-grouped);
+.mark[data-mark='2'] {
+    background: var(--mark-2);
 }
 
-.row-icon svg {
-    width: 22px;
-    height: 22px;
+.mark[data-mark='3'] {
+    background: var(--mark-3);
+}
+
+.mark[data-mark='4'] {
+    background: var(--mark-4);
+}
+
+.mark[data-mark='5'] {
+    background: var(--mark-5);
+}
+
+.mark.is-avatar {
+    background: var(--brand);
+    color: var(--on-brand);
+    font-size: var(--type-subhead);
 }
 
 .row-body {
@@ -827,23 +1264,38 @@ li+li>label.row::before {
     white-space: nowrap;
 }
 
+.row-subhead.is-wrap {
+    white-space: normal;
+}
+
 .row-subhead .sep::before {
     content: '\00b7';
     margin-inline: var(--space-xs);
 }
 
-/* Figures compared by magnitude sit on the trailing edge. */
+/* Figures compared by magnitude sit on the trailing edge, in digit cells. */
 .row-trail {
     flex: 0 0 auto;
     max-width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
     text-align: end;
-    overflow-wrap: anywhere;
+}
+
+.row-trail-sub {
+    font-size: var(--type-subhead);
+    color: var(--text-secondary);
+}
+
+.amount {
+    font-weight: 600;
 }
 
 /* Money in carries a plus sign as well as the colour. */
 .amount[data-sign='in'] {
     color: var(--success);
-    font-weight: 600;
 }
 
 /* A chevron means this pushes. */
@@ -865,10 +1317,6 @@ li+li>label.row::before {
 
 .group .row {
     padding-inline: var(--space-screen);
-}
-
-.group li+li>.row::before {
-    inset-inline-start: calc(var(--space-screen) + var(--icon-col) + var(--space-md));
 }
 
 .group .row+.row::before,
@@ -938,6 +1386,10 @@ li+li>label.row::before {
     color: var(--text);
 }
 
+.status[data-state='over'] {
+    color: var(--danger);
+}
+
 .status[data-state='pending']::before,
 .status[data-state='queued']::before,
 .ring {
@@ -986,7 +1438,30 @@ li+li>label.row::before {
     transform: translateX(calc(20px * var(--dir)));
 }
 
+/* One of several: a ring, and a filled centre when it is the one. */
+.radio {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    border: 2px solid var(--border-control);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+}
+
+.radio:checked {
+    border-color: var(--accent);
+    background: radial-gradient(circle, var(--accent) 0 5px, transparent 6px);
+}
+
 @media (forced-colors: active) {
+    .radio {
+        appearance: auto;
+        -webkit-appearance: auto;
+    }
+
     .switch {
         appearance: auto;
         -webkit-appearance: auto;
@@ -1055,6 +1530,268 @@ li+li>label.row::before {
     margin-inline-start: calc(-1 * var(--space-sm));
 }
 
+/* ── Analytics ─────────────────────────────────────────────────────────── */
+
+.segmented {
+    display: flex;
+    gap: var(--target-gap);
+    padding-block: var(--space-xs) var(--space-sm);
+}
+
+.segmented .chip {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: var(--space-sm);
+}
+
+/* Chart or list. Labelled, and the pressed one is filled. */
+.toggle {
+    display: flex;
+    flex-shrink: 0;
+    padding: 2px;
+    border-radius: var(--radius-control);
+    background: var(--fill-quiet);
+}
+
+.toggle button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-height: var(--target-min);
+    padding: 0 var(--space-md);
+    border: 0;
+    border-radius: calc(var(--radius-control) - 2px);
+    background: none;
+    font-size: var(--type-footnote);
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+.toggle button[aria-pressed='true'] {
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+/* The ring. Five segments at most (core/07-charts.md: six is the wrong
+   form), every one labelled where it is drawn so that no category is carried
+   by colour alone, and the same numbers one tap away as a table. */
+.donut {
+    position: relative;
+    margin: 0 var(--screen-inset);
+}
+
+.donut svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    stroke: none;
+    border-radius: var(--radius-card);
+    touch-action: manipulation;
+    cursor: pointer;
+}
+
+.donut svg:focus-visible {
+    outline-offset: -2px;
+}
+
+.donut .seg {
+    fill: none;
+    stroke-width: 20;
+    stroke-linecap: round;
+    transition: stroke-width var(--state-ms) ease, opacity var(--state-ms) ease;
+}
+
+/* A fine rim in the control-boundary colour, so the pale segments still have
+   an edge on a white page. */
+.donut .seg-rim {
+    fill: none;
+    stroke: var(--border-control);
+    stroke-width: 21.5;
+    stroke-linecap: round;
+    opacity: 0.55;
+}
+
+/* Selected is thicker, and the middle of the ring names it. */
+.donut .seg.is-selected {
+    stroke-width: 28;
+}
+
+.donut.has-selection .seg:not(.is-selected) {
+    opacity: 0.45;
+}
+
+.donut text {
+    fill: var(--text);
+    font-size: var(--type-footnote);
+    font-weight: 600;
+}
+
+.donut .lbl-share {
+    fill: var(--text-secondary);
+    font-weight: 500;
+}
+
+.donut .mid-label {
+    fill: var(--text-secondary);
+    font-weight: 400;
+}
+
+.donut .mid-value {
+    font-size: var(--type-title);
+    font-weight: 600;
+}
+
+.chart-alt {
+    display: none;
+}
+
+.cat-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--type-body);
+}
+
+.cat-table th,
+.cat-table td {
+    padding: var(--space-md) var(--space-sm);
+    font-weight: 400;
+    text-align: start;
+    vertical-align: middle;
+}
+
+.cat-table thead th {
+    padding-block: var(--space-sm);
+    font-size: var(--type-footnote);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.cat-table tr> :first-child {
+    padding-inline-start: var(--screen-inset);
+}
+
+.cat-table tr> :last-child {
+    padding-inline-end: var(--screen-inset);
+}
+
+/* It is a table, so its rules run the full width. */
+.cat-table tbody tr+tr>* {
+    border-top: 1px solid var(--separator);
+}
+
+.cat-table tbody th {
+    font-weight: 600;
+}
+
+.cat-table .num {
+    text-align: end;
+    white-space: nowrap;
+}
+
+.cat-table tfoot th,
+.cat-table tfoot td {
+    border-top: 1px solid var(--border-control);
+    font-weight: 600;
+}
+
+/* The key for a series: its colour and its place in the ring, as a number,
+   so the pairing survives greyscale. */
+.swatch {
+    display: inline-grid;
+    place-items: center;
+    width: 1.5em;
+    height: 1.5em;
+    margin-inline-end: var(--space-sm);
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1px var(--border-control);
+    background: var(--series-1);
+    color: var(--on-brand);
+    font-size: var(--type-caption);
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.seg[data-series='1'] {
+    stroke: var(--series-1);
+}
+
+.seg[data-series='2'] {
+    stroke: var(--series-2);
+}
+
+.seg[data-series='3'] {
+    stroke: var(--series-3);
+}
+
+.seg[data-series='4'] {
+    stroke: var(--series-4);
+}
+
+.seg[data-series='5'] {
+    stroke: var(--series-5);
+}
+
+.swatch[data-series='2'] {
+    background: var(--series-2);
+    color: var(--on-card);
+}
+
+.swatch[data-series='3'] {
+    background: var(--series-3);
+}
+
+.swatch[data-series='4'] {
+    background: var(--series-4);
+    color: var(--on-card);
+}
+
+.swatch[data-series='5'] {
+    background: var(--series-5);
+}
+
+/* A limit. The bar starts at zero and the words carry the numbers. */
+.limit .row-body {
+    gap: var(--space-xs);
+}
+
+.limit-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2px var(--space-sm);
+}
+
+.meter {
+    display: block;
+    height: 8px;
+    margin-block: var(--space-xs);
+    border-radius: var(--radius-pill);
+    background: var(--fill-quiet);
+    box-shadow: inset 0 0 0 1px var(--border-control);
+    overflow: hidden;
+}
+
+.meter-fill {
+    display: block;
+    width: calc(var(--v) * 100%);
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--accent-ring);
+}
+
+.limit[data-over] .meter-fill {
+    background: var(--danger);
+}
+
 /* ── Waiting, empty, error ─────────────────────────────────────────────── */
 /* Skeletons at the real row dimensions, so nothing moves when rows arrive. */
 
@@ -1063,6 +1800,10 @@ li+li>label.row::before {
     border-radius: var(--space-xs);
     background: var(--fill-quiet);
     animation: pulse 1.2s ease-in-out infinite;
+}
+
+.mark.skel {
+    border-radius: var(--radius-pill);
 }
 
 .skel-line {
@@ -1082,10 +1823,14 @@ li+li>label.row::before {
     margin-block: 0.3em;
 }
 
-.balance-figure .skel {
+.hero-figure .skel {
     width: 6em;
     height: 0.8em;
     margin-block: 0.2em;
+}
+
+.bank-card.skel {
+    background: var(--fill-quiet);
 }
 
 @keyframes pulse {
@@ -1117,7 +1862,11 @@ li+li>label.row::before {
     color: var(--text-secondary);
 }
 
-/* ── Sheet ─────────────────────────────────────────────────────────────── */
+.empty-body:last-child {
+    margin-bottom: 0;
+}
+
+/* ── Sheets ────────────────────────────────────────────────────────────── */
 
 .scrim {
     position: absolute;
@@ -1134,20 +1883,29 @@ li+li>label.row::before {
     pointer-events: auto;
 }
 
-/* A single detent that fits its content. --kb is the software keyboard,
-   measured from visualViewport; the sheet rides above it. */
+/* --kb is the software keyboard, measured from visualViewport; the sheet,
+   with its confirm, rides above it. */
 .sheet {
     position: absolute;
     inset: auto 0 var(--kb);
     z-index: 21;
-    max-height: calc(100% - var(--kb) - var(--safe-top) - var(--space-md));
+    max-height: calc(100% - var(--kb) - var(--safe-top) - var(--space-sm));
     display: flex;
     flex-direction: column;
-    background: var(--surface-raised);
     border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    background:
+        radial-gradient(120% 320px at 0% 0%, var(--sheet-wash-a), transparent 80%),
+        radial-gradient(120% 340px at 100% 0%, var(--sheet-wash-b), transparent 80%),
+        var(--surface-raised);
     box-shadow: 0 -8px 32px var(--shadow-float);
     transform: translateY(100%);
     transition: transform var(--sheet-ms) var(--ease-travel);
+}
+
+/* The large detent: a task that takes the whole screen covers the tabs,
+   rather than the tab bar being hidden to make room. */
+.sheet.is-large {
+    height: calc(100% - var(--kb) - var(--safe-top) - var(--space-sm));
 }
 
 .sheet.is-open {
@@ -1159,12 +1917,13 @@ li+li>label.row::before {
 }
 
 .sheet form {
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     min-height: 0;
 }
 
-/* The grabber and the header are the drag handle; the form below scrolls. */
+/* The grabber and the header are the drag handle; the body below scrolls. */
 .sheet-drag {
     flex-shrink: 0;
     touch-action: none;
@@ -1183,16 +1942,17 @@ li+li>label.row::before {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
+    min-height: var(--target-min);
     padding: var(--space-xs) var(--space-sm);
 }
 
 .sheet-head .btn-text {
     justify-self: start;
+    font-weight: 400;
 }
 
 .sheet-head .btn-text.is-end {
     justify-self: end;
-    color: var(--danger);
 }
 
 .sheet-title {
@@ -1204,34 +1964,30 @@ li+li>label.row::before {
 }
 
 .sheet-body {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: var(--space-sm) var(--screen-inset) 0;
+    padding-block: var(--space-sm) 0;
     scroll-padding-block: var(--space-md);
 }
 
-/* 32pt above the primary action, to separate it from what it acts on. */
+/* Above the primary action, to separate it from what it acts on. patterns.css
+   supplies the rest, including the bottom inset - so only the longhand. */
 .sheet-foot {
     flex-shrink: 0;
-    padding: var(--space-xl) var(--screen-inset) max(var(--space-screen), var(--safe-bottom));
+    padding-top: var(--space-screen);
 }
 
-/* The inset is the keyboard's while it is up - patterns.css supplies the
-   home-indicator case through .pinned-action. */
 .sheet.has-keyboard .sheet-foot {
     padding-top: var(--space-md);
     padding-bottom: var(--space-md);
 }
 
-/* ── Form ──────────────────────────────────────────────────────────────── */
-/* One question per row, the label above the field. */
+/* ── The send form ─────────────────────────────────────────────────────── */
 
 .field {
-    margin-bottom: var(--space-screen);
-}
-
-.field:last-child {
-    margin-bottom: 0;
+    margin-bottom: var(--space-md);
 }
 
 .field-label {
@@ -1242,45 +1998,200 @@ li+li>label.row::before {
     color: var(--text-secondary);
 }
 
-/* The fill matches the sheet, so the border is the only thing identifying
-   the control: border-control, not separator. */
-.field input,
-.field select {
-    width: 100%;
-    min-height: var(--primary-height);
-    padding: var(--space-md);
-    border: 1px solid var(--border-control);
+#toLabel {
+    padding-inline: var(--screen-inset);
+}
+
+.is-centred {
+    text-align: center;
+}
+
+/* Who to pay: a radio group, scrolled sideways. Arrow keys move through it,
+   and focus scrolls the one it lands on into view. */
+.people {
+    display: flex;
+    gap: var(--space-xs);
+    padding: var(--space-xs) calc(var(--screen-inset) - var(--space-sm));
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+}
+
+.people::-webkit-scrollbar {
+    display: none;
+}
+
+.person {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    min-width: 72px;
+    padding: var(--space-xs) var(--space-sm);
+    border: 0;
     border-radius: var(--radius-control);
-    background: var(--surface-raised);
-    font-size: var(--type-body);
-}
-
-.field select {
-    appearance: none;
-    -webkit-appearance: none;
-    padding-inline-end: calc(var(--space-md) * 2 + 20px);
-    text-overflow: ellipsis;
+    background: none;
+    font-size: var(--type-subhead);
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.field input::placeholder {
+.person .mark {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    font-size: var(--type-body);
+    font-weight: 600;
+}
+
+/* Chosen: a ring at 3:1, a tick, and the name gains weight - three signals,
+   one of them colour. */
+.person[aria-checked='true'] .mark {
+    box-shadow: 0 0 0 2px var(--surface-raised), 0 0 0 5px var(--accent-ring);
+}
+
+.person[aria-checked='true'] {
+    font-weight: 700;
+}
+
+.person-tick {
+    display: none;
+    position: absolute;
+    inset-block-end: -4px;
+    inset-inline-end: -4px;
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    border: 2px solid var(--surface-raised);
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+.person-tick svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 3.2;
+}
+
+.person[aria-checked='true'] .person-tick {
+    display: grid;
+}
+
+/* The amount. The reference draws it bare; a field whose fill is the page
+   needs an edge that says it is one, so it keeps a rule in border-control. */
+.amount-field {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 2px;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--space-sm);
+    border-bottom: 2px solid var(--border-control);
+    font-size: var(--type-large-title);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+}
+
+.amount-field:focus-within {
+    border-bottom-color: var(--accent);
+}
+
+.amount-field:has([aria-invalid='true']) {
+    border-bottom-color: var(--danger);
+}
+
+.amount-field input {
+    width: 4ch;
+    min-width: 3ch;
+    max-width: 100%;
+    min-height: var(--primary-height);
+    padding: 0;
+    border: 0;
+    background: none;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    caret-color: var(--accent-ring);
+    field-sizing: content;
+}
+
+.amount-field input:focus-visible {
+    outline: none;
+    /* The rule under the field is the focus indicator, and it is always drawn. */
+}
+
+.amount-field input::placeholder {
     color: var(--text-tertiary);
     opacity: 1;
 }
 
-.field input:focus-visible,
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--target-gap);
+    margin-bottom: var(--space-md);
+}
+
+/* Fill, not outline: the keys' fill differs from the sheet, so the fill is
+   doing the work the reference's hairline could not. */
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--target-gap);
+}
+
+.key {
+    display: grid;
+    place-items: center;
+    min-height: 48px;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: var(--fill-quiet);
+    font-size: var(--type-title);
+    font-weight: 500;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.key svg {
+    width: 26px;
+    height: 26px;
+}
+
+/* With the system keyboard up there are two keypads and room for one. */
+.sheet.has-keyboard .keypad {
+    display: none;
+}
+
+/* The fill matches the sheet, so the border is the only thing identifying
+   the control: border-control, not separator. */
+.field select {
+    width: 100%;
+    min-height: var(--primary-height);
+    padding: var(--space-md);
+    padding-inline-end: calc(var(--space-md) * 2 + 20px);
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-control);
+    background: none;
+    font-size: var(--type-body);
+    text-overflow: ellipsis;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
 .field select:focus-visible {
     outline-offset: -1px;
     border-color: var(--accent);
 }
 
-.field [aria-invalid='true'] {
-    border-color: var(--danger);
-    border-width: 2px;
-}
-
-.select-wrap,
-.affix-wrap {
+.select-wrap {
     position: relative;
 }
 
@@ -1295,24 +2206,10 @@ li+li>label.row::before {
     pointer-events: none;
 }
 
-.affix {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: var(--space-md);
-    display: flex;
-    align-items: center;
-    color: var(--text-secondary);
-    pointer-events: none;
-}
-
-.affix-wrap input {
-    padding-inline-start: calc(var(--space-md) + 1.1em);
-}
-
 .field-help,
 .field-error,
 .form-status {
-    margin-top: var(--space-xs);
+    margin-top: var(--space-sm);
     font-size: var(--type-footnote);
 }
 
@@ -1337,9 +2234,9 @@ li+li>label.row::before {
 }
 
 /* ── Snackbar ──────────────────────────────────────────────────────────── */
-/* Sits above whatever is pinned at the bottom of the current screen; app.js
-   measures that and sets --snack-bottom. The undo is the accent value for an
-   inverted surface, not the page accent. */
+/* Above whatever is pinned at the bottom of the current screen; app.js
+   measures that and sets --snack-bottom. On the inverse surface, with its
+   action in the accent chosen for that surface (pack/03-components.md). */
 
 .snackbar {
     position: absolute;
@@ -1470,7 +2367,7 @@ li+li>label.row::before {
    font setting, or a small phone with a medium one - side-by-side stops
    fitting. Decided here rather than discovered when it truncates: rows
    stack their figure under the text, labels wrap, and the tab bar keeps its
-   icons and drops its labels, as the platforms do. */
+   icons and drops its labels, as the platforms do (pack/01-surfaces.md). */
 @container (max-width: 16em) {
     .row {
         flex-wrap: wrap;
@@ -1485,7 +2382,8 @@ li+li>label.row::before {
     }
 
     .row-headline,
-    .row-subhead {
+    .row-subhead,
+    .who-name {
         white-space: normal;
         overflow-wrap: anywhere;
     }
@@ -1493,8 +2391,9 @@ li+li>label.row::before {
     .row-trail {
         flex: 1 0 100%;
         max-width: none;
+        align-items: flex-start;
         text-align: start;
-        padding-inline-start: calc(var(--icon-col) + var(--space-md));
+        padding-inline-start: calc(var(--mark-size) + var(--space-md));
     }
 
     .chevron {
@@ -1526,15 +2425,14 @@ li+li>label.row::before {
         grid-column: 1 / -1;
         grid-row: 2;
         text-align: start;
-        padding-inline: var(--space-sm);
     }
 
     .sheet-head .btn-text.is-end {
         grid-column: 2;
     }
 
-    .nav-row {
-        grid-template-columns: auto minmax(0, 1fr) 0;
+    .nav-row:not(.is-identity) {
+        grid-template-columns: auto minmax(0, 1fr) auto;
     }
 
     .nav-back-label {
@@ -1543,5 +2441,58 @@ li+li>label.row::before {
         height: 1px;
         overflow: hidden;
         clip: rect(0 0 0 0);
+    }
+
+    .segmented {
+        flex-wrap: wrap;
+    }
+
+    .segmented .chip {
+        flex-basis: 100%;
+    }
+
+    .cards li {
+        flex-basis: 92%;
+    }
+
+    /* The card's words need its whole width now, so the plate takes the
+       whole card and the orb goes: the contrast stays one number. */
+    .bank-card {
+        aspect-ratio: auto;
+        min-height: 10rem;
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .bank-card[data-art='ink']::after {
+        background: var(--card-ink);
+    }
+
+    /* Labels drawn round a ring have nowhere to grow. At this size the same
+       numbers are shown as the table instead. */
+    .donut {
+        display: none;
+    }
+
+    .chart-alt {
+        display: block;
+    }
+
+    .toggle {
+        display: none;
+    }
+
+    /* Three columns still, so it stays a table: the figures step down a
+       size and the category name is the column that wraps. */
+    .cat-table th,
+    .cat-table td {
+        padding-inline: var(--space-xs);
+    }
+
+    .cat-table .num {
+        font-size: var(--type-footnote);
+    }
+
+    .section-head {
+        flex-wrap: wrap;
     }
 }

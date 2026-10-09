@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en-GB" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- viewport-fit=cover is what makes env(safe-area-inset-*) report real
+         values; without it every inset is zero. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Accounts - Brindle</title>
+
+    <!-- Restored before the first paint (core/03-layout.md): which tab the
+         user left, so the right stack is the one that is visible when the
+         stylesheets land. Every read has its own try/catch - storage can
+         throw outright. -->
+    <script>
+        (function () {
+            var tab = 'accounts';
+            try {
+                var m = /^#\/(accounts|cards|payments|you)\b/.exec(location.hash);
+                if (m) tab = m[1];
+                else {
+                    var r = JSON.parse(localStorage.getItem('brindle.route') || 'null');
+                    if (r && r.tab) tab = r.tab;
+                }
+            } catch (_e) { }
+            document.documentElement.dataset.tab = tab;
+        })();
+    </script>
+
+    <link rel="stylesheet" href="tokens.css">
+    <link rel="stylesheet" href="patterns.css">
+    <link rel="stylesheet" href="app.css">
+</head>
+
+<body>
+
+    <!-- Icons. Inline, so nothing is fetched. -->
+    <svg class="sprite" aria-hidden="true" focusable="false">
+        <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 8h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 9h1.5a2.5 2.5 0 0 1 0 5H16M8 3v2M12 3v2" /></symbol>
+        <symbol id="i-train" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="3" /><path d="M5 11h14M9 21l-1.5-4M15 21l1.5-4M9 14h.01M15 14h.01" /></symbol>
+        <symbol id="i-in" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></symbol>
+        <symbol id="i-basket" viewBox="0 0 24 24"><path d="M4 9h16l-1.6 9a2 2 0 0 1-2 1.7H7.6a2 2 0 0 1-2-1.7zM9 9l3-5 3 5" /></symbol>
+        <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4" /></symbol>
+        <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z" /></symbol>
+        <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4zM14 7v10" /></symbol>
+        <symbol id="i-health" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" /><path d="M12 8v8M8 12h8" /></symbol>
+        <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM10 20v-6h4v6" /></symbol>
+        <symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="12" cy="7" rx="7" ry="3" /><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5" /></symbol>
+        <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M17 8V5H6a2 2 0 0 0 0 4h13a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V7M16 14h.01" /></symbol>
+        <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" /></symbol>
+        <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></symbol>
+        <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16h.01" /></symbol>
+    </svg>
+
+    <div class="device" id="device">
+
+        <!-- Demo scaffolding, not part of the app: a stand-in for the system
+             status bar, drawn only where the insets are being simulated. -->
+        <div class="status-bar" aria-hidden="true">
+            <span class="fig" id="statusTime">9:41</span>
+            <span class="status-glyphs">
+                <svg viewBox="0 0 18 12" width="18" height="12"><rect x="0" y="8" width="3" height="4" rx="1" /><rect x="5" y="5" width="3" height="7" rx="1" /><rect x="10" y="2.5" width="3" height="9.5" rx="1" /><rect x="15" y="0" width="3" height="12" rx="1" /></svg>
+                <svg viewBox="0 0 27 12" width="27" height="12"><rect x="0.5" y="0.5" width="23" height="11" rx="3.5" fill="none" stroke="currentColor" opacity="0.4" /><rect x="2" y="2" width="16" height="8" rx="2" /><rect x="25" y="4" width="2" height="4" rx="1" opacity="0.4" /></svg>
+            </span>
+        </div>
+
+        <!-- ══ STACKS ══════════════════════════════════════════════════════
+             One per tab. Each keeps its own pages, so leaving a tab two
+             screens deep and coming back finds it two screens deep. -->
+        <div class="stacks" id="stacks">
+
+            <!-- ── Accounts ─────────────────────────────────────────────── -->
+            <div class="stack" data-tab="accounts">
+                <div class="page" data-root data-title="Accounts">
+                    <div class="scroller">
+                        <div class="page-inner">
+                            <header class="nav-bar">
+                                <div class="nav-row">
+                                    <span></span>
+                                    <h1 class="nav-title" data-i18n="accounts.title" tabindex="-1">Accounts</h1>
+                                    <span></span>
+                                </div>
+                            </header>
+
+                            <main class="page-body">
+                                <!-- One offline indicator, not one per row. -->
+                                <div class="offline-banner" role="status" hidden>
+                                    <span class="ring" aria-hidden="true"></span>
+                                    <span class="offline-text"></span>
+                                </div>
+
+                                <!-- A write that was queued and then refused. It
+                                     outlives a toast, because it arrives minutes
+                                     after the action. -->
+                                <div id="notices"></div>
+
+                                <section class="balance screen" aria-labelledby="balanceLabel">
+                                    <div class="balance-head">
+                                        <h2 class="balance-label" id="balanceLabel" data-i18n="accounts.total">Total balance</h2>
+                                        <button class="btn-text" type="button" id="privacyBtn" data-i18n="accounts.hide">Hide</button>
+                                    </div>
+                                    <p class="balance-figure fig" id="totalBalance"></p>
+                                    <p class="balance-meta" id="balanceMeta"></p>
+                                </section>
+
+                                <h2 class="section-header" id="acctHeading" data-i18n="accounts.yours">Your accounts</h2>
+                                <ul class="list" id="accountRows" aria-labelledby="acctHeading"></ul>
+
+                                <div id="txRegion" aria-live="off"></div>
+                            </main>
+
+                            <!-- The primary action, in the reachable arc. It
+                                 opens a sheet, so it is a button and not a tab. -->
+                            <div class="action-bar">
+                                <button class="btn btn-primary" type="button" id="sendBtn" aria-haspopup="dialog"
+                                    data-i18n="send.open">Send money</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Cards ────────────────────────────────────────────────── -->
+            <div class="stack" data-tab="cards">
+                <div class="page is-grouped" data-root data-title="Cards">
+                    <div class="scroller">
+                        <div class="page-inner">
+                            <header class="nav-bar">
+                                <div class="nav-row">
+                                    <span></span>
+                                    <p class="nav-title is-collapsing" data-i18n="cards.title" aria-hidden="true">Cards</p>
+                                    <span></span>
+                                </div>
+                            </header>
+                            <main class="page-body">
+                                <h1 class="large-title" data-i18n="cards.title" tabindex="-1">Cards</h1>
+                                <div class="offline-banner" role="status" hidden>
+                                    <span class="ring" aria-hidden="true"></span>
+                                    <span class="offline-text"></span>
+                                </div>
+                                <div id="cardRows"></div>
+                                <p class="section-footer" data-i18n="cards.footer">Freezing a card blocks new
+                                    payments straight away. Subscriptions pick up again when you unfreeze it.</p>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Payments ─────────────────────────────────────────────── -->
+            <div class="stack" data-tab="payments">
+                <div class="page" data-root data-title="Payments">
+                    <div class="scroller">
+                        <div class="page-inner">
+                            <header class="nav-bar">
+                                <div class="nav-row">
+                                    <span></span>
+                                    <p class="nav-title is-collapsing" data-i18n="payments.title" aria-hidden="true">Payments</p>
+                                    <span></span>
+                                </div>
+                            </header>
+                            <main class="page-body">
+                                <h1 class="large-title" data-i18n="payments.title" tabindex="-1">Payments</h1>
+                                <div class="offline-banner" role="status" hidden>
+                                    <span class="ring" aria-hidden="true"></span>
+                                    <span class="offline-text"></span>
+                                </div>
+                                <h2 class="section-header" id="upHeading" data-i18n="payments.upcoming">Upcoming</h2>
+                                <ul class="list" id="upcomingRows" aria-labelledby="upHeading"></ul>
+                                <p class="section-footer" data-i18n="payments.upcomingFooter">Upcoming payments
+                                    leave Everyday on the morning they are due.</p>
+                                <h2 class="section-header" id="payeeHeading" data-i18n="payments.payees">Payees</h2>
+                                <ul class="list" id="payeeRows" aria-labelledby="payeeHeading"></ul>
+                                <p class="section-footer" data-i18n="payments.payeesFooter">To pay one of them,
+                                    use Send money on the Accounts tab.</p>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── You ──────────────────────────────────────────────────── -->
+            <div class="stack" data-tab="you">
+                <div class="page is-grouped" data-root data-title="You">
+                    <div class="scroller">
+                        <div class="page-inner">
+                            <header class="nav-bar">
+                                <div class="nav-row">
+                                    <span></span>
+                                    <p class="nav-title is-collapsing" data-i18n="you.title" aria-hidden="true">You</p>
+                                    <span></span>
+                                </div>
+                            </header>
+                            <main class="page-body">
+                                <h1 class="large-title" data-i18n="you.title" tabindex="-1">You</h1>
+                                <div class="offline-banner" role="status" hidden>
+                                    <span class="ring" aria-hidden="true"></span>
+                                    <span class="offline-text"></span>
+                                </div>
+                                <h2 class="section-header" id="detailsHeading" data-i18n="you.details">Your details</h2>
+                                <dl class="list group kv-list" aria-labelledby="detailsHeading">
+                                    <div class="row kv"><dt data-i18n="you.name">Name</dt><dd>Morgan Ellery</dd></div>
+                                    <div class="row kv"><dt data-i18n="you.email">Email</dt><dd class="break">morgan@ellery.example</dd></div>
+                                    <div class="row kv"><dt data-i18n="you.phone">Phone</dt><dd class="fig">07700 900143</dd></div>
+                                </dl>
+
+                                <h2 class="section-header" id="privacyHeading" data-i18n="you.privacy">Privacy</h2>
+                                <ul class="list group" aria-labelledby="privacyHeading">
+                                    <li>
+                                        <label class="row pressable">
+                                            <span class="row-body"><span class="row-headline is-plain"
+                                                    data-i18n="you.hideBalances">Hide balances</span></span>
+                                            <input class="switch" type="checkbox" role="switch" id="privacySwitch">
+                                        </label>
+                                    </li>
+                                </ul>
+                                <p class="section-footer" data-i18n="you.privacyFooter">Replaces every balance with
+                                    dots until you turn it off. Handy on a train.</p>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ TAB BAR ═════════════════════════════════════════════════════
+             Four destinations, each labelled, each a place and not an action.
+             Selected is a filled icon and a heavier label as well as a tint. -->
+        <nav class="tab-bar" id="tabBar" aria-label="Main">
+            <a class="tab" href="#/accounts" data-tab="accounts">
+                <span class="tab-icon">
+                    <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM10 20v-6h4v6" /></svg>
+                    <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 3.3 10.8V19a1.7 1.7 0 0 0 1.7 1.7h4.3V14h5.4v6.7H19a1.7 1.7 0 0 0 1.7-1.7v-8.2z" /></svg>
+                    <span class="tab-badge fig" id="accountsBadge" aria-hidden="true" hidden></span>
+                </span>
+                <span class="tab-label" data-i18n="tab.accounts">Accounts</span>
+                <span class="sr-only" id="accountsBadgeName"></span>
+            </a>
+            <a class="tab" href="#/cards" data-tab="cards">
+                <span class="tab-icon">
+                    <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg>
+                    <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.3 8.6V7A2.7 2.7 0 0 1 5 4.3h14A2.7 2.7 0 0 1 21.7 7v1.6zM2.3 11.2h19.4V17a2.7 2.7 0 0 1-2.7 2.7H5A2.7 2.7 0 0 1 2.3 17z" /></svg>
+                </span>
+                <span class="tab-label" data-i18n="tab.cards">Cards</span>
+            </a>
+            <a class="tab" href="#/payments" data-tab="payments">
+                <span class="tab-icon">
+                    <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3l-7 18-4-7-7-4zM21 3L10 14" /></svg>
+                    <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 2.4 2 9.6l6.4 3.4zM21.6 2.4 11 15.6l3.4 6.4z" /></svg>
+                </span>
+                <span class="tab-label" data-i18n="tab.payments">Payments</span>
+            </a>
+            <a class="tab" href="#/you" data-tab="you">
+                <span class="tab-icon">
+                    <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>
+                    <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.7" /><path d="M3.3 21.7a8.7 8.7 0 0 1 17.4 0z" /></svg>
+                </span>
+                <span class="tab-label" data-i18n="tab.you">You</span>
+            </a>
+        </nav>
+
+        <!-- ══ SHEET ═══════════════════════════════════════════════════════
+             Rises from the edge the thumb is at. The confirm is at the bottom,
+             inside it. -->
+        <div class="scrim" id="scrim"></div>
+
+        <section class="sheet" id="sendSheet" role="dialog" aria-modal="true" aria-labelledby="sendTitle" hidden>
+            <div class="sheet-drag" id="sheetDrag">
+                <div class="grabber" aria-hidden="true"></div>
+                <div class="sheet-head">
+                    <button class="btn-text" type="button" id="sendCancel" data-i18n="send.cancel">Cancel</button>
+                    <h2 class="sheet-title" id="sendTitle" tabindex="-1" data-i18n="send.title">Send money</h2>
+                    <!-- Clearing a draft is rare and destructive, so it sits
+                         where the hand is not. -->
+                    <button class="btn-text is-end" type="button" id="sendClear" data-i18n="send.clear" hidden>Clear</button>
+                </div>
+            </div>
+
+            <form id="sendForm" novalidate>
+                <div class="sheet-body" id="sheetBody">
+                    <div class="field">
+                        <label class="field-label" for="fPayee" data-i18n="send.to">To</label>
+                        <div class="select-wrap">
+                            <select id="fPayee" name="payee" aria-describedby="fPayeeErr"></select>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-down" /></svg>
+                        </div>
+                        <p class="field-error" id="fPayeeErr" hidden></p>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="fAmount" data-i18n="send.amount">Amount</label>
+                        <div class="affix-wrap">
+                            <span class="affix" id="fAmountAffix" aria-hidden="true">£</span>
+                            <!-- Keyboard type per field: a decimal pad, not QWERTY. -->
+                            <input id="fAmount" name="amount" type="text" inputmode="decimal"
+                                autocomplete="transaction-amount" enterkeyhint="next" placeholder="0.00"
+                                class="fig" aria-describedby="fAmountHelp fAmountErr">
+                        </div>
+                        <p class="field-help" id="fAmountHelp"></p>
+                        <p class="field-error" id="fAmountErr" hidden></p>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="fFrom" data-i18n="send.from">From</label>
+                        <div class="select-wrap">
+                            <select id="fFrom" name="from"></select>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-down" /></svg>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="fRef" data-i18n="send.reference">Reference (optional)</label>
+                        <input id="fRef" name="reference" type="text" maxlength="18" autocomplete="off"
+                            autocapitalize="sentences" enterkeyhint="send">
+                    </div>
+                </div>
+
+                <div class="sheet-foot pinned-action">
+                    <p class="form-status" id="sendStatus" role="alert" hidden></p>
+                    <button class="btn btn-primary" type="submit" id="sendSubmit">
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                        <span class="btn-label" id="sendSubmitLabel" data-i18n="send.submit">Send money</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Something already done, carrying an undo. -->
+        <div class="snackbar" id="snackbar" role="status">
+            <span class="snackbar-text" id="snackbarText"></span>
+            <button class="snackbar-action" type="button" id="snackbarUndo" data-i18n="snack.undo">Undo</button>
+        </div>
+
+        <div class="sr-only" id="live" aria-live="polite"></div>
+
+        <!-- Demo scaffolding: where the home indicator would be. -->
+        <div class="home-indicator" aria-hidden="true"></div>
+    </div>
+
+    <!-- ══ DEMO CONTROLS ═══════════════════════════════════════════════════
+         Not part of the app, and outside the phone. They exist so the states
+         a phone reaches on its own - no network, a slow first load, a server
+         error - can be reached from a desk. The same states are available as
+         ?state=loading | empty | error | offline. -->
+    <aside class="demo-panel" aria-label="Demo controls">
+        <h2>Demo controls</h2>
+        <p>Outside the phone, and not part of the app. They put the screen into states a phone reaches on its
+            own.</p>
+        <div class="demo-buttons">
+            <button type="button" id="demoOffline" aria-pressed="false">Go offline</button>
+            <button type="button" data-demo="slow">Slow first load</button>
+            <button type="button" data-demo="empty">New, empty account</button>
+            <button type="button" data-demo="error">Server error</button>
+            <button type="button" data-demo="ready">Populated</button>
+            <button type="button" data-demo="away">Back after 20 minutes</button>
+            <button type="button" data-demo="reset">Reset demo data</button>
+        </div>
+        <h3>Worth trying</h3>
+        <ul>
+            <li>Go offline, send money, come back online.</li>
+            <li>Send to <b>Old Flat Deposit</b>: it is refused, online and after queueing.</li>
+            <li>Type in the sheet, close it, reload: the draft is still there.</li>
+            <li>Open a payment, switch tab, come back, reload.</li>
+        </ul>
+    </aside>
+
+    <!-- A pushed screen. Cloned per push by app.js. -->
+    <template id="tplPage">
+        <div class="page">
+            <div class="scroller">
+                <div class="page-inner">
+                    <header class="nav-bar">
+                        <div class="nav-row">
+                            <!-- Back is where the platform puts back, and says
+                                 where it goes. -->
+                            <button class="nav-back" type="button">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-back" /></svg>
+                                <span class="nav-back-label"></span>
+                            </button>
+                            <h1 class="nav-title" tabindex="-1"></h1>
+                            <span></span>
+                        </div>
+                    </header>
+                    <main class="page-body"></main>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

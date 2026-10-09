@@ -1,0 +1,779 @@
+/* ==========================================================================
+   SITE - the page around the scene. Load last. Every colour is a token from
+   theme.css or tokens.css; nothing here types one.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-padding-top: calc(var(--header-h) + var(--gap-item));
+}
+
+h1, h2, h3, p, dl, dd, ol, figure {
+    margin: 0;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.figure,
+.facts dd,
+.spec td,
+.price {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+.skip {
+    position: absolute;
+    left: var(--gap-item);
+    top: var(--gap-tight);
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+    padding: 0 var(--gap-item);
+    border-radius: var(--r-btn);
+    background: var(--surface);
+    color: var(--text);
+    transform: translateY(-200%);
+}
+
+.skip:focus-visible {
+    transform: none;
+}
+
+/* ----- Chrome: a header that is a plate, except over the top of the stage */
+
+.site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 20;
+    height: var(--header-h);
+    background: var(--plate);
+    border-bottom: 1px solid var(--stage-line);
+    transition: background var(--d-fast) ease, border-color var(--d-fast) ease;
+}
+
+/* Set by script, so without script the header is always the opaque plate. */
+.site-header[data-top] {
+    background: transparent;
+    border-bottom-color: transparent;
+}
+
+.site-header-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-block);
+    max-width: var(--width-page);
+    height: 100%;
+    margin-inline: auto;
+    padding-inline: var(--pad-page);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gap-tight);
+    min-height: var(--target);
+    flex: none;
+    color: var(--stage-text);
+    font: 700 var(--t-body) / 1 var(--font);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+}
+
+.brand-sub {
+    color: var(--stage-text-3);
+    font-weight: 500;
+}
+
+/* A shaft in a housing, seen end on. */
+.brand-mark {
+    width: 1.375rem;
+    height: 1.375rem;
+    border: 0.3125rem solid var(--stage-text);
+    border-radius: var(--r-pill);
+    background: var(--accent-on-stage);
+    background-clip: content-box;
+    padding: 0.125rem;
+}
+
+.site-nav {
+    display: flex;
+    gap: var(--gap-tight);
+    min-width: 0;
+    margin-inline-start: auto;
+    overflow-x: auto;
+}
+
+.site-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+    padding: 0 0.75rem;
+    border-radius: var(--r-control);
+    color: var(--stage-text-2);
+    font: 500 var(--t-small) / 1 var(--font);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.site-nav a:active {
+    color: var(--stage-text);
+    background: var(--stage-3);
+}
+
+/* ----- The hero stage ---------------------------------------------------- */
+
+.hero .stage {
+    padding-block: var(--hero-top) var(--hero-bottom);
+    row-gap: var(--gap-block);
+}
+
+.stage-text {
+    display: grid;
+    gap: var(--gap-item);
+    justify-items: start;
+}
+
+.eyebrow {
+    color: var(--stage-text-3);
+    font: 500 var(--t-caption) / 1.5 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+h1 {
+    font: 700 var(--t-hero) / 1 var(--font);
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+}
+
+.lead {
+    color: var(--stage-text-2);
+    font-size: var(--t-body);
+    line-height: 1.6;
+}
+
+.facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-tight) var(--gap-block);
+    margin-block: var(--gap-tight);
+}
+
+.facts dt {
+    color: var(--stage-text-3);
+    font-size: var(--t-caption);
+    line-height: 1.5;
+}
+
+.facts dd {
+    color: var(--stage-text);
+    font-size: var(--t-h3);
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.unit {
+    color: var(--stage-text-2);
+    font-size: var(--t-small);
+    font-weight: 400;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--gap-tight) var(--gap-item);
+}
+
+.link-quiet {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+    padding: 0 var(--gap-tight);
+    color: var(--stage-text);
+    font: 500 var(--t-small) / 1 var(--font);
+    text-underline-offset: 0.25em;
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+}
+
+/* ----- On the scene frame ------------------------------------------------ */
+
+.scene-hint {
+    position: absolute;
+    top: var(--gap-item);
+    inset-inline-end: var(--gap-item);
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--stage-line);
+    border-radius: var(--r-pill);
+    background: var(--plate);
+    color: var(--stage-text-2);
+    font: 500 var(--t-caption) / 1.5 var(--font);
+    pointer-events: none;
+}
+
+.scene-views {
+    flex-wrap: wrap;
+    gap: var(--gap-tight) var(--gap-item);
+    padding-inline: var(--gap-item);
+}
+
+.scene-viewset {
+    display: flex;
+    gap: var(--gap-tight);
+}
+
+.scene-views button {
+    transition: background var(--d-fast) ease, border-color var(--d-fast) ease;
+}
+
+/* Pressed is a heavier edge as well as a colour, so it survives greyscale. */
+.scene-views button[aria-pressed="true"] {
+    box-shadow: inset 0 0 0 calc(var(--border-selected) - 1px) var(--accent-on-stage);
+    font-weight: 700;
+}
+
+.scene-views button:active,
+.hotspot:active,
+.scene-load:active {
+    background: var(--stage-3);
+    border-color: var(--stage-text-2);
+}
+
+/* Hotspots, their notes and the hint belong to the running scene only. */
+.scene:not([data-state="ready"]) .hotspot,
+.scene:not([data-state="ready"]) .spot-note,
+.scene:not([data-state="ready"]) .scene-hint {
+    display: none;
+}
+
+/* A callout: the pill stands off the part on a stem, so the label names the
+   part without covering it. The stem's foot is the exact point. */
+.hotspot {
+    z-index: 1;
+    white-space: nowrap;
+    transform: translate(var(--x, 0), var(--y, 0)) translate(-50%, calc(-100% - var(--stem)));
+}
+
+.hotspot::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 1px;
+    height: var(--stem);
+    background: var(--stage-text-2);
+    pointer-events: none;
+}
+
+.hotspot::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: calc(100% + var(--stem));
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border: 1px solid var(--stage);
+    border-radius: var(--r-pill);
+    background: var(--stage-text);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.hotspot[aria-expanded="true"] {
+    border-color: var(--accent-on-stage);
+    box-shadow: inset 0 0 0 calc(var(--border-selected) - 1px) var(--accent-on-stage);
+    background: var(--stage-3);
+}
+
+.spot-note {
+    position: absolute;
+    top: var(--gap-item);
+    inset-inline-start: var(--gap-item);
+    z-index: 2;
+    max-width: min(19rem, calc(100% - var(--gap-block)));
+    padding: var(--gap-item) 1.25rem;
+    border-color: var(--stage-control);
+    font-size: var(--t-small);
+    line-height: 1.5;
+    color: var(--stage-text-2);
+}
+
+.spot-note strong {
+    color: var(--stage-text);
+}
+
+.spot-note[hidden] {
+    display: none;
+}
+
+/* ----- The configurator: a form on a plate, under both lanes ------------- */
+
+.configure {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, max-content));
+    justify-content: space-between;
+    gap: var(--gap-item) var(--gap-block);
+    padding: 1.5rem var(--gap-block);
+}
+
+.configure > * {
+    min-width: 0;
+}
+
+.configure-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.options {
+    align-content: start;
+    gap: var(--gap-tight);
+    min-width: 0;
+}
+
+.option-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-tight);
+}
+
+.option {
+    gap: var(--gap-tight);
+    padding: 0 0.875rem 0 0.75rem;
+    font: 500 var(--t-small) / 1 var(--font);
+    color: var(--stage-text);
+    transition: background var(--d-fast) ease, border-color var(--d-fast) ease;
+}
+
+.option input {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0;
+    accent-color: var(--accent-on-stage);
+    flex: none;
+}
+
+.option input:focus-visible {
+    outline: none;            /* the ring is drawn on the row, by scene.css */
+}
+
+.option:has(input:checked) {
+    box-shadow: inset 0 0 0 calc(var(--border-selected) - 1px) var(--accent-on-stage);
+}
+
+.option:has(input:disabled) {
+    color: var(--stage-text-3);
+    cursor: not-allowed;
+}
+
+.option-swatch {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.configure-result {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gap-tight) var(--gap-block);
+    padding-top: var(--gap-item);
+    border-top: 1px solid var(--stage-line);
+}
+
+.summary {
+    color: var(--stage-text-2);
+    font-size: var(--t-small);
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+}
+
+.price {
+    color: var(--stage-text);
+    font-size: var(--t-h3);
+    font-weight: 600;
+    line-height: 1.25;
+    white-space: nowrap;
+}
+
+.price-label {
+    color: var(--stage-text-3);
+    font: 400 var(--t-caption) / 1.5 var(--font);
+    margin-inline-end: var(--gap-tight);
+}
+
+/* ----- The page: long things, on the light surface ----------------------- */
+
+.band {
+    padding-block: var(--gap-chapter);
+}
+
+.band--surface {
+    background: var(--surface);
+    border-block: 1px solid var(--line);
+}
+
+.band-inner {
+    max-width: var(--width-page);
+    margin-inline: auto;
+    padding-inline: var(--pad-page);
+}
+
+.band-head {
+    display: grid;
+    gap: var(--gap-tight);
+    margin-bottom: var(--gap-block);
+}
+
+.band h2 {
+    font: 700 var(--t-h2) / 1.15 var(--font);
+    letter-spacing: -0.02em;
+}
+
+.band-head p,
+.quote p {
+    max-width: var(--measure);
+    color: var(--text-2);
+}
+
+.parts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--gap-item);
+    padding: 0;
+    list-style: none;
+    counter-reset: part;
+}
+
+.parts li {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-btn);
+    background: var(--surface);
+    counter-increment: part;
+}
+
+.parts li::before {
+    content: counter(part, decimal-leading-zero);
+    display: block;
+    margin-bottom: var(--gap-tight);
+    color: var(--text-3);
+    font: 500 var(--t-caption) / 1.5 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+.parts h3 {
+    margin-bottom: 0.375rem;
+    font: 600 var(--t-body) / 1.25 var(--font);
+}
+
+.parts p {
+    color: var(--text-2);
+    font-size: var(--t-small);
+    line-height: 1.55;
+}
+
+.spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    gap: var(--gap-block) var(--gap-section);
+}
+
+.spec-grid > * {
+    min-width: 0;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+.spec {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--t-small);
+    line-height: 1.5;
+}
+
+.spec caption {
+    padding-bottom: var(--gap-tight);
+    text-align: start;
+    color: var(--text);
+    font: 600 var(--t-h3) / 1.25 var(--font);
+}
+
+.spec th,
+.spec td {
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: baseline;
+}
+
+.spec th {
+    text-align: start;
+    color: var(--text-2);
+    font-weight: 400;
+}
+
+.spec thead th {
+    color: var(--text-3);
+    font-size: var(--t-caption);
+    font-weight: 500;
+    border-bottom-color: var(--control);
+}
+
+.spec td {
+    text-align: end;
+    color: var(--text);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* The unit column: quiet, and close to its figure. */
+.spec tbody td:last-child:not([colspan]):not(:only-of-type) {
+    width: 3.5rem;
+}
+
+.spec:not(.spec--wide) td:last-child:not(.text) {
+    padding-inline-start: var(--gap-tight);
+    text-align: start;
+    color: var(--text-3);
+    font-family: var(--font);
+    font-weight: 400;
+}
+
+.spec td.text,
+.spec td.code {
+    text-align: start;
+}
+
+.spec td.text {
+    font-family: var(--font);
+}
+
+.spec:not(.spec--wide) td.text {
+    text-align: end;
+}
+
+.spec--wide {
+    min-width: 46rem;
+}
+
+.spec--wide thead th {
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
+.spec--wide th,
+.spec--wide td {
+    padding-inline: 0 var(--gap-item);
+}
+
+.spec--wide th.num {
+    text-align: end;
+}
+
+.spec--wide tbody th {
+    color: var(--text);
+    font-weight: 600;
+    vertical-align: top;
+}
+
+.quote {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: var(--gap-block) var(--gap-section);
+    align-items: start;
+}
+
+.quote > * {
+    min-width: 0;
+}
+
+.quote h2 {
+    margin-bottom: var(--gap-item);
+}
+
+.quote-card {
+    display: grid;
+    gap: var(--gap-item);
+    justify-items: start;
+    padding: var(--gap-block);
+    border: 1px solid var(--line);
+    border-radius: var(--r-plate);
+    background: var(--page);
+}
+
+.quote-lines {
+    display: grid;
+    gap: var(--gap-tight);
+    width: 100%;
+}
+
+.quote-lines > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 var(--gap-item);
+    padding-bottom: var(--gap-tight);
+    border-bottom: 1px solid var(--line);
+}
+
+.quote-lines dt {
+    color: var(--text-2);
+    font-size: var(--t-small);
+}
+
+.quote-lines dd {
+    font-size: var(--t-small);
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.quote-alt {
+    font-size: var(--t-small);
+    color: var(--text-2);
+}
+
+.quote-alt a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+}
+
+.band a:not(.btn-primary) {
+    color: var(--accent);
+    text-underline-offset: 0.2em;
+}
+
+.site-footer {
+    padding-block: var(--gap-block);
+    color: var(--text-3);
+    font-size: var(--t-caption);
+    line-height: 1.5;
+}
+
+.site-footer p {
+    max-width: var(--measure);
+}
+
+/* ----- Hover: only where there is something to hover with ---------------- */
+
+@media (hover: hover) {
+    .site-nav a:hover {
+        color: var(--stage-text);
+        background: var(--stage-3);
+    }
+
+    .link-quiet:hover {
+        color: var(--accent-on-stage);
+    }
+
+    .scene-views button:hover,
+    .hotspot:hover,
+    .option:hover {
+        background: var(--stage-3);
+        border-color: var(--stage-text-2);
+    }
+
+    .band a:not(.btn-primary):hover {
+        color: var(--accent-hover);
+    }
+}
+
+/* ----- One column -------------------------------------------------------- */
+
+@media (max-width: 800px) {
+    .configure {
+        order: 3;
+        grid-template-columns: minmax(0, 1fr);
+        padding: var(--gap-item);
+    }
+
+    /* Five labels over a phone-sized frame cover the model they describe.
+       The same five are the list under "What you are looking at". */
+    .scene .hotspot,
+    .scene .spot-note {
+        display: none;
+    }
+
+    .scene-views {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        bottom: var(--gap-tight);
+    }
+
+    .scene-viewset {
+        flex: none;
+    }
+
+    .scene-views button {
+        white-space: nowrap;
+    }
+}
+
+/* ----- Preferences ------------------------------------------------------- */
+
+@media (prefers-contrast: more) {
+    .plate,
+    .site-header,
+    .scene-hint {
+        border-color: var(--stage-control);
+    }
+
+    .parts li,
+    .quote-card,
+    .spec th,
+    .spec td {
+        border-color: var(--control);
+    }
+}
+
+@media (forced-colors: active) {
+    .scene-views button[aria-pressed="true"],
+    .hotspot[aria-expanded="true"],
+    .option:has(input:checked) {
+        border: var(--border-selected) solid Highlight;
+    }
+
+    .option-swatch {
+        forced-color-adjust: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-header,
+    .scene-views button,
+    .option,
+    .btn-primary {
+        transition: none;
+    }
+
+    .btn-primary:active {
+        transform: none;
+    }
+}

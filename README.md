@@ -21,6 +21,39 @@ This repo gives it one. Each **pack** is a design system for a specific domain,
 carrying a thesis another domain would reject — plus the tokens, measurements
 and reasoning to act on it.
 
+## What it produces
+
+Four requests, four packs. Each page below was built by an assistant working
+only from the generated skill in [`dist/`](dist/) — plain HTML, CSS and
+JavaScript, no framework, no build step.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<a href="demos/erp-finance/"><img src="demos/erp-finance/screenshot.png" alt="Accounts-payable workbench: dark sidebar, five KPI tiles, filters and a dense table of supplier invoices with status pills and one action per row"></a>
+<br><b><code>erp</code></b> — an accounts-payable workbench. Thirty-four invoices, twenty on screen at 1080p, one action per row.
+</td>
+<td width="50%" valign="top">
+<a href="demos/consumer-manufacturer/"><img src="demos/consumer-manufacturer/screenshot.png" alt="Home page of a pump manufacturer: a large serif headline, one primary button, and a hatched cross-section drawing of the pump"></a>
+<br><b><code>consumer-web</code></b> — a pump manufacturer's home page. One headline, one primary action, a drawing instead of a stock photo.
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="demos/immersive-manufacturer/"><img src="demos/immersive-manufacturer/screenshot.png" alt="Product page for an electric motor: a real-time 3D cutaway of the motor with labelled parts, view buttons, and a configurator with a price"></a>
+<br><b><code>immersive-web</code></b> — a motor the visitor can turn over and cut open, with a poster behind it for when WebGL is not there.
+</td>
+<td width="50%" valign="top" align="center">
+<a href="demos/mobile-finance/"><img src="demos/mobile-finance/screenshot.png" width="250" alt="Banking app home screen: total balance, two accounts, today's transactions as rows, a full-width Send money button above a four-tab bar"></a>
+<br><b><code>mobile-app</code></b> — a banking app's home screen. Rows, not cards; the primary action where the thumb is.
+</td>
+</tr>
+</table>
+
+Same repo, same core rules, and almost no decision in common — which is the
+point. Every company, name and figure in them is invented. Sources, how to open
+each one, and what was not verified are in [`demos/`](demos/).
+
 ## Point your agent at it
 
 Tell your assistant to read this, and it will pick the pack that fits and

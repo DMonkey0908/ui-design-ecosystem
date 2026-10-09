@@ -21,6 +21,40 @@ Repo này đưa cho nó một lập trường. Mỗi **pack** là một hệ thi
 vực cụ thể, mang một luận điểm mà lĩnh vực khác sẽ bác bỏ — kèm token, số đo, và
 lý do để hành động theo.
 
+## Nó tạo ra cái gì
+
+Bốn yêu cầu, bốn pack. Mỗi trang dưới đây do một trợ lý dựng, chỉ dựa vào skill
+đã sinh trong [`dist/`](../dist/) — HTML, CSS và JavaScript thuần, không
+framework, không bước build.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<a href="../demos/erp-finance/"><img src="../demos/erp-finance/screenshot.png" alt="Màn hình công nợ phải trả: sidebar tối, năm ô KPI, bộ lọc và một bảng hoá đơn nhà cung cấp dày đặc với nhãn trạng thái và một thao tác trên mỗi dòng"></a>
+<br><b><code>erp</code></b> — màn hình công nợ phải trả. Ba mươi tư hoá đơn, hai mươi dòng trên màn hình 1080p, mỗi dòng một thao tác.
+</td>
+<td width="50%" valign="top">
+<a href="../demos/consumer-manufacturer/"><img src="../demos/consumer-manufacturer/screenshot.png" alt="Trang chủ của một hãng sản xuất máy bơm: tiêu đề serif lớn, một nút chính, và bản vẽ mặt cắt máy bơm"></a>
+<br><b><code>consumer-web</code></b> — trang chủ của một hãng sản xuất máy bơm. Một tiêu đề, một hành động chính, bản vẽ thay cho ảnh stock.
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="../demos/immersive-manufacturer/"><img src="../demos/immersive-manufacturer/screenshot.png" alt="Trang sản phẩm của một động cơ điện: mô hình 3D cắt bổ thời gian thực với nhãn từng bộ phận, các nút góc nhìn, và bộ cấu hình có giá"></a>
+<br><b><code>immersive-web</code></b> — một động cơ mà khách xoay được và cắt bổ được, phía sau có ảnh poster cho lúc không có WebGL.
+</td>
+<td width="50%" valign="top" align="center">
+<a href="../demos/mobile-finance/"><img src="../demos/mobile-finance/screenshot.png" width="250" alt="Màn hình chính của app ngân hàng: tổng số dư, hai tài khoản, giao dịch hôm nay dạng dòng, nút Send money rộng hết chiều ngang phía trên thanh bốn tab"></a>
+<br><b><code>mobile-app</code></b> — màn hình chính của một app ngân hàng. Dòng chứ không phải card; hành động chính nằm đúng chỗ ngón cái.
+</td>
+</tr>
+</table>
+
+Cùng một repo, cùng bộ luật core, và gần như không có quyết định nào giống nhau
+— đó chính là điều cần thấy. Mọi công ty, tên riêng và con số trong đó đều là
+bịa. Mã nguồn, cách mở từng demo, và những gì chưa được kiểm chứng nằm trong
+[`demos/`](../demos/).
+
 ## Chỉ agent của bạn tới đây
 
 Bảo trợ lý của bạn đọc file này, nó sẽ tự chọn pack phù hợp và cài:

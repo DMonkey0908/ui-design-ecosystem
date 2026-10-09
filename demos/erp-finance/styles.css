@@ -1,0 +1,852 @@
+/* ==========================================================================
+   PAGE — accounts payable workbench.
+   Loaded THIRD, after theme.css and erp-shell.css. Every colour here is a
+   theme token; there is no literal in this file. Type is in rem (content)
+   or em (chrome). Hover lives inside @media (hover: hover) — it is a
+   refinement, never the only way to reach something.
+   ========================================================================== */
+
+/* ── Shell additions the shipped shell leaves to the page ──────────────── */
+
+.brand-glyph {
+    display: grid;
+    place-items: center;
+    color: var(--text-on-brand);
+}
+
+.brand-glyph svg {
+    width: 26px;
+    height: 26px;
+}
+
+/* The shipped flat variant paints the active rail in --brand, which is the
+   on-paper accent: 2.84:1 against the ink sidebar. The rail is on ink, so it
+   takes the on-dark value like the label beside it. */
+.nav-item.is-active {
+    border-left-color: var(--brand-on-dark);
+}
+
+/* The shipped shell gives its controls hover and focus but no pressed
+   state. One step up the ink wash. */
+.nav-item:active,
+.icon-btn:active,
+.user-menu:active,
+.sidebar-toggle:active {
+    background: var(--ink-active);
+}
+
+.nav-item.is-active .nav-badge {
+    background: var(--ink-active);
+    color: var(--ink-text);
+}
+
+/* ── Card ──────────────────────────────────────────────────────────────── */
+
+.card {
+    background: var(--paper);
+    border: 1px solid var(--paper-border);
+    border-radius: var(--radius-card);
+    padding: 20px 22px;
+    min-width: 0;
+}
+
+.card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.card-head > div:first-child {
+    min-width: 0;
+}
+
+.card-title {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--paper-text);
+}
+
+.note {
+    margin: 0;
+    max-width: 72ch;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--paper-text-2);
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+
+.btn {
+    padding: 8px 16px;
+    border: 1px solid var(--paper-border-strong);
+    border-radius: var(--radius-control);
+    background: var(--paper);
+    color: var(--paper-text);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:active:not(:disabled) {
+    background: var(--paper-3);
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+/* Busy for a quarter of a second: the control acknowledges the press and
+   keeps its full contrast. It ignores a second press in the script. */
+.btn[aria-busy='true'] {
+    cursor: progress;
+}
+
+.btn-primary {
+    border-color: var(--brand);
+    background: var(--brand);
+    color: var(--text-on-brand);
+}
+
+.btn-primary:active:not(:disabled) {
+    background: var(--brand-dark);
+    border-color: var(--brand-dark);
+}
+
+.btn-sm {
+    padding: 5px 12px;
+    font-size: 0.75rem;
+}
+
+/* A bare text action — "Clear filters", "Dismiss". */
+.link-btn {
+    min-height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--brand);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.link-btn:active {
+    color: var(--brand-dark);
+}
+
+/* Solid accent, not the a35 wash: the ring has to clear 3:1 against paper. */
+.btn:focus-visible,
+.link-btn:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+}
+
+@media (hover: hover) {
+    .btn:hover:not(:disabled) {
+        background: var(--paper-2);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        background: var(--brand-hover);
+        border-color: var(--brand-hover);
+    }
+
+    .link-btn:hover:not(:disabled) {
+        color: var(--brand-hover);
+        text-decoration: underline;
+    }
+}
+
+/* ── KPI tiles ─────────────────────────────────────────────────────────── */
+
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.tile {
+    padding: 12px 14px;
+    border: 1px solid var(--paper-border);
+    border-radius: var(--radius-card);
+    background: var(--paper-2);
+    min-width: 0;
+}
+
+.tile-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--paper-text-2);
+}
+
+/* The number is never coloured. The judgement is worded in the sub-line. */
+.tile-value {
+    margin-top: 4px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--paper-text);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tile-sub {
+    margin-top: 2px;
+    font-size: 0.72rem;
+    color: var(--paper-text-3);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Fields and the filter row ─────────────────────────────────────────── */
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--paper-text-2);
+}
+
+.field input,
+.field select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid var(--field-border);
+    border-radius: var(--radius-control);
+    background: var(--paper);
+    color: var(--paper-text);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+.field input::placeholder {
+    color: var(--paper-text-3);
+    opacity: 1;
+}
+
+.field :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 1px;
+    border-color: var(--brand);
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px 12px;
+    margin-bottom: 10px;
+}
+
+.filters input,
+.filters select {
+    height: 36px;
+}
+
+.filters .field {
+    flex: 0 1 auto;
+    min-width: 150px;
+}
+
+.filters .field-grow {
+    flex: 1 1 240px;
+    min-width: 220px;
+}
+
+/* Sits on the control baseline: 36px control, 24px target. */
+.filters .link-btn {
+    margin-bottom: 6px;
+}
+
+.table-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2px 16px;
+    /* Reserved, so a message arriving does not move the table. */
+    min-height: 1.25rem;
+    margin-bottom: 6px;
+}
+
+.filter-note {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--paper-text-2);
+    font-variant-numeric: tabular-nums;
+}
+
+.action-note {
+    text-align: end;
+    margin-inline-start: auto;
+}
+
+/* ── Table ─────────────────────────────────────────────────────────────── */
+
+.table-wrap {
+    /* The containing block for anything absolutely positioned inside (the
+       .sr-only header label). Without it that label escapes the scroller
+       and widens the page. */
+    position: relative;
+    overflow-x: auto;
+    border: 1px solid var(--paper-border);
+    border-radius: var(--radius-card);
+}
+
+/* Inset: the wrapper clips on the x axis, so an outset ring would be cut. */
+.table-wrap:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -2px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+}
+
+.table th {
+    padding: 8px 12px;
+    text-align: start;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--paper-text-2);
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--paper-border);
+    white-space: nowrap;
+}
+
+.table td {
+    /* The row is a fixed height, so it never wraps and a skeleton row is
+       exactly the height of the row that replaces it. */
+    height: 2.125rem;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    line-height: 1.0625rem;
+    color: var(--paper-text);
+    border-bottom: 1px solid var(--paper-border);
+    white-space: nowrap;
+}
+
+.table tr:last-child td {
+    border-bottom: 0;
+}
+
+.table .num {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.table td.date {
+    font-variant-numeric: tabular-nums;
+}
+
+.table td.truncate {
+    max-width: 17rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table code {
+    /* A second font on the line would otherwise grow the line box. */
+    line-height: 1;
+    color: var(--paper-text);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.table td.cur {
+    color: var(--paper-text-2);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+@media (hover: hover) {
+    .table tbody tr:hover td {
+        background: var(--paper-2);
+    }
+}
+
+/* Quietest status weight: text. Colour is paired with weight and a word. */
+.status {
+    color: var(--paper-text-2);
+}
+
+.status[data-state='warn'] {
+    color: var(--state-warning-text);
+    font-weight: 600;
+}
+
+.status[data-state='bad'] {
+    color: var(--state-danger-text);
+    font-weight: 600;
+}
+
+.status[data-state='none'] {
+    color: var(--paper-text-3);
+}
+
+/* ── Pills ─────────────────────────────────────────────────────────────── */
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    /* 1px + the 1px border = the spec's 2px. The border is transparent until
+       forced-colors or prefers-contrast needs an edge. */
+    padding: 1px 8px;
+    border: 1px solid transparent;
+    line-height: 1.2;
+    vertical-align: middle;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.pill[data-state='approved'] {
+    background: var(--pill-success-bg);
+    color: var(--pill-success-text);
+}
+
+.pill[data-state='hold'] {
+    background: var(--pill-warning-bg);
+    color: var(--pill-warning-text);
+}
+
+.pill[data-state='overdue'] {
+    background: var(--pill-danger-bg);
+    color: var(--pill-danger-text);
+}
+
+.pill[data-state='due'] {
+    background: var(--pill-neutral-bg);
+    color: var(--pill-neutral-text);
+}
+
+/* A pill is taller than the line it sits on; without this it, not the
+   data, would set the row height. */
+.table td.col-status {
+    padding-block: 0;
+}
+
+/* ── Row action ────────────────────────────────────────────────────────── */
+
+.table .col-action {
+    width: 1%;
+    text-align: end;
+}
+
+/* The action is 26px tall; at the standard 8px cell padding it would set
+   the row height on its own. Trimmed here so the row stays the data's. */
+.table td.col-action {
+    padding-block: 3px;
+}
+
+.row-action {
+    min-width: 4.5rem;
+    min-height: 26px;
+    padding: 4px 10px;
+    border: 1px solid var(--paper-border-strong);
+    border-radius: var(--radius-control);
+    background: var(--paper);
+    color: var(--paper-text-2);
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.row-action:active:not(:disabled) {
+    background: var(--paper-3);
+}
+
+.row-action:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -2px;
+}
+
+/* A toggle states its own state, and its label changes with it. */
+.row-action[aria-pressed='true'] {
+    border-color: var(--brand-border);
+    background: var(--brand-tint);
+    color: var(--brand);
+}
+
+@media (hover: hover) {
+    .row-action:hover:not(:disabled) {
+        background: var(--paper-2);
+        color: var(--paper-text);
+    }
+
+    .row-action[aria-pressed='true']:hover:not(:disabled) {
+        background: var(--brand-tint-2);
+        color: var(--brand-hover);
+    }
+}
+
+/* ── Loading ───────────────────────────────────────────────────────────── */
+
+.skeleton-cell {
+    display: block;
+    height: 11px;
+    border-radius: 3px;
+    background: linear-gradient(90deg,
+            var(--paper-3) 0%, var(--paper-2) 50%, var(--paper-3) 100%);
+    background-size: 200% 100%;
+    animation: skeleton-sweep 1.1s ease-in-out infinite;
+}
+
+.skeleton-cell.is-short {
+    width: 45%;
+}
+
+.skeleton-cell.is-right {
+    margin-inline-start: auto;
+    width: 60%;
+}
+
+@keyframes skeleton-sweep {
+    from {
+        background-position: 100% 0;
+    }
+
+    to {
+        background-position: -100% 0;
+    }
+}
+
+/* The global guard kills the animation and supplies no end state. */
+@media (prefers-reduced-motion: reduce) {
+    .skeleton-cell {
+        animation: none;
+        background: var(--paper-3);
+        opacity: 1;
+    }
+}
+
+/* ── Empty and error ───────────────────────────────────────────────────── */
+
+.empty {
+    padding: 18px 12px;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--paper-text-3);
+}
+
+.empty p {
+    margin: 0 auto;
+    max-width: 72ch;
+    line-height: 1.5;
+}
+
+.empty[data-state='error'] p {
+    color: var(--paper-text);
+}
+
+.empty .btn {
+    margin-top: 10px;
+}
+
+/* ── Topbar dropdowns: paper, fixed, floating ──────────────────────────── */
+
+.dropdown {
+    position: fixed;
+    top: calc(var(--topbar-height) - 4px);
+    inset-inline-end: 16px;
+    z-index: 20;
+    width: 15rem;
+    box-sizing: border-box;
+    padding: 6px;
+    border: 1px solid var(--paper-border);
+    border-radius: var(--radius-float);
+    background: var(--paper);
+    color: var(--paper-text);
+    box-shadow: var(--shadow-float);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.98);
+    pointer-events: none;
+    transform-origin: top right;
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0s linear 0.16s;
+}
+
+.dropdown.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+.dropdown-notices {
+    width: 21rem;
+}
+
+.dropdown-title {
+    margin: 0;
+    padding: 8px 12px 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--paper-text-2);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: var(--paper-text);
+    text-decoration: none;
+    font: inherit;
+    font-size: 0.9em;
+    font-weight: 500;
+    text-align: start;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+}
+
+.dropdown-item:active {
+    background: var(--paper-border);
+}
+
+.dropdown-item:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -2px;
+}
+
+@media (hover: hover) {
+    .dropdown-item:hover:not(:disabled) {
+        background: var(--paper-3);
+    }
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--paper-border);
+    margin: 4px 6px;
+}
+
+.notice-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.notice-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--paper-border);
+}
+
+.notice-text {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--paper-text);
+}
+
+.notice-meta {
+    font-size: 0.72rem;
+    color: var(--paper-text-3);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Dialog ────────────────────────────────────────────────────────────── */
+
+.dialog {
+    width: min(30rem, calc(100vw - 32px));
+    box-sizing: border-box;
+    padding: 0;
+    border: 1px solid var(--paper-border);
+    border-radius: var(--radius-float);
+    background: var(--paper);
+    color: var(--paper-text);
+    box-shadow: var(--shadow-float);
+}
+
+.dialog::backdrop {
+    background: var(--scrim);
+}
+
+.dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px 22px;
+}
+
+.dialog-body .card-title {
+    margin: 0;
+}
+
+.dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.dialog tr.is-total td {
+    background: var(--paper-2);
+    font-weight: 700;
+}
+
+/* ── Toast: a failed action says so, and stays until dismissed ─────────── */
+
+.toast {
+    position: fixed;
+    inset-block-end: 20px;
+    inset-inline-end: 20px;
+    z-index: 30;
+    width: min(26rem, calc(100vw - 32px));
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid var(--paper-border-strong);
+    border-inline-start: 3px solid var(--state-danger);
+    border-radius: var(--radius-card);
+    background: var(--paper);
+    box-shadow: var(--shadow-float);
+}
+
+.toast[hidden] {
+    display: none;
+}
+
+.toast-title {
+    margin: 0 0 2px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--state-danger-dark);
+}
+
+.toast-text {
+    margin: 0 0 6px;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--paper-text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Preferences beyond reduced motion ─────────────────────────────────── */
+
+@media (prefers-contrast: more) {
+
+    .card,
+    .tile,
+    .table-wrap,
+    .table th,
+    .table td,
+    .dropdown,
+    .dialog {
+        border-color: var(--paper-text-2);
+    }
+
+    .pill {
+        border-color: currentColor;
+    }
+
+    .tile-sub,
+    .status[data-state='none'],
+    .notice-meta,
+    .field input::placeholder {
+        color: var(--paper-text-2);
+    }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    .dialog::backdrop {
+        background: var(--scrim-opaque);
+    }
+}
+
+/* Every colour chosen above is gone here; state has to survive as an edge
+   and a word. The pill and the pressed toggle keep their borders. */
+@media (forced-colors: active) {
+    .pill {
+        border-color: currentColor;
+    }
+
+    .nav-item.is-active {
+        text-decoration: underline;
+    }
+
+    .row-action[aria-pressed='true'] {
+        border-width: 2px;
+    }
+
+    .skeleton-cell {
+        border: 1px solid;
+    }
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+/* 860px — filter fields grow and the search takes a full line */
+@media (max-width: 860px) {
+    .filters .field {
+        flex: 1 1 140px;
+        min-width: 0;
+    }
+
+    .filters .field-grow {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+}
+
+/* 640px — edge-anchored panels span the viewport */
+@media (max-width: 640px) {
+    .dropdown {
+        inset-inline: 8px;
+        width: auto;
+        max-width: 380px;
+        margin-inline-start: auto;
+    }
+
+    .toast {
+        inset-inline: 8px;
+        width: auto;
+    }
+}
+
+/* 520px — the card gives its padding back to the table */
+@media (max-width: 520px) {
+    .card {
+        padding: 14px 12px;
+    }
+
+    .actions {
+        width: 100%;
+    }
+}

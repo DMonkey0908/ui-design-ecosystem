@@ -1,0 +1,1288 @@
+/* ==========================================================================
+   PAGE — Kestrow home. Written entirely in theme.css tokens: no colour
+   literal lives in this file. Order: tokens -> layout -> components -> page.
+
+   Breakpoints, and what each is for:
+     60em     navigation switches between inline links and the menu button
+     62.5em   hero, split and FAQ blocks go from one column to two
+     56.25em  feature rows go side by side and alternate
+   Everything else is auto-fit grids and clamp().
+   ========================================================================== */
+
+/* ----- Tokens defined in terms of the palette ---------------------------- */
+:root {
+    /* Technical drawings: an ink ramp, with the wetted volume as the one tint. */
+    --draw-ink: var(--text);
+    --draw-line: var(--text-2);
+    --draw-thin: var(--text-3);
+    --draw-part: var(--canvas-2);
+    --draw-fluid: var(--accent-tint-2);
+    --draw-grid: color-mix(in srgb, var(--line) 55%, transparent);
+
+    --header-h: 4.5rem;
+    --header-plate: color-mix(in srgb, var(--canvas) 85%, transparent);
+}
+
+/* ----- Base -------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    position: relative;
+    overflow-wrap: break-word;
+    /* Every figure on the page, wherever it turns up. */
+    font-variant-numeric: tabular-nums;
+}
+
+p {
+    margin: 0 0 var(--gap-item);
+}
+
+p:last-child {
+    margin-block-end: 0;
+}
+
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+p a {
+    color: var(--accent);
+    text-underline-offset: 0.2em;
+}
+
+.on-ink p a {
+    color: var(--accent-on-dark);
+}
+
+[id] {
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+}
+
+.skip {
+    position: absolute;
+    inset-block-start: 0.75rem;
+    inset-inline-start: 0.75rem;
+    z-index: 100;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--r-input);
+    background: var(--ink);
+    color: var(--ink-text);
+    font: 600 var(--t-small)/1.2 var(--font-body);
+    transform: translateY(-300%);
+}
+
+.skip:focus-visible {
+    transform: none;
+    outline-color: var(--accent);
+}
+
+.scroll-sentinel {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    width: 1px;
+    height: 0.5rem;
+    pointer-events: none;
+}
+
+.defs {
+    position: absolute;
+}
+
+/* Meta, sources, legal. --text-3 is for these and nothing longer. */
+.eyebrow {
+    margin: 0 0 1.25rem;
+    color: var(--text-3);
+    font: 600 var(--t-caption)/1.5 var(--font-body);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.src {
+    color: var(--text-3);
+    font-size: var(--t-caption);
+    line-height: 1.5;
+}
+
+.on-ink .src {
+    color: var(--ink-text-2);
+}
+
+.reassure {
+    margin: 0;
+    color: var(--text-3);
+    font-size: var(--t-caption);
+    line-height: 1.5;
+    max-width: 30rem;
+}
+
+/* ----- Buttons ----------------------------------------------------------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.875rem 1.75rem;
+    border: 1px solid transparent;
+    border-radius: var(--r-btn);
+    font: 600 1.0625rem/1 var(--font-body);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background var(--t-fast) ease, transform var(--t-fast) ease, box-shadow var(--t-fast) ease;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--text-on-accent);
+    box-shadow: var(--shadow-cta);
+}
+
+.btn-primary:active {
+    background: var(--accent-active);
+    transform: none;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--line-2);
+}
+
+.btn-secondary:active {
+    background: var(--line);
+}
+
+.btn-lg {
+    padding: 1.125rem 2.25rem;
+    font-size: 1.125rem;
+}
+
+.btn-sm {
+    padding: 0.75rem 1.125rem;
+    font-size: var(--t-small);
+    border-radius: var(--r-input);
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+    background: var(--canvas-2);
+    border-color: var(--line-2);
+    color: var(--text-2);
+    box-shadow: none;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+@media (hover: hover) {
+    .btn-primary:hover {
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary:hover {
+        background: var(--canvas-2);
+    }
+}
+
+.on-ink .btn-primary {
+    background: var(--accent-on-dark);
+    color: var(--ink);
+    box-shadow: none;
+}
+
+/* ----- Header ------------------------------------------------------------ */
+.header {
+    z-index: 50;
+    background: transparent;
+    transition: background var(--t-fast) ease, box-shadow var(--t-fast) ease;
+}
+
+/* Sticky only once JS can plate it; a transparent sticky bar with copy
+   scrolling underneath is unreadable. */
+.js .header {
+    position: sticky;
+    inset-block-start: 0;
+}
+
+.header.is-scrolled,
+.header.menu-open {
+    background: var(--canvas);
+    box-shadow: var(--shadow-sm);
+}
+
+@supports ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
+    .header.is-scrolled:not(.menu-open) {
+        background: var(--header-plate);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+    }
+}
+
+.header-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+    max-width: var(--width-page);
+    min-height: var(--header-h);
+    margin-inline: auto;
+    padding-inline: var(--pad-section);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.75rem;
+    margin-inline-end: auto;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.brand-name {
+    font: 700 1.3125rem/1 var(--font-body);
+    letter-spacing: -0.015em;
+}
+
+.bm-ring,
+.bm-vane {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.bm-hub {
+    fill: currentColor;
+}
+
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+}
+
+.nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nav li {
+    max-width: none;
+}
+
+.nav ul a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 0.875rem;
+    border-radius: var(--r-input);
+    color: var(--text);
+    font: 500 var(--t-small)/1 var(--font-body);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--t-fast) ease;
+}
+
+.nav ul a:active {
+    background: var(--line);
+}
+
+@media (hover: hover) {
+    .nav ul a:hover {
+        background: var(--canvas-2);
+    }
+}
+
+.menu-btn {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding-inline: 0.875rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-input);
+    background: transparent;
+    color: var(--text);
+    font: 600 var(--t-small)/1 var(--font-body);
+    cursor: pointer;
+    transition: background var(--t-fast) ease;
+}
+
+.menu-btn:active,
+.menu-btn[aria-expanded="true"] {
+    background: var(--canvas-2);
+}
+
+.menu-icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+/* 60em: below this the links do not fit beside the brand. With JS they move
+   into a menu; without it they simply wrap under the brand and stay usable. */
+@media (max-width: 59.99em) {
+    .nav {
+        flex-basis: 100%;
+        padding-block-end: 0.75rem;
+    }
+
+    .js .menu-btn {
+        display: inline-flex;
+    }
+
+    .js .nav {
+        position: absolute;
+        inset-block-start: calc(100% + 0.5rem);
+        inset-inline: var(--pad-section);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        border-radius: var(--r-card);
+        background: var(--surface);
+        box-shadow: var(--shadow-lg);
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-0.375rem);
+        transition: opacity 160ms ease, transform 160ms var(--ease), visibility 0s linear 160ms;
+    }
+
+    .js .menu-open .nav {
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        transition-delay: 0s;
+    }
+
+    .js .nav ul {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .js .nav ul a {
+        display: flex;
+        min-height: 3rem;
+        font-size: var(--t-body);
+    }
+}
+
+/* ----- Section furniture ------------------------------------------------- */
+.section-head {
+    max-width: 46rem;
+    margin-block-end: calc(var(--gap-block) * 2);
+}
+
+.section-head > :last-child {
+    margin-block-end: 0;
+}
+
+.split,
+.faq-grid,
+.hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+}
+
+.faq-grid .section-head {
+    margin-block-end: 0;
+}
+
+@media (min-width: 62.5em) {
+    .split {
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+        align-items: center;
+    }
+
+    .split-form {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .faq-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+        align-items: start;
+    }
+
+    .hero-grid {
+        grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+        align-items: center;
+        gap: 3.5rem;
+    }
+}
+
+/* ----- Hero -------------------------------------------------------------- */
+.hero h1 {
+    margin-block-end: 1.25rem;
+}
+
+.hero-action {
+    display: grid;
+    justify-items: start;
+    gap: 0.875rem;
+    margin-block-start: var(--gap-block);
+}
+
+.hero-proof {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+    max-width: 34rem;
+    margin-block-start: var(--gap-block);
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid var(--line);
+}
+
+.hero-proof-fig {
+    font: 700 var(--t-h3)/1 var(--font-body);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+}
+
+.hero-proof-txt {
+    flex: 1 1 14rem;
+    min-width: 0;
+    color: var(--text-2);
+    font-size: var(--t-small);
+    line-height: 1.5;
+}
+
+/* ----- Drawing sheets ---------------------------------------------------- */
+.sheet {
+    min-width: 0;
+    margin: 0;
+    padding: clamp(0.875rem, 2.5vw, 1.5rem);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background-color: var(--surface);
+    background-image:
+        linear-gradient(var(--draw-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--draw-grid) 1px, transparent 1px);
+    background-size: 1.5rem 1.5rem;
+    background-position: -1px -1px;
+    box-shadow: var(--shadow-md);
+    /* The drawing's meaning is in its tones; keep them under forced colours. */
+    forced-color-adjust: none;
+}
+
+.hero-sheet {
+    box-shadow: var(--shadow-lg);
+}
+
+.sheet figcaption {
+    margin-block-start: 1rem;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--line);
+}
+
+.dw {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0.5rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    max-width: none;
+    color: var(--text-2);
+    font-size: var(--t-small);
+    line-height: 1.4;
+}
+
+.legend b {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 1.625rem;
+    height: 1.625rem;
+    border: 1.5px solid var(--text);
+    border-radius: var(--r-pill);
+    background: var(--surface);
+    color: var(--text);
+    font: 700 var(--t-caption)/1 var(--font-mono);
+}
+
+.sheet-title {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    max-width: none;
+    margin-block-start: 0.875rem;
+    color: var(--text-3);
+    font: 500 var(--t-caption)/1.5 var(--font-mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.dims {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+    gap: 0.5rem 1rem;
+    margin: 0;
+}
+
+.dims div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.dims dt {
+    color: var(--text-3);
+    font: italic 600 var(--t-small)/1.4 var(--font-mono);
+}
+
+.dims dd {
+    margin: 0;
+    font: 600 var(--t-small)/1.4 var(--font-body);
+}
+
+/* Drawing strokes and fills */
+.hatch-line { stroke: var(--draw-thin); stroke-width: 0.7; }
+.f-cut { fill: url(#hatch); stroke: var(--draw-line); stroke-width: 1.5; stroke-linejoin: round; }
+.f-part { fill: var(--draw-part); stroke: var(--draw-line); stroke-width: 1.5; stroke-linejoin: round; }
+.f-plate { fill: var(--surface); stroke: var(--draw-line); stroke-width: 1.5; }
+.f-fluid { fill: var(--draw-fluid); }
+.f-mag, .f-ink { fill: var(--draw-ink); }
+.f-brg { fill: var(--draw-line); }
+.s { fill: none; stroke: var(--draw-line); stroke-width: 1.5; }
+.s-thin { fill: none; stroke: var(--draw-thin); stroke-width: 1; }
+.s-heavy { fill: none; stroke: var(--draw-ink); stroke-width: 4; stroke-linejoin: round; }
+.s-centre { fill: none; stroke: var(--draw-thin); stroke-width: 1; stroke-dasharray: 16 4 3 4; }
+.s-flow { fill: none; stroke: var(--draw-ink); stroke-width: 2.25; }
+.s-ghost { fill: none; stroke: var(--draw-thin); stroke-width: 1.25; stroke-dasharray: 6 5; }
+.s-part-ring { fill: none; stroke: var(--draw-part); stroke-width: 18; }
+.s-mag-n { fill: none; stroke: var(--draw-ink); stroke-width: 16; }
+.s-mag-s { fill: none; stroke: var(--draw-thin); stroke-width: 16; }
+.s-mag-n.in, .s-mag-s.in { stroke-width: 14; }
+.leader path { fill: none; stroke: var(--draw-ink); stroke-width: 1; }
+.leader circle { fill: var(--surface); stroke: var(--draw-ink); stroke-width: 1; }
+.balloon circle { fill: var(--surface); stroke: var(--draw-ink); stroke-width: 1.5; }
+.balloon text {
+    fill: var(--draw-ink);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+.dim path { fill: none; stroke: var(--draw-ink); stroke-width: 1; }
+.dim .ext { stroke: var(--draw-thin); }
+.dim text {
+    fill: var(--draw-ink);
+    font-family: var(--font-mono);
+    font-style: italic;
+    font-weight: 600;
+    text-anchor: middle;
+}
+
+/* A drawing scales with its column, and its callouts would scale down to
+   nothing with it. Below 40em they are redrawn larger. These sizes are SVG
+   user units of the viewBox, not CSS pixels of type. */
+@media (max-width: 40em) {
+    .balloon circle { r: 19px; }
+    .balloon text { font-size: 22px; }
+    .dim text { font-size: 23px; }
+}
+
+/* ----- The problem ------------------------------------------------------- */
+.stat {
+    padding-inline-start: var(--gap-block);
+    border-inline-start: 1px solid var(--line-2);
+}
+
+.stat-fig {
+    margin: 0 0 0.75rem;
+    font: 700 var(--t-hero)/1 var(--font-body);
+    letter-spacing: -0.03em;
+}
+
+.stat-txt {
+    margin: 0 0 0.75rem;
+    font-size: var(--t-lead);
+    line-height: 1.5;
+    max-width: 22rem;
+}
+
+/* ----- Feature rows ------------------------------------------------------ */
+.features {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gap-section);
+}
+
+.feature {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+}
+
+.feature .copy {
+    max-width: 32rem;
+}
+
+.feature h3 {
+    font-size: clamp(var(--t-h3), 2.6vw, 2rem);
+    line-height: 1.2;
+}
+
+.feature .copy p {
+    color: var(--text-2);
+}
+
+@media (min-width: 56.25em) {
+    .feature {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    /* Visual order only: neither column holds a focusable element. */
+    .feature:nth-child(even) > .media {
+        order: -1;
+    }
+
+    .feature:nth-child(even) > .copy {
+        justify-self: end;
+    }
+}
+
+/* ----- Proof (inverted) -------------------------------------------------- */
+.quote {
+    margin: 0;
+}
+
+.quote blockquote {
+    margin: 0;
+}
+
+.quote blockquote p {
+    max-width: 21em;
+    margin: 0;
+    font: 400 var(--t-h2)/1.2 var(--font-display);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+}
+
+.quote figcaption {
+    margin-block-start: 1.5rem;
+    color: var(--ink-text-2);
+    font-size: var(--t-small);
+    line-height: 1.5;
+}
+
+.quote-name {
+    display: block;
+    color: var(--ink-text);
+    font-weight: 600;
+    font-size: var(--t-body);
+}
+
+.figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+    gap: var(--gap-block);
+    margin: calc(var(--gap-block) * 2) 0 0;
+    padding-block-start: var(--gap-block);
+    border-block-start: 1px solid var(--ink-line);
+}
+
+.figures div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    min-width: 0;
+}
+
+.figures dt {
+    order: 2;
+    max-width: 18rem;
+    color: var(--ink-text);
+    font-size: var(--t-small);
+    line-height: 1.45;
+}
+
+.figures dd {
+    order: 1;
+    margin: 0;
+    font: 700 var(--t-h2)/1.1 var(--font-body);
+    letter-spacing: -0.02em;
+}
+
+.figures dd.src {
+    order: 3;
+    font: 400 var(--t-caption)/1.5 var(--font-body);
+    letter-spacing: 0;
+}
+
+/* ----- Ranges and prices ------------------------------------------------- */
+.plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(16.25rem, 100%), 1fr));
+    gap: 1.5rem;
+}
+
+.plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 2rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--surface);
+}
+
+.plan.is-featured {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+}
+
+.plan-flag {
+    position: absolute;
+    inset-block-start: -0.8125rem;
+    inset-inline-start: 2rem;
+    margin: 0;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--r-pill);
+    background: var(--ink);
+    color: var(--ink-text);
+    font: 600 var(--t-caption)/1 var(--font-body);
+    white-space: nowrap;
+}
+
+.plan-code {
+    margin: 0 0 0.25rem;
+    color: var(--text-3);
+    font: 600 var(--t-small)/1.4 var(--font-mono);
+    letter-spacing: 0.02em;
+}
+
+.plan h3 {
+    margin-block-end: 0.375rem;
+}
+
+.plan-for {
+    margin: 0;
+    color: var(--text-2);
+    font-size: var(--t-small);
+    line-height: 1.5;
+}
+
+.plan-price {
+    margin: 1.5rem 0;
+}
+
+.plan-price .from {
+    color: var(--text-3);
+    font-size: var(--t-caption);
+}
+
+.plan-price .amount {
+    display: block;
+    font: 700 var(--t-h2)/1.1 var(--font-body);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.plan-price .per {
+    display: block;
+    margin-block-start: 0.375rem;
+    color: var(--text-2);
+    font-size: var(--t-small);
+    line-height: 1.4;
+}
+
+.specs {
+    margin: 0 0 var(--gap-block);
+}
+
+.specs div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 0.625rem;
+    border-block-start: 1px solid var(--line);
+}
+
+.specs dt {
+    color: var(--text-2);
+    font-size: var(--t-small);
+}
+
+.specs dd {
+    margin: 0;
+    font-weight: 600;
+    font-size: var(--t-small);
+    text-align: end;
+    white-space: nowrap;
+}
+
+.plan .btn {
+    margin-block-start: auto;
+}
+
+.range-note {
+    margin-block-start: var(--gap-block);
+    color: var(--text-2);
+    font-size: var(--t-small);
+    line-height: 1.6;
+}
+
+/* ----- How it works ------------------------------------------------------ */
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+    gap: var(--gap-block) 2.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.steps li {
+    min-width: 0;
+    max-width: none;
+    padding-block-start: 1.25rem;
+    border-block-start: 1px solid var(--text);
+}
+
+.step-n {
+    display: block;
+    margin-block-end: 1.5rem;
+    color: var(--text-3);
+    font: 600 var(--t-small)/1 var(--font-mono);
+}
+
+.step-n::before {
+    content: "Step ";
+}
+
+.steps p {
+    color: var(--text-2);
+}
+
+/* ----- FAQ --------------------------------------------------------------- */
+.faq {
+    border-block-start: 1px solid var(--line-2);
+}
+
+.faq:last-child {
+    border-block-end: 1px solid var(--line-2);
+}
+
+.faq summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: 4rem;
+    padding-block: 1rem;
+    font: 600 var(--t-lead)/1.35 var(--font-body);
+    cursor: pointer;
+    list-style: none;
+}
+
+.faq summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq summary::after {
+    content: "";
+    flex: none;
+    width: 0.625rem;
+    height: 0.625rem;
+    margin-inline-end: 0.375rem;
+    border-inline-end: 2px solid var(--text-2);
+    border-block-end: 2px solid var(--text-2);
+    transform: translateY(-0.15rem) rotate(45deg);
+    transition: transform var(--t-fast) ease;
+}
+
+.faq[open] summary::after {
+    transform: translateY(0.15rem) rotate(-135deg);
+}
+
+.faq summary:active {
+    color: var(--text-2);
+}
+
+@media (hover: hover) {
+    .faq summary:hover::after {
+        border-color: var(--text);
+    }
+}
+
+.faq p {
+    margin: 0;
+    padding-block-end: 1.5rem;
+    color: var(--text-2);
+}
+
+/* ----- Closing action: the form ------------------------------------------ */
+.gets {
+    display: grid;
+    gap: 0.75rem;
+    margin: var(--gap-block) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.gets li {
+    position: relative;
+    padding-inline-start: 2rem;
+    color: var(--text-2);
+}
+
+.gets li::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0.5em;
+    inset-inline-start: 0.25rem;
+    width: 0.875rem;
+    height: 0.5rem;
+    border-inline-start: 2px solid var(--text);
+    border-block-end: 2px solid var(--text);
+    transform: rotate(-45deg);
+}
+
+.card {
+    min-width: 0;
+    padding: 2rem;
+    border-radius: var(--r-card);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.form-card {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-md);
+}
+
+#size-form {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr));
+    gap: 1.25rem 1rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-tight);
+    min-width: 0;
+}
+
+.field label {
+    color: var(--text-2);
+    font: 600 var(--t-small)/1.4 var(--font-body);
+}
+
+.field input {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--border-input);
+    border-radius: var(--r-input);
+    background: var(--surface);
+    color: var(--text);
+    font: 400 1.0625rem/1.5 var(--font-body);
+    font-variant-numeric: tabular-nums;
+    transition: border-color var(--t-fast) ease, box-shadow var(--t-fast) ease;
+}
+
+.field input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-color: var(--accent);
+}
+
+.field input[aria-invalid="true"] {
+    border-color: var(--danger);
+    box-shadow: inset 0 0 0 1px var(--danger);
+}
+
+@media (hover: hover) {
+    .field input:hover {
+        border-color: var(--text);
+    }
+
+    .field input[aria-invalid="true"]:hover {
+        border-color: var(--danger);
+    }
+}
+
+.field .hint {
+    margin: 0;
+    color: var(--text-3);
+    font-size: var(--t-caption);
+    line-height: 1.5;
+}
+
+/* Icon and wording carry the error; the colour only agrees with them. */
+.field .error {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0;
+    color: var(--danger);
+    font-size: var(--t-small);
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.field .error::before {
+    content: "!";
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-block-start: 0.0625rem;
+    border-radius: var(--r-pill);
+    background: var(--danger);
+    color: var(--surface);
+    font-size: var(--t-caption);
+    font-weight: 700;
+    line-height: 1;
+}
+
+.series-note {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: var(--r-input);
+    background: var(--canvas-2);
+    color: var(--text-2);
+    font-size: var(--t-small);
+    line-height: 1.5;
+}
+
+.form-done {
+    display: grid;
+    justify-items: start;
+    gap: 1rem;
+}
+
+.form-done:focus-visible {
+    outline-offset: 0.75rem;
+}
+
+.form-done h3,
+.form-done p {
+    margin: 0;
+}
+
+.done-ring,
+.done-tick {
+    fill: none;
+    stroke: var(--success);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ----- Footer: the one place density is correct -------------------------- */
+.footer {
+    padding-block: calc(var(--gap-section) / 2);
+}
+
+.footer-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--gap-block) * 1.5);
+    max-width: var(--width-page);
+    margin-inline: auto;
+    padding-inline: var(--pad-section);
+}
+
+.footer .brand {
+    color: var(--ink-text);
+}
+
+.footer-brand p {
+    max-width: 22rem;
+    margin-block-start: 0.75rem;
+    color: var(--ink-text-2);
+    font-size: var(--t-small);
+    line-height: 1.6;
+}
+
+.footer-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
+    gap: var(--gap-block) 1.5rem;
+}
+
+.footer-nav h2 {
+    margin: 0 0 0.5rem;
+    color: var(--ink-text-2);
+    font: 600 var(--t-caption)/1.5 var(--font-body);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.footer-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer-nav li {
+    max-width: none;
+    font-size: var(--t-small);
+    line-height: 1.5;
+}
+
+.footer-nav a {
+    display: inline-flex;
+    align-items: center;
+    /* Dense, but still a full 44px target: this pack assumes a finger. */
+    min-height: 2.75rem;
+    color: var(--ink-text);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.footer-nav a:active {
+    color: var(--accent-on-dark);
+}
+
+@media (hover: hover) {
+    .footer-nav a:hover {
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+}
+
+.footer-nav .note,
+.footer-nav address {
+    display: block;
+    color: var(--ink-text-2);
+    font-style: normal;
+}
+
+.footer-nav .note {
+    font-size: var(--t-caption);
+    margin-block-end: 0.5rem;
+}
+
+.footer-nav address {
+    padding-block: 0.375rem 0.5rem;
+}
+
+.footer-legal {
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid var(--ink-line);
+    color: var(--ink-text-2);
+    font-size: var(--t-caption);
+    line-height: 1.6;
+}
+
+.footer-legal p {
+    max-width: 75ch;
+    margin: 0 0 0.25rem;
+}
+
+@media (min-width: 62.5em) {
+    .footer-inner {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    }
+
+    .footer-legal {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ----- System preferences ------------------------------------------------ */
+@media (prefers-reduced-transparency: reduce) {
+    .header.is-scrolled:not(.menu-open) {
+        background: var(--canvas);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+}
+
+@media (prefers-contrast: more) {
+    :root {
+        --text-2: var(--text);
+        --text-3: var(--text);
+        --line: var(--text-2);
+        --line-2: var(--text);
+        --ink-text-2: var(--ink-text);
+        --header-plate: var(--canvas);
+    }
+
+    .header.is-scrolled {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        border-block-end: 1px solid var(--text);
+    }
+
+    .btn-secondary,
+    .menu-btn {
+        border-color: var(--text);
+    }
+}
+
+@media (forced-colors: active) {
+    .btn,
+    .menu-btn,
+    .plan,
+    .card {
+        border: 1px solid ButtonText;
+    }
+
+    .plan.is-featured {
+        border-width: 3px;
+    }
+
+    .header.is-scrolled {
+        border-block-end: 1px solid CanvasText;
+    }
+}

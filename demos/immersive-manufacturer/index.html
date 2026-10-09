@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KD-132 permanent-magnet motor, 7.5 kW - Kordane Drives</title>
+<meta name="description" content="The Kordane KD-132: a 7.5 kW IE5 permanent-magnet motor with flange and foot mounting. Turn it, open the housing, and configure finish, mounting and shaft.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="scene.css">
+<link rel="stylesheet" href="site.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.min.js", "three/addons/": "./vendor/three/addons/" } }
+</script>
+<script type="module" src="main.js"></script>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header on-stage">
+  <div class="site-header-inner">
+    <a class="brand" href="#top" aria-label="Kordane Drives, home">
+      <span class="brand-mark" aria-hidden="true"></span>Kordane <span class="brand-sub">Drives</span>
+    </a>
+    <nav class="site-nav" aria-label="Sections of this page">
+      <a href="#parts">Parts</a>
+      <a href="#specification">Specification</a>
+      <a href="#variants">Variants</a>
+      <a href="#quote">Quote</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ======================================================================
+     The stage. Text in its own lane, the scene in the other, the options on
+     a plate beneath. Complete as it stands: the scene is mounted over it.
+     ====================================================================== -->
+<section class="on-stage hero" id="top" aria-labelledby="hero-title">
+  <div class="stage">
+
+    <div class="stage-text">
+      <p class="eyebrow">KD-132 &middot; permanent-magnet motor</p>
+      <h1 id="hero-title">Turn it over. Then open it up.</h1>
+      <p class="lead">A 7.5&nbsp;kW, IE5 motor for pumps, fans and conveyors. See where the
+        flange, the terminal box and the fan sit before it reaches your machine, and cut
+        the housing away to see what is inside.</p>
+
+      <dl class="facts">
+        <div><dt>Rated power</dt><dd>7.5 <span class="unit">kW</span></dd></div>
+        <div><dt>Rated torque</dt><dd>47.7 <span class="unit">N&middot;m</span></dd></div>
+        <div><dt>Shaft height</dt><dd>132 <span class="unit">mm</span></dd></div>
+      </dl>
+
+      <div class="actions">
+        <a class="btn-primary" href="#quote">Request a quote</a>
+        <a class="link-quiet" href="#specification">Full specification</a>
+      </div>
+    </div>
+
+    <figure class="scene" id="scene" data-state="poster">
+      <img class="scene-poster" src="poster.webp" width="1440" height="960" fetchpriority="high"
+           alt="KD-132 motor in pebble grey, seen from the front right. The steel output shaft and the round mounting flange are at the front, the terminal box with two cable glands is on top, and the finned housing runs back to a dark fan cowl.">
+      <canvas class="scene-canvas" role="img"
+              aria-label="KD-132 motor, 3D view. Use the view buttons to turn it and the Cutaway button to open the housing."></canvas>
+      <div class="scene-progress" aria-hidden="true"></div>
+      <button class="scene-load" type="button" hidden>View in 3D</button>
+      <p class="scene-hint" hidden>Drag to turn</p>
+
+      <button class="hotspot" type="button" data-spot="shaft" aria-expanded="false" aria-controls="spot-shaft" hidden>Output shaft</button>
+      <div class="plate spot-note" id="spot-shaft" hidden>
+        <p><strong>Output shaft.</strong> 38&nbsp;mm across and 80&nbsp;mm long, with a 10&nbsp;mm key. Order it smooth for a clamping hub.</p>
+      </div>
+      <button class="hotspot" type="button" data-spot="flange" aria-expanded="false" aria-controls="spot-flange" hidden>Flange</button>
+      <div class="plate spot-note" id="spot-flange" hidden>
+        <p><strong>Mounting flange.</strong> 300&nbsp;mm across, four 14.5&nbsp;mm holes on a 265&nbsp;mm circle. The machined spigot centres the motor on the gearbox.</p>
+      </div>
+      <button class="hotspot" type="button" data-spot="terminal" aria-expanded="false" aria-controls="spot-terminal" hidden>Terminal box</button>
+      <div class="plate spot-note" id="spot-terminal" hidden>
+        <p><strong>Terminal box.</strong> On top, with two M25 cable glands facing right. It can be turned in 90&deg; steps on site.</p>
+      </div>
+      <button class="hotspot" type="button" data-spot="fan" aria-expanded="false" aria-controls="spot-fan" hidden>Fan cowl</button>
+      <div class="plate spot-note" id="spot-fan" hidden>
+        <p><strong>Fan and cowl.</strong> A shaft-mounted fan pushes air along the fins. Leave 40&nbsp;mm clear behind the grille.</p>
+      </div>
+      <button class="hotspot" type="button" data-spot="winding" aria-expanded="false" aria-controls="spot-winding" hidden>Stator and rotor</button>
+      <div class="plate spot-note" id="spot-winding" hidden>
+        <p><strong>Stator and rotor.</strong> Copper windings in a laminated core, around a rotor on two sealed bearings. The air gap is 0.3&nbsp;mm.</p>
+      </div>
+
+      <div class="scene-views">
+        <div class="scene-viewset" role="group" aria-label="View">
+          <button type="button" data-view="hero" aria-pressed="true">Three-quarter</button>
+          <button type="button" data-view="front" aria-pressed="false">Shaft end</button>
+          <button type="button" data-view="side" aria-pressed="false">Side</button>
+          <button type="button" data-view="back" aria-pressed="false">Fan end</button>
+          <button type="button" data-view="top" aria-pressed="false">Top</button>
+        </div>
+        <div class="scene-viewset" role="group" aria-label="Housing">
+          <button type="button" data-cut aria-pressed="false">Cutaway</button>
+        </div>
+      </div>
+    </figure>
+
+    <form class="plate configure" id="configure" aria-labelledby="configure-title">
+      <h2 class="configure-title" id="configure-title">Configure</h2>
+
+      <fieldset class="options">
+        <legend>Finish</legend>
+        <div class="option-row">
+          <label class="option">
+            <input type="radio" name="finish" value="pebble" checked>
+            <span class="option-swatch" style="--swatch: var(--finish-pebble)"></span>
+            Pebble grey
+          </label>
+          <label class="option">
+            <input type="radio" name="finish" value="orange">
+            <span class="option-swatch" style="--swatch: var(--finish-orange)"></span>
+            Signal orange
+          </label>
+          <label class="option">
+            <input type="radio" name="finish" value="graphite">
+            <span class="option-swatch" style="--swatch: var(--finish-graphite)"></span>
+            Graphite
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="options">
+        <legend>Mounting</legend>
+        <div class="option-row">
+          <label class="option"><input type="radio" name="mount" value="b35" checked> Flange and feet</label>
+          <label class="option"><input type="radio" name="mount" value="b5"> Flange only</label>
+        </div>
+      </fieldset>
+
+      <fieldset class="options">
+        <legend>Shaft</legend>
+        <div class="option-row">
+          <label class="option"><input type="radio" name="shaft" value="keyed" checked> Keyed</label>
+          <label class="option"><input type="radio" name="shaft" value="smooth"> Smooth</label>
+        </div>
+      </fieldset>
+
+      <div class="configure-result">
+        <p class="summary" id="summary" role="status">Pebble grey, flange and feet, keyed shaft. 58.0&nbsp;kg, ships in 5 working days.</p>
+        <p class="price"><span class="price-label">List price</span> <span class="figure" data-bind="price">&euro;2,180</span></p>
+      </div>
+    </form>
+
+    <p class="sr-only" id="scene-status" role="status"></p>
+  </div>
+</section>
+
+<!-- ======================================================================
+     The page. Everything the scene shows, written down.
+     ====================================================================== -->
+<section class="band" id="parts" aria-labelledby="parts-title">
+  <div class="band-inner">
+    <div class="band-head">
+      <h2 id="parts-title">What you are looking at</h2>
+      <p>Five things an installer checks on a drawing. Each is a label on the model above,
+        and each is here in words.</p>
+    </div>
+    <ol class="parts">
+      <li>
+        <h3>Output shaft</h3>
+        <p>38&nbsp;mm across and 80&nbsp;mm long, with a 10&nbsp;mm key. Order it smooth for a clamping hub.</p>
+      </li>
+      <li>
+        <h3>Mounting flange</h3>
+        <p>300&nbsp;mm across, four 14.5&nbsp;mm holes on a 265&nbsp;mm circle. The machined spigot centres the motor on the gearbox.</p>
+      </li>
+      <li>
+        <h3>Terminal box</h3>
+        <p>On top, with two M25 cable glands facing right when you look at the shaft. It can be turned in 90&deg; steps on site.</p>
+      </li>
+      <li>
+        <h3>Fan and cowl</h3>
+        <p>A shaft-mounted fan pushes air along the fins. Leave 40&nbsp;mm clear behind the grille.</p>
+      </li>
+      <li>
+        <h3>Stator and rotor</h3>
+        <p>Copper windings in a laminated core, around a rotor on two sealed bearings. The air gap is 0.3&nbsp;mm. Shown in the cutaway.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="band band--surface" id="specification" aria-labelledby="spec-title">
+  <div class="band-inner">
+    <div class="band-head">
+      <h2 id="spec-title">Specification</h2>
+      <p>At 400&nbsp;V, 50&nbsp;Hz and 40&nbsp;&deg;C ambient. The dimensions are those of the
+        model above; weight and price follow the configuration.</p>
+    </div>
+    <div class="spec-grid">
+      <div class="table-scroll">
+        <table class="spec">
+          <caption>Performance</caption>
+          <tbody>
+            <tr><th scope="row">Rated power</th><td>7.5</td><td>kW</td></tr>
+            <tr><th scope="row">Rated speed</th><td>1,500</td><td>rpm</td></tr>
+            <tr><th scope="row">Rated torque</th><td>47.7</td><td>N&middot;m</td></tr>
+            <tr><th scope="row">Rated current</th><td>14.1</td><td>A</td></tr>
+            <tr><th scope="row">Efficiency at full load</th><td>93.4</td><td>%</td></tr>
+            <tr><th scope="row">Efficiency class</th><td colspan="2" class="text">IE5</td></tr>
+            <tr><th scope="row">Protection</th><td colspan="2" class="text">IP55</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-scroll">
+        <table class="spec">
+          <caption>Dimensions and weight</caption>
+          <tbody>
+            <tr><th scope="row">Shaft height</th><td>132</td><td>mm</td></tr>
+            <tr><th scope="row">Shaft, diameter by length</th><td>38 &times; 80</td><td>mm</td></tr>
+            <tr><th scope="row">Flange diameter</th><td>300</td><td>mm</td></tr>
+            <tr><th scope="row">Length, shaft tip to cowl</th><td>438</td><td>mm</td></tr>
+            <tr><th scope="row">Width across feet</th><td>240</td><td>mm</td></tr>
+            <tr><th scope="row">Height over terminal box</th><td>285</td><td>mm</td></tr>
+            <tr><th scope="row">Weight</th><td data-bind="weight">58.0</td><td>kg</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="variants" aria-labelledby="variants-title">
+  <div class="band-inner">
+    <div class="band-head">
+      <h2 id="variants-title">Variants</h2>
+      <p>Every option in the configurator, and what it changes.</p>
+    </div>
+    <div class="table-scroll">
+      <table class="spec spec--wide">
+        <thead>
+          <tr><th scope="col">Option</th><th scope="col">Choice</th><th scope="col">Code</th>
+            <th scope="col" class="num">Weight, kg</th><th scope="col" class="num">Price, &euro;</th>
+            <th scope="col" class="num">Ships in, working days</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row" rowspan="3">Finish</th><td class="text">Pebble grey</td><td class="code">7032</td><td>0.0</td><td>0</td><td>5</td></tr>
+          <tr><td class="text">Signal orange</td><td class="code">2004</td><td>0.0</td><td>+60</td><td>15</td></tr>
+          <tr><td class="text">Graphite</td><td class="code">7024</td><td>0.0</td><td>+60</td><td>15</td></tr>
+          <tr><th scope="row" rowspan="2">Mounting</th><td class="text">Flange and feet</td><td class="code">B35</td><td>0.0</td><td>0</td><td>5</td></tr>
+          <tr><td class="text">Flange only</td><td class="code">B5</td><td>&minus;2.6</td><td>&minus;45</td><td>5</td></tr>
+          <tr><th scope="row" rowspan="2">Shaft</th><td class="text">Keyed</td><td class="code">K</td><td>0.0</td><td>0</td><td>5</td></tr>
+          <tr><td class="text">Smooth</td><td class="code">S</td><td>0.0</td><td>0</td><td>5</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="band band--surface" id="quote" aria-labelledby="quote-title">
+  <div class="band-inner quote">
+    <div>
+      <h2 id="quote-title">Request a quote</h2>
+      <p>Send us the order code and a quantity. A sales engineer replies within one working
+        day with a price, a delivery date and the dimensional drawing.</p>
+    </div>
+    <div class="quote-card">
+      <dl class="quote-lines">
+        <div><dt>Order code</dt><dd class="figure" data-bind="code">KD132-7K5-B35-K-7032</dd></div>
+        <div><dt>List price, each</dt><dd class="figure" data-bind="price">&euro;2,180</dd></div>
+        <div><dt>Ships in</dt><dd><span class="figure" data-bind="lead">5</span> working days</dd></div>
+      </dl>
+      <a class="btn-primary" data-bind-href="mail" href="mailto:sales@kordane.example?subject=Quote%20request%20KD132-7K5-B35-K-7032">Email sales</a>
+      <p class="quote-alt">or call <a href="tel:+490000000000">+49 00 0000 0000</a>, Monday to Friday, 08:00 to 17:00 CET</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="band-inner">
+    <p>Kordane Drives is a fictional manufacturer. This page is a demonstration of the
+      immersive-web design pack; the motor is built from geometry in the browser.</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Kestrow | Sealless magnetic-drive chemical pumps</title>
+<meta name="description" content="Kestrow builds magnetic-drive centrifugal pumps for acids, solvents and caustics. No shaft seal to leak, ISO 2858 footprints, prices and lead times published.">
+<link rel="icon" href="data:,">
+<!-- Page budget (agreed before the hero art was drawn): no raster images, no
+     font files, no third parties. HTML + CSS + JS under 100 KB uncompressed,
+     JS under 8 KB. All imagery is inline SVG with reserved dimensions. -->
+<script>document.documentElement.classList.add('js');</script>
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/page.css">
+<script src="js/site.js" defer></script>
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to content</a>
+<div class="scroll-sentinel" aria-hidden="true"></div>
+
+<!-- Shared drawing definitions: hatch, arrowheads, and the two pump halves
+     that the hero section and the pull-out drawing both use. -->
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line class="hatch-line" x1="0" y1="0" x2="0" y2="6"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="f-ink" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+    <marker id="tick" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="f-ink" d="M0,1.5 L10,5 L0,8.5 z"/>
+    </marker>
+
+    <g id="g-casing">
+      <path class="f-cut" d="M40,140 H54 V170 H120 V116 Q120,90 146,90 H160 V54 H135 V40 H175 V108 H156 Q138,108 138,126 V185 H40 Z"/>
+      <path class="f-cut" d="M215,40 H255 V54 H230 V90 H250 V150 H236 V108 H215 Z"/>
+      <path class="f-cut" d="M40,235 H138 V294 Q138,312 156,312 H236 V270 H250 V330 H146 Q120,330 120,304 V250 H54 V280 H40 Z"/>
+      <path class="f-part" d="M150,330 H236 L244,352 H142 Z"/>
+    </g>
+
+    <g id="g-rotor">
+      <!-- impeller -->
+      <path class="f-part" d="M166,186 L196,122 H206 V130 H202 L174,188 Z"/>
+      <path class="f-part" d="M166,234 L196,298 H206 V290 H202 L174,232 Z"/>
+      <rect class="f-part" x="206" y="122" width="9" height="176"/>
+      <path class="f-part" d="M150,210 Q158,197 174,197 H206 V223 H174 Q158,223 150,210 Z"/>
+      <!-- shaft, bearing carrier, bearings -->
+      <rect class="f-part" x="215" y="202" width="150" height="16"/>
+      <rect class="f-part" x="262" y="154" width="8" height="38"/>
+      <rect class="f-part" x="262" y="228" width="8" height="38"/>
+      <rect class="f-brg" x="259" y="192" width="14" height="10"/>
+      <rect class="f-brg" x="259" y="218" width="14" height="10"/>
+      <!-- inner magnet rotor -->
+      <rect class="f-part" x="284" y="166" width="84" height="88" rx="3"/>
+      <rect class="f-mag" x="292" y="166" width="68" height="9"/>
+      <rect class="f-mag" x="292" y="245" width="68" height="9"/>
+      <!-- containment shell: one piece, drawn heavy -->
+      <rect class="f-mag" x="251" y="91" width="10" height="59"/>
+      <rect class="f-mag" x="251" y="270" width="10" height="59"/>
+      <path class="s-heavy" d="M256,150 H370 Q392,150 392,172 V248 Q392,270 370,270 H256"/>
+    </g>
+
+    <g id="g-drive">
+      <!-- lantern -->
+      <path class="f-cut" d="M262,90 H470 V190 H456 V106 H262 Z"/>
+      <path class="f-cut" d="M262,330 H470 V230 H456 V314 H262 Z"/>
+      <path class="f-part" d="M330,330 H452 L458,352 H324 Z"/>
+      <!-- outer magnet carrier and drive shaft -->
+      <rect class="f-part" x="282" y="116" width="136" height="14"/>
+      <rect class="f-part" x="282" y="290" width="136" height="14"/>
+      <rect class="f-part" x="404" y="116" width="14" height="188"/>
+      <rect class="f-mag" x="292" y="130" width="68" height="11"/>
+      <rect class="f-mag" x="292" y="279" width="68" height="11"/>
+      <rect class="f-part" x="418" y="199" width="62" height="22"/>
+    </g>
+  </defs>
+</svg>
+
+<header class="header">
+  <div class="header-inner">
+    <a class="brand" href="#top" aria-label="Kestrow, home">
+      <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false">
+        <circle class="bm-ring" cx="16" cy="16" r="13.5"/>
+        <path class="bm-vane" d="M16,16 C16,9 20,5.5 24,5.2"/>
+        <path class="bm-vane" d="M16,16 C22.1,19.5 23,24.7 21.3,28.3"/>
+        <path class="bm-vane" d="M16,16 C9.9,19.5 5,17.8 2.7,14.5"/>
+        <circle class="bm-hub" cx="16" cy="16" r="3"/>
+      </svg>
+      <span class="brand-name">Kestrow</span>
+    </a>
+
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path class="menu-icon" d="M4,7 H20 M4,12 H20 M4,17 H20"/></svg>
+      <span>Menu</span>
+    </button>
+
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="#why">Why sealless</a></li>
+        <li><a href="#build">How it is built</a></li>
+        <li><a href="#range">Ranges and prices</a></li>
+        <li><a href="#order">Ordering</a></li>
+        <li><a href="#faq">Questions</a></li>
+      </ul>
+      <a class="btn btn-secondary btn-sm" href="#size">Size a pump</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============================ HERO ============================ -->
+<section class="section hero" aria-labelledby="hero-h">
+  <div class="inner hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Magnetic-drive process pumps, built in Västerås since 1987</p>
+      <h1 id="hero-h">Chemical pumps with no seal to leak.</h1>
+      <p class="lead">Kestrow builds sealless centrifugal pumps for acids, solvents and caustics. The motor turns the impeller through a solid wall, so there is no shaft seal to wear out and nowhere for the liquid to get out.</p>
+      <div class="hero-action">
+        <a class="btn btn-primary btn-lg" href="#size">Size a pump</a>
+        <p class="reassure">Four fields. An applications engineer replies within one working day. No account, and no phone call unless you ask for one.</p>
+      </div>
+      <p class="hero-proof">
+        <span class="hero-proof-fig">9.2 years</span>
+        <span class="hero-proof-txt">median run time between overhauls, across 6,840 pumps in service. <span class="src">Kestrow service records, 2015–2025.</span></span>
+      </p>
+    </div>
+
+    <figure class="sheet hero-sheet">
+      <svg class="dw" viewBox="0 -12 580 386" width="580" height="386" role="img" aria-labelledby="hero-dw-t hero-dw-d">
+        <title id="hero-dw-t">Section through a Kestrow MD 50 magnetic-drive pump</title>
+        <desc id="hero-dw-d">Liquid enters from the left, passes through the impeller and leaves upward. Behind the impeller a one-piece containment shell closes the liquid off. Magnets on the motor side turn magnets on the liquid side through the shell wall, so no shaft passes through it.</desc>
+        <!-- wetted volume -->
+        <path class="f-fluid" d="M40,185 H138 V126 Q138,108 156,108 H175 V40 H215 V108 H236 V150 H370 Q392,150 392,172 V248 Q392,270 370,270 H236 V312 H156 Q138,312 138,294 V235 H40 Z"/>
+        <use href="#g-casing"/>
+        <use href="#g-drive"/>
+        <use href="#g-rotor"/>
+        <!-- coupling, motor (broken off), baseplate -->
+        <rect class="f-part" x="478" y="188" width="16" height="44" rx="2"/>
+        <path class="f-part" d="M500,124 H566 Q559,134.75 566,145.5 T566,167 T566,188.5 T566,210 T566,231.5 T566,253 T566,274.5 T566,296 H500 Q494,296 494,290 V130 Q494,124 500,124 Z"/>
+        <path class="s-thin" d="M506,140 H556 M506,154 H556 M506,168 H556 M506,182 H556 M506,196 H556 M506,224 H556 M506,238 H556 M506,252 H556 M506,266 H556 M506,280 H556"/>
+        <rect class="f-part" x="512" y="108" width="34" height="16" rx="2"/>
+        <rect class="f-part" x="510" y="296" width="40" height="56"/>
+        <rect class="f-cut" x="110" y="352" width="462" height="12"/>
+        <!-- centre lines -->
+        <path class="s-centre" d="M14,210 H574 M195,26 V112"/>
+        <!-- flow -->
+        <path class="s-flow" d="M2,210 H32" marker-end="url(#arrow)"/>
+        <path class="s-flow" d="M195,30 V0" marker-end="url(#arrow)"/>
+        <!-- callouts -->
+        <g class="leader">
+          <path d="M95,99 L210,150"/><circle cx="210" cy="150" r="2.5"/>
+          <path d="M262,35 L256,91"/>
+          <path d="M306,35 V170"/><circle cx="306" cy="170" r="2.5"/>
+          <path d="M350,35 V135"/><circle cx="350" cy="135" r="2.5"/>
+        </g>
+        <g class="balloon">
+          <circle cx="84" cy="92" r="13"/><text x="84" y="92" font-size="14">1</text>
+          <circle cx="262" cy="22" r="13"/><text x="262" y="22" font-size="14">2</text>
+          <circle cx="306" cy="22" r="13"/><text x="306" y="22" font-size="14">3</text>
+          <circle cx="350" cy="22" r="13"/><text x="350" y="22" font-size="14">4</text>
+        </g>
+      </svg>
+      <figcaption>
+        <ol class="legend">
+          <li><b>1</b> Impeller</li>
+          <li><b>2</b> Containment shell</li>
+          <li><b>3</b> Inner magnets, wetted</li>
+          <li><b>4</b> Outer magnets, dry</li>
+        </ol>
+        <p class="sheet-title"><span>MD 50-200</span><span>Section on drive axis</span><span>Wetted volume shaded</span></p>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ========================== THE PROBLEM ========================== -->
+<section class="section" id="why" aria-labelledby="why-h">
+  <div class="inner split">
+    <div class="reveal">
+      <h2 id="why-h">A mechanical seal is a leak on a schedule.</h2>
+      <p>A conventional pump has a spinning shaft passing through the wall that holds the liquid in. Two polished faces rub together to close the gap. They wear, they run hot when the suction starves, and when they let go the liquid leaves along the shaft.</p>
+      <p>With water that is a puddle. With hydrochloric acid, toluene or 50% caustic it is a shutdown, a report and somebody in a chemical suit.</p>
+    </div>
+    <div class="stat reveal">
+      <p class="stat-fig">61%</p>
+      <p class="stat-txt">of the 1,212 sealed-pump repairs our service centres carried out in 2024 started at the mechanical seal.</p>
+      <p class="src">Kestrow service centres, all makes, January to December 2024.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== FEATURE DETAIL ======================== -->
+<section class="section" id="build" aria-labelledby="build-h">
+  <div class="inner">
+    <div class="section-head reveal">
+      <h2 id="build-h">Built around the wall, not around the seal.</h2>
+      <p class="lead">Three decisions make a Kestrow different from the pump it replaces. None of them needs new pipework.</p>
+    </div>
+
+    <div class="features">
+      <article class="feature reveal">
+        <div class="copy">
+          <h3>Nothing rotating crosses the pressure boundary</h3>
+          <p>A ring of magnets on the motor side drags a ring of magnets on the liquid side round with it. Between them sits a one-piece shell, 1.6 mm of alloy C-276 or carbon-fibre-reinforced PFA, bolted up static. No hole for a shaft means no seal, no seal flush and no barrier-fluid pot to top up.</p>
+        </div>
+        <figure class="sheet media">
+          <svg class="dw" viewBox="0 0 480 360" width="480" height="360" role="img" aria-labelledby="dw-a-t dw-a-d">
+            <title id="dw-a-t">End view of the magnetic coupling</title>
+            <desc id="dw-a-d">Three concentric parts. The outer ring of magnets is on the dry motor side. The inner ring of magnets sits in the liquid. A static shell, drawn as a heavy line, separates them completely.</desc>
+            <circle class="s-part-ring" cx="240" cy="180" r="147"/>
+            <circle class="s" cx="240" cy="180" r="156"/>
+            <circle class="s" cx="240" cy="180" r="138"/>
+            <circle class="s-mag-n" cx="240" cy="180" r="129" stroke-dasharray="78 124.63"/>
+            <circle class="s-mag-s" cx="240" cy="180" r="129" stroke-dasharray="78 124.63" stroke-dashoffset="-101.3"/>
+            <circle class="f-fluid" cx="240" cy="180" r="107"/>
+            <circle class="s-heavy" cx="240" cy="180" r="108"/>
+            <circle class="s-mag-n in" cx="240" cy="180" r="88" stroke-dasharray="52 86.23"/>
+            <circle class="s-mag-s in" cx="240" cy="180" r="88" stroke-dasharray="52 86.23" stroke-dashoffset="-69.1"/>
+            <circle class="f-part" cx="240" cy="180" r="81"/>
+            <circle class="f-plate" cx="240" cy="180" r="24"/>
+            <rect class="f-part" x="234" y="150" width="12" height="9"/>
+            <path class="s-centre" d="M60,180 H420 M240,10 V350"/>
+            <path class="s-flow" d="M325,32.8 A170,170 0 0 1 387.2,95" marker-end="url(#arrow)"/>
+            <path class="s-flow" d="M268,131.5 A56,56 0 0 1 292.6,160.8" marker-end="url(#arrow)"/>
+            <g class="leader">
+              <path d="M50,69 L120,96"/><circle cx="120" cy="96" r="2.5"/>
+              <path d="M50,292 L151.5,242"/><circle cx="151.5" cy="242" r="2.5"/>
+              <path d="M430,292 L322,237.5"/><circle cx="322" cy="237.5" r="2.5"/>
+            </g>
+            <g class="balloon">
+              <circle cx="40" cy="60" r="13"/><text x="40" y="60" font-size="14">1</text>
+              <circle cx="40" cy="300" r="13"/><text x="40" y="300" font-size="14">2</text>
+              <circle cx="440" cy="300" r="13"/><text x="440" y="300" font-size="14">3</text>
+            </g>
+          </svg>
+          <figcaption>
+            <ol class="legend">
+              <li><b>1</b> Motor side, dry</li>
+              <li><b>2</b> Shell, static</li>
+              <li><b>3</b> Liquid side, sealed in</li>
+            </ol>
+          </figcaption>
+        </figure>
+      </article>
+
+      <article class="feature reveal">
+        <div class="copy">
+          <h3>It bolts down where the old pump stood</h3>
+          <p>Every Kestrow follows the ISO 2858 envelope: the same flange positions, shaft height and foot holes as the sealed end-suction pump already on your baseplate. Swapping one is a shift's work for two fitters. You do not cut pipe, and you do not redraw the P&amp;ID.</p>
+        </div>
+        <figure class="sheet media">
+          <svg class="dw" viewBox="0 0 480 360" width="480" height="360" role="img" aria-labelledby="dw-b-t dw-b-d">
+            <title id="dw-b-t">Mounting dimensions of the MD 50-200</title>
+            <desc id="dw-b-d">Side elevation with four dimensions marked: a, from the suction flange face to the discharge centre line; f, from the discharge centre line to the shaft end; h1, from the foot to the shaft centre; h2, from the shaft centre to the discharge flange face.</desc>
+            <!-- ground -->
+            <rect class="f-cut ground" x="20" y="300" width="450" height="10"/>
+            <!-- pump outline -->
+            <rect class="f-part" x="70" y="130" width="10" height="100"/>
+            <rect class="f-part" x="80" y="150" width="22" height="60"/>
+            <rect class="f-part" x="112" y="60" width="76" height="10"/>
+            <rect class="f-part" x="128" y="70" width="44" height="42"/>
+            <rect class="f-part" x="100" y="110" width="92" height="140" rx="22"/>
+            <path class="f-part" d="M112,250 H190 L196,300 H106 Z"/>
+            <rect class="f-part" x="192" y="118" width="12" height="124"/>
+            <rect class="f-part" x="204" y="126" width="126" height="108" rx="6"/>
+            <rect class="f-plate" x="226" y="146" width="82" height="26" rx="13"/>
+            <rect class="f-plate" x="226" y="188" width="82" height="26" rx="13"/>
+            <rect class="f-part" x="330" y="142" width="70" height="76" rx="4"/>
+            <path class="f-part" d="M344,218 H384 L388,300 H340 Z"/>
+            <rect class="f-part" x="400" y="170" width="55" height="20"/>
+            <path class="s-centre" d="M52,180 H470 M150,44 V262"/>
+            <!-- dimensions -->
+            <g class="dim">
+              <path class="ext" d="M70,126 V22 M150,56 V22 M455,166 V22"/>
+              <path d="M70,30 H150" marker-start="url(#tick)" marker-end="url(#tick)"/>
+              <path d="M150,30 H455" marker-start="url(#tick)" marker-end="url(#tick)"/>
+              <path class="ext" d="M108,60 H24 M66,180 H24 M102,300 H24"/>
+              <path d="M34,60 V180" marker-start="url(#tick)" marker-end="url(#tick)"/>
+              <path d="M34,180 V300" marker-start="url(#tick)" marker-end="url(#tick)"/>
+              <text x="110" y="20" font-size="16">a</text>
+              <text x="302" y="20" font-size="16">f</text>
+              <text x="16" y="124" font-size="16">h2</text>
+              <text x="16" y="244" font-size="16">h1</text>
+            </g>
+          </svg>
+          <figcaption>
+            <dl class="dims">
+              <div><dt>a</dt><dd>80 mm</dd></div>
+              <div><dt>f</dt><dd>385 mm</dd></div>
+              <div><dt>h1</dt><dd>160 mm</dd></div>
+              <div><dt>h2</dt><dd>180 mm</dd></div>
+            </dl>
+          </figcaption>
+        </figure>
+      </article>
+
+      <article class="feature reveal">
+        <div class="copy">
+          <h3>The whole wet end comes out as one cartridge</h3>
+          <p>Undo eight nuts and the impeller, shell and bearings slide out of the back together while the casing stays in the line. A spare cartridge goes in and the pump is running again in about forty minutes. The worn one comes back to us on an exchange price.</p>
+        </div>
+        <figure class="sheet media">
+          <svg class="dw" viewBox="0 0 480 360" width="480" height="360" role="img" aria-labelledby="dw-c-t dw-c-d">
+            <title id="dw-c-t">Back pull-out of the cartridge</title>
+            <desc id="dw-c-d">The pump casing on the left stays connected to its suction and discharge pipes. The impeller, containment shell and drive housing are shown withdrawn to the right as a single unit.</desc>
+            <g transform="translate(22,44) scale(0.74)">
+              <!-- pipework that stays -->
+              <path class="f-part" d="M-22,170 H26 V250 H-22"/>
+              <rect class="f-part" x="26" y="140" width="14" height="140"/>
+              <path class="f-part" d="M160,-52 V26 H230 V-52"/>
+              <rect class="f-part" x="135" y="26" width="120" height="14"/>
+              <use href="#g-casing"/>
+              <rect class="f-cut" x="60" y="352" width="530" height="12"/>
+              <!-- travel -->
+              <path class="s-ghost" d="M252,150 H352 M252,270 H352 M252,90 H352 M252,330 H352"/>
+              <g transform="translate(104,0)">
+                <use href="#g-drive"/>
+                <use href="#g-rotor"/>
+              </g>
+              <path class="s-centre" d="M-10,210 H600"/>
+              <path class="s-flow" d="M262,392 H352" marker-end="url(#arrow)"/>
+            </g>
+            <g class="leader">
+              <path d="M96,318 L112,278"/><circle cx="112" cy="278" r="2.5"/>
+              <path d="M388,318 L372,292"/><circle cx="372" cy="292" r="2.5"/>
+            </g>
+            <g class="balloon">
+              <circle cx="90" cy="330" r="13"/><text x="90" y="330" font-size="14">1</text>
+              <circle cx="394" cy="330" r="13"/><text x="394" y="330" font-size="14">2</text>
+            </g>
+          </svg>
+          <figcaption>
+            <ol class="legend">
+              <li><b>1</b> Casing stays piped in</li>
+              <li><b>2</b> Cartridge withdraws</li>
+            </ol>
+          </figcaption>
+        </figure>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PROOF ============================ -->
+<section class="section on-ink" aria-labelledby="proof-h">
+  <div class="inner">
+    <h2 class="sr-only" id="proof-h">In service</h2>
+    <figure class="quote reveal">
+      <blockquote>
+        <p>Fourteen pumps on concentrated sulphuric acid for six years. Two sets of bearings. Not one leak.</p>
+      </blockquote>
+      <figcaption><span class="quote-name">Ingrid Solvang</span> Maintenance lead, Vessring Kemi AS, acid plant 2</figcaption>
+    </figure>
+    <dl class="figures reveal">
+      <div>
+        <dt>Pumps shipped since 1987</dt>
+        <dd>41,300</dd>
+        <dd class="src">Order book, December 2025</dd>
+      </div>
+      <div>
+        <dt>Countries with a stocked service partner</dt>
+        <dd>38</dd>
+        <dd class="src">Partner register, March 2026</dd>
+      </div>
+      <div>
+        <dt>Pumps returned under the five-year shell warranty</dt>
+        <dd>0.4%</dd>
+        <dd class="src">Warranty claims on 2016–2020 builds</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================ RANGE ============================ -->
+<section class="section" id="range" aria-labelledby="range-h">
+  <div class="inner">
+    <div class="section-head reveal">
+      <h2 id="range-h">Three ranges, with the price printed.</h2>
+      <p class="lead">List prices for a complete pump in 316L with a standard IE3 motor, ex works Västerås. Your quote will be within a few per cent of these unless the liquid needs an exotic alloy.</p>
+    </div>
+
+    <div class="plans reveal">
+      <article class="plan">
+        <p class="plan-code">MD 25</p>
+        <h3>Compact</h3>
+        <p class="plan-for">Transfer, dosing and tank-farm duties.</p>
+        <p class="plan-price"><span class="from">from</span> <span class="amount">€4,850</span> <span class="per">per pump, ex works, motor included</span></p>
+        <dl class="specs">
+          <div><dt>Flow up to</dt><dd>12 m³/h</dd></div>
+          <div><dt>Head up to</dt><dd>38 m</dd></div>
+          <div><dt>Motor</dt><dd>0.75–2.2 kW</dd></div>
+          <div><dt>Ships in</dt><dd>5 working days</dd></div>
+        </dl>
+        <a class="btn btn-secondary" href="#size" data-series="MD 25">Size an MD 25</a>
+      </article>
+
+      <article class="plan is-featured">
+        <p class="plan-flag">Most plants start here</p>
+        <p class="plan-code">MD 50</p>
+        <h3>Process</h3>
+        <p class="plan-for">Reactor feed, circulation and scrubber loops.</p>
+        <p class="plan-price"><span class="from">from</span> <span class="amount">€9,200</span> <span class="per">per pump, ex works, motor included</span></p>
+        <dl class="specs">
+          <div><dt>Flow up to</dt><dd>65 m³/h</dd></div>
+          <div><dt>Head up to</dt><dd>70 m</dd></div>
+          <div><dt>Motor</dt><dd>3–15 kW</dd></div>
+          <div><dt>Ships in</dt><dd>10 working days</dd></div>
+        </dl>
+        <a class="btn btn-primary" href="#size" data-series="MD 50">Size an MD 50</a>
+      </article>
+
+      <article class="plan">
+        <p class="plan-code">MD 100</p>
+        <h3>Heavy duty</h3>
+        <p class="plan-for">Loading, unloading and main process lines.</p>
+        <p class="plan-price"><span class="from">from</span> <span class="amount">€21,400</span> <span class="per">per pump, ex works, motor included</span></p>
+        <dl class="specs">
+          <div><dt>Flow up to</dt><dd>180 m³/h</dd></div>
+          <div><dt>Head up to</dt><dd>95 m</dd></div>
+          <div><dt>Motor</dt><dd>18.5–55 kW</dd></div>
+          <div><dt>Ships in</dt><dd>15 working days</dd></div>
+        </dl>
+        <a class="btn btn-secondary" href="#size" data-series="MD 100">Size an MD 100</a>
+      </article>
+    </div>
+
+    <p class="range-note reveal">Common to all three: liquid temperatures from −40 to 180 °C, silicon-carbide bearings, an ATEX Zone 1 option, and a hydrostatic and performance test certificate for the individual pump. Prices as listed in January 2026. Alloy C-276 and PFA-lined wet ends are priced on the quote.</p>
+  </div>
+</section>
+
+<!-- ========================= HOW IT WORKS ========================= -->
+<section class="section" id="order" aria-labelledby="order-h">
+  <div class="inner">
+    <div class="section-head reveal">
+      <h2 id="order-h">Ordering takes three steps.</h2>
+    </div>
+    <ol class="steps reveal">
+      <li>
+        <span class="step-n" aria-hidden="true">1</span>
+        <h3>Send the duty point</h3>
+        <p>The liquid, the flow and the head. That is enough for us to pick a pump, and it takes about a minute.</p>
+      </li>
+      <li>
+        <span class="step-n" aria-hidden="true">2</span>
+        <h3>Check the selection</h3>
+        <p>Within one working day an applications engineer sends the pump we would fit, its curve with your duty point marked, the wetted materials, a firm price and a ship date.</p>
+      </li>
+      <li>
+        <span class="step-n" aria-hidden="true">3</span>
+        <h3>Fit the pump</h3>
+        <p>It arrives hydrotested, with its own test curve in the crate, and bolts to the baseplate you already have. The commissioning sheet is two pages.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================= FAQ ============================= -->
+<section class="section" id="faq" aria-labelledby="faq-h">
+  <div class="inner faq-grid">
+    <div class="section-head reveal">
+      <h2 id="faq-h">Questions engineers ask before they switch.</h2>
+      <p class="lead">Taken from the calls our applications desk logged last year, most frequent first.</p>
+    </div>
+    <div class="faqs reveal">
+      <details class="faq">
+        <summary>What happens if it runs dry?</summary>
+        <p>The bearings are lubricated by the liquid, so a dry pump is a pump on borrowed time. Sintered silicon-carbide bearings with a carbon coating survive about thirty minutes dry. Every pump leaves with a power monitor on the motor that trips it in under five seconds when the load drops, which is long before that.</p>
+      </details>
+      <details class="faq">
+        <summary>Is it less efficient than a sealed pump?</summary>
+        <p>Slightly. Eddy currents in a metal shell cost between 4 and 8 per cent of shaft power, and nothing at all with the PFA shell. Against that, there is no seal flush to pump, heat and dispose of. On the duties we have metered, total energy came out within 3 per cent either way.</p>
+      </details>
+      <details class="faq">
+        <summary>Can it handle solids?</summary>
+        <p>Up to 5 per cent by weight and 150 microns, with the flushed-bearing option. Above that, or with anything magnetic in the stream, we will tell you not to buy this pump and say what we would use instead.</p>
+      </details>
+      <details class="faq">
+        <summary>What if the magnets decouple?</summary>
+        <p>If the impeller jams, the coupling slips rather than breaking something. The same power monitor sees the load fall and stops the motor. The magnets are samarium-cobalt, rated to 250 °C, and are not weakened by slipping once.</p>
+      </details>
+      <details class="faq">
+        <summary>Do you sell direct?</summary>
+        <p>Direct in the Nordics, Germany and Benelux. Elsewhere through a service partner who holds cartridges in stock, at the same list price. The duty-point form reaches the same applications desk either way.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== CLOSING ACTION ======================== -->
+<section class="section" id="size" aria-labelledby="size-h">
+  <div class="inner split split-form">
+    <div class="reveal">
+      <h2 id="size-h">Size a pump for your duty.</h2>
+      <p class="lead">Tell us what you are moving and how hard. An engineer, not a configurator, picks the pump.</p>
+      <ul class="gets">
+        <li>The selected pump, with your duty point marked on its curve</li>
+        <li>Wetted materials checked against your liquid and temperature</li>
+        <li>A firm price and a ship date</li>
+      </ul>
+    </div>
+
+    <div class="card form-card reveal">
+      <form id="size-form" action="mailto:sizing@kestrow.example" method="post" enctype="text/plain">
+        <input type="hidden" name="series" id="f-series" value="">
+        <p class="series-note" id="series-note" hidden></p>
+
+        <div class="field">
+          <label for="f-liquid">Liquid and concentration</label>
+          <input id="f-liquid" name="liquid" type="text" required autocomplete="off" aria-describedby="f-liquid-hint f-liquid-err">
+          <p class="hint" id="f-liquid-hint">For example: sulphuric acid 98%, 40 °C</p>
+          <p class="error" id="f-liquid-err" hidden></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="f-flow">Flow, m³/h</label>
+            <input id="f-flow" name="flow_m3h" type="text" inputmode="decimal" required autocomplete="off" aria-describedby="f-flow-err">
+            <p class="error" id="f-flow-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="f-head">Head, m</label>
+            <input id="f-head" name="head_m" type="text" inputmode="decimal" required autocomplete="off" aria-describedby="f-head-err">
+            <p class="error" id="f-head-err" hidden></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-email">Work email</label>
+          <input id="f-email" name="email" type="email" required autocomplete="email" aria-describedby="f-email-hint f-email-err">
+          <p class="hint" id="f-email-hint">The selection is sent here. Nothing else is.</p>
+          <p class="error" id="f-email-err" hidden></p>
+        </div>
+
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Size a pump</button>
+        <p class="reassure">Reply within one working day. No account, and no phone call unless you ask for one.</p>
+        <p class="sr-only" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="form-done" id="form-done" tabindex="-1" hidden>
+        <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" focusable="false"><circle class="done-ring" cx="24" cy="24" r="21"/><path class="done-tick" d="M14,25 L21,32 L34,17"/></svg>
+        <h3>Duty point received</h3>
+        <p id="form-done-text"></p>
+        <p class="src">This is a demonstration page, so nothing was actually sent.</p>
+        <button class="btn btn-secondary" type="button" id="form-again">Size another pump</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="footer on-ink">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="brand" href="#top" aria-label="Kestrow, back to top">
+        <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false">
+          <circle class="bm-ring" cx="16" cy="16" r="13.5"/>
+          <path class="bm-vane" d="M16,16 C16,9 20,5.5 24,5.2"/>
+          <path class="bm-vane" d="M16,16 C22.1,19.5 23,24.7 21.3,28.3"/>
+          <path class="bm-vane" d="M16,16 C9.9,19.5 5,17.8 2.7,14.5"/>
+          <circle class="bm-hub" cx="16" cy="16" r="3"/>
+        </svg>
+        <span class="brand-name">Kestrow</span>
+      </a>
+      <p>Sealless magnetic-drive pumps for chemical duty. Designed, cast, machined and tested in Västerås, Sweden.</p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer">
+      <div>
+        <h2>Pumps</h2>
+        <ul>
+          <li><a href="#range">MD 25 Compact</a></li>
+          <li><a href="#range">MD 50 Process</a></li>
+          <li><a href="#range">MD 100 Heavy duty</a></li>
+          <li><a href="#build">How it is built</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Buying</h2>
+        <ul>
+          <li><a href="#range">Prices and lead times</a></li>
+          <li><a href="#order">How ordering works</a></li>
+          <li><a href="#faq">Questions</a></li>
+          <li><a href="#size">Size a pump</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Service</h2>
+        <ul>
+          <li><a href="mailto:spares@kestrow.example">spares@kestrow.example</a></li>
+          <li><a href="mailto:service@kestrow.example">service@kestrow.example</a></li>
+          <li><a href="tel:+46215550140">+46 21 555 01 40</a><span class="note">Breakdown line, 24 hours</span></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <ul>
+          <li><address>Kestrow Pumps AB<br>Verkstadsgatan 12<br>721 30 Västerås, Sweden</address></li>
+          <li><a href="mailto:sizing@kestrow.example">sizing@kestrow.example</a></li>
+          <li><a href="tel:+46215550100">+46 21 555 01 00</a><span class="note">Weekdays 07:00–17:00 CET</span></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="footer-legal">
+      <p>© 2026 Kestrow Pumps AB. Org. no. 556000-0000. Quality system certified to ISO 9001:2015.</p>
+      <p>Terms of sale and privacy notice on request from <a href="mailto:legal@kestrow.example">legal@kestrow.example</a>. Kestrow is a fictional company made for a design demonstration.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1547 @@
+/* ==========================================================================
+   Brindle - screen styles.
+   Loads after tokens.css and patterns.css. No literal colour in this file;
+   a colour no token covered was added to tokens.css (and tokens.json).
+
+   Type is in rem, so the reader's font setting scales it. Space is in the px
+   tokens, so it does not - the same split as sp and dp.
+   ========================================================================== */
+
+:root {
+    /* The screen margin, widened by a side inset when there is one. */
+    --screen-inset: max(var(--space-screen), var(--safe-left), var(--safe-right));
+    /* Measured at runtime by app.js, because both bars grow with the text.
+       These are the values before the first measurement. */
+    --nav-h: calc(var(--nav-bar-height) + var(--safe-top));
+    --tabbar-h: calc(var(--tab-bar-height) + var(--safe-bottom));
+    --kb: 0px;
+    --dir: 1;
+    --icon-col: 40px;
+    --ease-travel: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+[dir='rtl'] {
+    --dir: -1;
+}
+
+/* Stated boundaries for readers who asked for them: the structural hairline
+   takes the control-boundary value. */
+@media (prefers-contrast: more) {
+    :root {
+        --separator: var(--border-control);
+        --text-tertiary: var(--text-secondary);
+    }
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+/* patterns.css sets the body size in px; in rem it follows the user's font
+   setting, which is the web's Dynamic Type. */
+body {
+    font-size: var(--type-body);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xl);
+    overflow: hidden;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+dl,
+dd {
+    margin: 0;
+}
+
+ul {
+    padding: 0;
+    list-style: none;
+}
+
+button,
+input,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+}
+
+/* Every figure, everywhere. */
+.fig {
+    font-variant-numeric: tabular-nums;
+}
+
+.break {
+    overflow-wrap: anywhere;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* ── The device ────────────────────────────────────────────────────────── */
+/* On a phone this is the whole viewport. On anything larger it stays phone
+   sized and is centred, rather than stretching a one-handed layout across a
+   desk. */
+
+.device {
+    position: relative;
+    flex: none;
+    width: min(100vw, 390px);
+    height: min(100vh, 844px);
+    height: min(100dvh, 844px);
+    overflow: hidden;
+    background: var(--bg);
+    isolation: isolate;
+    /* So the large-text rules at the end of this file can ask how many em
+       wide the screen is, rather than how many px. */
+    container-type: inline-size;
+}
+
+@media (min-width: 440px) {
+    body {
+        background: var(--demo-backdrop);
+    }
+}
+
+@media (min-width: 440px) and (min-height: 880px) {
+    .device {
+        border-radius: 44px;
+        box-shadow: 0 24px 64px var(--shadow-float), 0 0 0 1px var(--separator);
+    }
+}
+
+/* Demo scaffolding. A desktop browser reports every inset as zero, which
+   would make the safe-area handling invisible - so where the pointer is a
+   mouse, stand in for a device that has a status bar and a home indicator.
+   On a real phone these rules do not apply and env() supplies the values. */
+.status-bar,
+.home-indicator {
+    display: none;
+}
+
+@media (pointer: fine) {
+    .device {
+        --safe-top: 47px;
+        --safe-bottom: 34px;
+    }
+
+    .status-bar {
+        position: absolute;
+        inset: 0 0 auto;
+        z-index: 30;
+        height: 47px;
+        padding: var(--space-sm) var(--space-xl) 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: var(--type-subhead);
+        font-weight: 600;
+        pointer-events: none;
+    }
+
+    .status-glyphs {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .status-glyphs svg {
+        fill: currentColor;
+        stroke: none;
+    }
+
+    .home-indicator {
+        display: block;
+        position: absolute;
+        z-index: 30;
+        bottom: var(--space-sm);
+        left: 50%;
+        width: 134px;
+        height: 5px;
+        margin-left: -67px;
+        border-radius: var(--radius-pill);
+        background: var(--text);
+        pointer-events: none;
+    }
+}
+
+/* ── Stacks and pages ──────────────────────────────────────────────────── */
+
+.stacks,
+.stack,
+.page,
+.scroller {
+    position: absolute;
+    inset: 0;
+}
+
+.stack {
+    visibility: hidden;
+}
+
+html[data-tab='accounts'] .stack[data-tab='accounts'],
+html[data-tab='cards'] .stack[data-tab='cards'],
+html[data-tab='payments'] .stack[data-tab='payments'],
+html[data-tab='you'] .stack[data-tab='you'] {
+    visibility: visible;
+}
+
+/* A push enters from the edge it will return to. */
+.page {
+    /* Its own stacking context, so a page underneath cannot show its sticky
+       bars through the one on top. */
+    isolation: isolate;
+    background: var(--bg);
+    transition: transform var(--push-ms) var(--ease-travel);
+}
+
+.page.is-grouped {
+    background: var(--bg-grouped);
+}
+
+.page.is-off {
+    transform: translateX(calc(100% * var(--dir)));
+}
+
+.page:not([data-root]) {
+    box-shadow: calc(-1px * var(--dir)) 0 0 var(--separator);
+}
+
+/* Content scrolls UNDER both bars, with their heights added as padding. */
+.scroller {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--tabbar-h);
+    scroll-padding-top: var(--nav-h);
+}
+
+.page-inner {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-body {
+    flex: 1 0 auto;
+    min-width: 0;
+    padding-bottom: var(--space-lg);
+}
+
+/* ── Chrome ────────────────────────────────────────────────────────────── */
+/* Translucent, over the content. The opaque value is the default; the
+   translucent one is applied only where blur exists and the reader has not
+   asked for it to be switched off. Two blurred layers on screen, never
+   stacked on each other. */
+
+.nav-bar,
+.tab-bar,
+.action-bar {
+    background: var(--bg);
+}
+
+.is-grouped .nav-bar {
+    background: var(--bg-grouped);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    @media not (prefers-reduced-transparency: reduce) {
+
+        /* The top bar only becomes a material once something is under it. */
+        .page[data-scrolled] .nav-bar,
+        .tab-bar,
+        .action-bar {
+            background: var(--chrome-bg);
+            -webkit-backdrop-filter: blur(20px) saturate(1.6);
+            backdrop-filter: blur(20px) saturate(1.6);
+        }
+    }
+}
+
+@media (prefers-contrast: more) {
+
+    .nav-bar,
+    .page[data-scrolled] .nav-bar,
+    .tab-bar,
+    .action-bar {
+        background: var(--bg);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+}
+
+/* Navigation bar: a title, back, nothing else. Sticky rather than fixed, so
+   the layout still knows it is there. */
+.nav-bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding-top: var(--safe-top);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--state-ms) ease;
+}
+
+.page[data-scrolled] .nav-bar {
+    border-bottom-color: var(--separator);
+}
+
+.nav-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    min-height: var(--nav-bar-height);
+    padding-inline: max(var(--space-sm), var(--safe-left)) max(var(--space-sm), var(--safe-right));
+}
+
+.nav-title {
+    font-size: var(--type-body);
+    font-weight: 600;
+    text-align: center;
+    padding-inline: var(--space-sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: opacity var(--state-ms) ease;
+}
+
+/* The small title appears as the large one scrolls under the bar. */
+.nav-title.is-collapsing {
+    opacity: 0;
+}
+
+.page[data-collapsed] .nav-title.is-collapsing {
+    opacity: 1;
+}
+
+.nav-title:focus-visible,
+.large-title:focus-visible,
+.sheet-title:focus-visible {
+    outline-offset: -2px;
+}
+
+.nav-back {
+    justify-self: start;
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    min-width: var(--target-min);
+    min-height: var(--target-min);
+    padding: 0 var(--space-sm) 0 0;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: none;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.nav-back svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2.2;
+}
+
+[dir='rtl'] .nav-back svg,
+[dir='rtl'] .chevron {
+    transform: scaleX(-1);
+}
+
+.nav-back-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.large-title {
+    padding: var(--space-xs) var(--screen-inset) var(--space-sm);
+    font-size: var(--type-large-title);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+/* Tab bar. patterns.css gives it a fixed height; here it is a minimum,
+   because a web label scales with the text and a fixed bar would clip it. */
+.tab-bar {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 10;
+    display: flex;
+    height: auto;
+    min-height: calc(var(--tab-bar-height) + var(--safe-bottom));
+    padding-inline: var(--safe-left) var(--safe-right);
+    border-top: 1px solid var(--separator);
+}
+
+/* The whole item is the target, edge to edge. */
+.tab {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: var(--tab-bar-height);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: var(--space-xs) 2px;
+    color: var(--text-secondary);
+    font-size: var(--type-caption);
+    line-height: 1.2;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tab:focus-visible {
+    outline-offset: -2px;
+    border-radius: var(--radius-control);
+}
+
+.tab-icon {
+    position: relative;
+    display: flex;
+}
+
+.tab svg {
+    width: 24px;
+    height: 24px;
+}
+
+.tab-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Selected is not colour alone: the icon fills and the label gains weight. */
+.tab .icon-on {
+    display: none;
+    fill: currentColor;
+    stroke: none;
+}
+
+.tab[aria-current='page'] {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.tab[aria-current='page'] .icon-on {
+    display: block;
+}
+
+.tab[aria-current='page'] .icon-off {
+    display: none;
+}
+
+/* min-height, never height: it holds a digit, and a fixed box clips it. */
+.tab-badge {
+    position: absolute;
+    top: -4px;
+    inset-inline-start: 62%;
+    min-width: 1.5em;
+    min-height: 1.5em;
+    padding: 0 var(--space-xs);
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-pill);
+    background: var(--danger);
+    color: var(--on-accent);
+    font-size: var(--type-caption);
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+/* The pinned primary action. Above the tab bar, which itself carries the
+   bottom inset - so nothing here is under the home indicator. */
+.action-bar {
+    position: sticky;
+    /* Sticky offsets are measured inside the scroller's padding, and that
+       padding is already the tab bar's height. */
+    bottom: 0;
+    z-index: 4;
+    margin-top: auto;
+    padding: var(--space-md) var(--screen-inset);
+    border-top: 1px solid var(--separator);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+
+.btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: 100%;
+    min-height: var(--primary-height);
+    padding: var(--space-sm) var(--space-screen);
+    border: 0;
+    border-radius: var(--radius-control);
+    font-size: var(--type-body);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--press-ms) ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a.btn {
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+.btn-primary:active:not(:disabled) {
+    background: var(--accent-pressed);
+}
+
+/* Quiet fill: the fill differs from the surface, so the fill is the edge. */
+.btn-secondary {
+    background: var(--fill-quiet);
+    color: var(--accent);
+}
+
+.btn-secondary:active:not(:disabled) {
+    box-shadow: inset 0 0 0 100vmax var(--pressed-overlay);
+}
+
+.btn:disabled {
+    cursor: default;
+}
+
+.btn:disabled:not([aria-busy='true']) {
+    opacity: 0.5;
+}
+
+/* Busy: the label is replaced in place and the button keeps its width. The
+   spinner waits 300ms before showing, so a fast answer never flashes one. */
+.btn-spinner {
+    display: none;
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: var(--radius-pill);
+    opacity: 0;
+    animation: spin 0.8s linear infinite, appear 1ms linear 300ms forwards;
+}
+
+.btn[aria-busy='true'] .btn-spinner {
+    display: block;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes appear {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Reduced motion: no spin. The label already says what is happening, so the
+   ring is dropped rather than left frozen, and nothing is left at opacity 0. */
+@media (prefers-reduced-motion: reduce) {
+    .btn[aria-busy='true'] .btn-spinner {
+        display: none;
+        animation: none;
+        opacity: 1;
+    }
+}
+
+.btn-text {
+    min-width: var(--target-min);
+    min-height: var(--target-min);
+    padding: 0 var(--space-sm);
+    border: 0;
+    border-radius: var(--radius-control);
+    background: none;
+    color: var(--accent);
+    font-size: var(--type-body);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-text.is-end {
+    justify-self: end;
+}
+
+.btn-text:active,
+.nav-back:active,
+.tab:active {
+    background: var(--pressed-overlay);
+}
+
+/* Hover is a refinement, offered only where a hover state exists. */
+@media (hover: hover) {
+
+    .pressable:hover,
+    .btn-text:hover,
+    .nav-back:hover {
+        background: var(--hover-overlay);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        background: var(--accent-pressed);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+        box-shadow: inset 0 0 0 100vmax var(--hover-overlay);
+    }
+
+    .tab:hover {
+        color: var(--text);
+    }
+
+    .tab[aria-current='page']:hover {
+        color: var(--accent-pressed);
+    }
+
+    .pressable:active,
+    .btn-text:active,
+    .nav-back:active {
+        background: var(--pressed-overlay);
+    }
+}
+
+/* ── Balance ───────────────────────────────────────────────────────────── */
+/* What the screen is about, at the top where the eye lands. The label is
+   quieter than the value it labels. */
+
+.balance {
+    padding-top: var(--space-xs);
+    padding-bottom: var(--space-sm);
+}
+
+.balance-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    min-height: var(--target-min);
+}
+
+.balance-label {
+    font-size: var(--type-subhead);
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.balance-head .btn-text {
+    margin-inline-end: calc(-1 * var(--space-sm));
+    font-size: var(--type-subhead);
+}
+
+.balance-figure {
+    font-size: var(--type-large-title);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.balance-meta {
+    margin-top: var(--space-xs);
+    font-size: var(--type-footnote);
+    color: var(--text-tertiary);
+}
+
+.hero {
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-md);
+}
+
+.hero-name {
+    font-size: var(--type-title);
+    font-weight: 600;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.hero .balance-figure {
+    margin-top: var(--space-xs);
+}
+
+.hero .status {
+    margin-top: var(--space-sm);
+}
+
+/* ── Sections and rows ─────────────────────────────────────────────────── */
+
+.section-header {
+    padding: var(--space-lg) var(--screen-inset) var(--space-sm);
+    font-size: var(--type-footnote);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.section-header::first-letter {
+    text-transform: uppercase;
+}
+
+/* Sticks under the bar in the one long list, on an opaque plate. */
+.section-header.is-sticky {
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 2;
+    padding-top: var(--space-md);
+    margin-top: var(--space-md);
+    background: var(--bg);
+}
+
+.section-footer {
+    max-width: 72ch;
+    padding: var(--space-sm) var(--screen-inset) 0;
+    font-size: var(--type-footnote);
+    color: var(--text-tertiary);
+}
+
+/* The row: min-height and it grows. Never a fixed height. */
+.row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding-inline: var(--screen-inset);
+    color: inherit;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a.row,
+label.row {
+    cursor: pointer;
+}
+
+.row:focus-visible {
+    outline-offset: -2px;
+}
+
+/* Inset divider: it starts under the text, so the icons read as a column. */
+li+li>.row::before,
+.row+.row::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: calc(var(--screen-inset) + var(--icon-col) + var(--space-md)) 0;
+    height: 1px;
+    background: var(--separator);
+}
+
+.list.no-icons li+li>.row::before,
+.kv-list .row+.row::before,
+li+li>label.row::before {
+    inset-inline-start: var(--screen-inset);
+}
+
+.row-icon {
+    width: var(--icon-col);
+    height: var(--icon-col);
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-control);
+    background: var(--fill-quiet);
+    color: var(--text-secondary);
+}
+
+.is-grouped .row-icon {
+    background: var(--bg-grouped);
+}
+
+.row-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.row-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.row-headline {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.row-headline.is-plain {
+    font-weight: 400;
+    white-space: normal;
+}
+
+.row-subhead {
+    font-size: var(--type-subhead);
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.row-subhead .sep::before {
+    content: '\00b7';
+    margin-inline: var(--space-xs);
+}
+
+/* Figures compared by magnitude sit on the trailing edge. */
+.row-trail {
+    flex: 0 0 auto;
+    max-width: 50%;
+    text-align: end;
+    overflow-wrap: anywhere;
+}
+
+/* Money in carries a plus sign as well as the colour. */
+.amount[data-sign='in'] {
+    color: var(--success);
+    font-weight: 600;
+}
+
+/* A chevron means this pushes. */
+.chevron {
+    width: 16px;
+    height: 16px;
+    margin-inline-start: calc(-1 * var(--space-xs));
+    color: var(--text-tertiary);
+    stroke-width: 2.4;
+}
+
+/* Grouped section: the surface colour, card corners, the screen margin. */
+.group {
+    margin-inline: var(--screen-inset);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    overflow: hidden;
+}
+
+.group .row {
+    padding-inline: var(--space-screen);
+}
+
+.group li+li>.row::before {
+    inset-inline-start: calc(var(--space-screen) + var(--icon-col) + var(--space-md));
+}
+
+.group .row+.row::before,
+.group.no-icons li+li>.row::before,
+.group li+li>label.row::before {
+    inset-inline-start: var(--space-screen);
+}
+
+/* A label and its value: side by side while there is room, stacked when the
+   text is large enough that there is not. */
+.kv {
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-md);
+}
+
+.kv dt,
+.kv-label {
+    font-size: var(--type-subhead);
+    color: var(--text-secondary);
+}
+
+.kv dd,
+.kv-value {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: end;
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+}
+
+.inline-actions {
+    padding: var(--space-sm) calc(var(--screen-inset) - var(--space-sm)) 0;
+}
+
+/* ── Status markers ────────────────────────────────────────────────────── */
+/* A dot and a word. The word is always there; pending and queued are a
+   hollow ring, which is the difference that survives greyscale. Drawn with a
+   border so it also survives forced colours. */
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--type-footnote);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.status::before,
+.ring {
+    content: '';
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border: 4px solid currentColor;
+    border-radius: var(--radius-pill);
+}
+
+.status[data-state='done'] {
+    color: var(--success);
+}
+
+.status[data-state='frozen'] {
+    color: var(--text);
+}
+
+.status[data-state='pending']::before,
+.status[data-state='queued']::before,
+.ring {
+    border-width: 2px;
+}
+
+.status[data-state='queued'] {
+    color: var(--warning);
+}
+
+/* ── Switch ────────────────────────────────────────────────────────────── */
+/* A real checkbox. Off is drawn in the control-boundary colour, because the
+   track is the only thing saying this is a control. */
+
+.switch {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    position: relative;
+    width: 51px;
+    height: 31px;
+    margin: 0;
+    border-radius: var(--radius-pill);
+    background: var(--border-control);
+    cursor: pointer;
+    transition: background-color var(--state-ms) ease;
+}
+
+.switch::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-start: 2px;
+    width: 27px;
+    height: 27px;
+    border-radius: var(--radius-pill);
+    background: var(--bg);
+    transition: transform var(--state-ms) ease;
+}
+
+.switch:checked {
+    background: var(--accent);
+}
+
+.switch:checked::after {
+    transform: translateX(calc(20px * var(--dir)));
+}
+
+@media (forced-colors: active) {
+    .switch {
+        appearance: auto;
+        -webkit-appearance: auto;
+        width: 24px;
+        height: 24px;
+    }
+
+    .switch::after {
+        content: none;
+    }
+}
+
+/* ── Offline banner and notices ────────────────────────────────────────── */
+
+.offline-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    margin: var(--space-sm) var(--screen-inset) var(--space-sm);
+    padding: var(--space-md);
+    border-radius: var(--radius-control);
+    background: var(--fill-quiet);
+    font-size: var(--type-footnote);
+    color: var(--text);
+}
+
+.is-grouped .offline-banner {
+    background: var(--surface);
+}
+
+.offline-banner .ring {
+    margin-top: 0.35em;
+    color: var(--warning);
+}
+
+.notice {
+    display: flex;
+    gap: var(--space-md);
+    margin: var(--space-sm) var(--screen-inset);
+    padding: var(--space-md) var(--space-md) var(--space-xs);
+    border-radius: var(--radius-card);
+    background: var(--fill-quiet);
+}
+
+.notice>svg {
+    width: 24px;
+    height: 24px;
+    color: var(--danger);
+}
+
+.notice-title {
+    font-weight: 600;
+}
+
+.notice-body {
+    margin-top: var(--space-xs);
+    font-size: var(--type-subhead);
+    color: var(--text-secondary);
+}
+
+.notice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-xs);
+    margin-inline-start: calc(-1 * var(--space-sm));
+}
+
+/* ── Waiting, empty, error ─────────────────────────────────────────────── */
+/* Skeletons at the real row dimensions, so nothing moves when rows arrive. */
+
+.skel {
+    display: block;
+    border-radius: var(--space-xs);
+    background: var(--fill-quiet);
+    animation: pulse 1.2s ease-in-out infinite;
+}
+
+.skel-line {
+    width: 55%;
+    height: 0.8em;
+    margin-block: 0.3em;
+}
+
+.skel-line.is-short {
+    width: 35%;
+    font-size: var(--type-subhead);
+}
+
+.skel-fig {
+    width: 4.5em;
+    height: 0.8em;
+    margin-block: 0.3em;
+}
+
+.balance-figure .skel {
+    width: 6em;
+    height: 0.8em;
+    margin-block: 0.2em;
+}
+
+@keyframes pulse {
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skel {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+.empty {
+    padding: var(--space-xl) var(--screen-inset) var(--space-lg);
+    text-align: center;
+}
+
+.empty-title {
+    font-weight: 600;
+}
+
+.empty-body {
+    max-width: 72ch;
+    margin: var(--space-sm) auto var(--space-lg);
+    font-size: var(--type-subhead);
+    color: var(--text-secondary);
+}
+
+/* ── Sheet ─────────────────────────────────────────────────────────────── */
+
+.scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    background: var(--scrim);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--sheet-ms) ease;
+}
+
+.scrim.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* A single detent that fits its content. --kb is the software keyboard,
+   measured from visualViewport; the sheet rides above it. */
+.sheet {
+    position: absolute;
+    inset: auto 0 var(--kb);
+    z-index: 21;
+    max-height: calc(100% - var(--kb) - var(--safe-top) - var(--space-md));
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-raised);
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    box-shadow: 0 -8px 32px var(--shadow-float);
+    transform: translateY(100%);
+    transition: transform var(--sheet-ms) var(--ease-travel);
+}
+
+.sheet.is-open {
+    transform: translateY(0);
+}
+
+.sheet.is-dragging {
+    transition: none;
+}
+
+.sheet form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* The grabber and the header are the drag handle; the form below scrolls. */
+.sheet-drag {
+    flex-shrink: 0;
+    touch-action: none;
+    cursor: grab;
+}
+
+.grabber {
+    width: 36px;
+    height: 5px;
+    margin: var(--space-sm) auto 0;
+    border-radius: var(--radius-pill);
+    background: var(--border-control);
+}
+
+.sheet-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    padding: var(--space-xs) var(--space-sm);
+}
+
+.sheet-head .btn-text {
+    justify-self: start;
+}
+
+.sheet-head .btn-text.is-end {
+    justify-self: end;
+    color: var(--danger);
+}
+
+.sheet-title {
+    grid-column: 2;
+    padding-inline: var(--space-sm);
+    font-size: var(--type-body);
+    font-weight: 600;
+    text-align: center;
+}
+
+.sheet-body {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--space-sm) var(--screen-inset) 0;
+    scroll-padding-block: var(--space-md);
+}
+
+/* 32pt above the primary action, to separate it from what it acts on. */
+.sheet-foot {
+    flex-shrink: 0;
+    padding: var(--space-xl) var(--screen-inset) max(var(--space-screen), var(--safe-bottom));
+}
+
+/* The inset is the keyboard's while it is up - patterns.css supplies the
+   home-indicator case through .pinned-action. */
+.sheet.has-keyboard .sheet-foot {
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-md);
+}
+
+/* ── Form ──────────────────────────────────────────────────────────────── */
+/* One question per row, the label above the field. */
+
+.field {
+    margin-bottom: var(--space-screen);
+}
+
+.field:last-child {
+    margin-bottom: 0;
+}
+
+.field-label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-size: var(--type-footnote);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* The fill matches the sheet, so the border is the only thing identifying
+   the control: border-control, not separator. */
+.field input,
+.field select {
+    width: 100%;
+    min-height: var(--primary-height);
+    padding: var(--space-md);
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-control);
+    background: var(--surface-raised);
+    font-size: var(--type-body);
+}
+
+.field select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-inline-end: calc(var(--space-md) * 2 + 20px);
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.field input::placeholder {
+    color: var(--text-tertiary);
+    opacity: 1;
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+    outline-offset: -1px;
+    border-color: var(--accent);
+}
+
+.field [aria-invalid='true'] {
+    border-color: var(--danger);
+    border-width: 2px;
+}
+
+.select-wrap,
+.affix-wrap {
+    position: relative;
+}
+
+.select-wrap svg {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: var(--space-md);
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.affix {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--space-md);
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.affix-wrap input {
+    padding-inline-start: calc(var(--space-md) + 1.1em);
+}
+
+.field-help,
+.field-error,
+.form-status {
+    margin-top: var(--space-xs);
+    font-size: var(--type-footnote);
+}
+
+.field-help {
+    color: var(--text-secondary);
+}
+
+/* An error is a word and a mark as well as a colour. */
+.field-error,
+.form-status {
+    color: var(--danger);
+    font-weight: 600;
+}
+
+.field-error::before,
+.form-status::before {
+    content: '! ';
+}
+
+.form-status {
+    margin: 0 0 var(--space-md);
+}
+
+/* ── Snackbar ──────────────────────────────────────────────────────────── */
+/* Sits above whatever is pinned at the bottom of the current screen; app.js
+   measures that and sets --snack-bottom. The undo is the accent value for an
+   inverted surface, not the page accent. */
+
+.snackbar {
+    position: absolute;
+    inset-inline: var(--screen-inset);
+    bottom: calc(var(--snack-bottom, var(--tabbar-h)) + var(--space-md));
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-screen);
+    border-radius: var(--radius-control);
+    background: var(--inverse-surface);
+    color: var(--on-inverse);
+    font-size: var(--type-subhead);
+    box-shadow: 0 8px 24px var(--shadow-float);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity var(--state-ms) ease, transform var(--state-ms) ease, visibility 0s linear var(--state-ms);
+}
+
+.snackbar.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0s;
+}
+
+.snackbar-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-block: var(--space-sm);
+}
+
+.snackbar-action {
+    flex-shrink: 0;
+    min-width: var(--target-min);
+    min-height: var(--target-min);
+    padding: 0 var(--space-md);
+    border: 0;
+    border-radius: var(--radius-control);
+    background: none;
+    color: var(--accent-on-inverse);
+    font-size: var(--type-subhead);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.snackbar-action:focus-visible {
+    outline-color: var(--accent-on-inverse);
+    outline-offset: -2px;
+}
+
+/* ── Demo controls ─────────────────────────────────────────────────────── */
+/* Outside the phone, for a mouse at a desk - so this panel is deliberately
+   not held to the pack's 44pt targets. It only exists where there is room. */
+
+.demo-panel {
+    display: none;
+}
+
+@media (min-width: 800px) and (pointer: fine) {
+    .demo-panel {
+        display: block;
+        flex: 0 1 17rem;
+        max-height: 100%;
+        overflow-y: auto;
+        padding: var(--space-lg) 0;
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+    }
+
+    .demo-panel h2,
+    .demo-panel h3 {
+        margin-bottom: var(--space-sm);
+        font-size: var(--type-subhead);
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .demo-panel h3 {
+        margin-top: var(--space-lg);
+    }
+
+    .demo-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+        margin-top: var(--space-md);
+    }
+
+    .demo-panel button {
+        min-height: 32px;
+        padding: var(--space-xs) var(--space-md);
+        border: 1px solid var(--border-control);
+        border-radius: var(--radius-pill);
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+    }
+
+    .demo-panel button:hover {
+        border-color: var(--text);
+    }
+
+    .demo-panel button[aria-pressed='true'] {
+        background: var(--inverse-surface);
+        border-color: var(--inverse-surface);
+        color: var(--on-inverse);
+    }
+
+    .demo-panel ul {
+        list-style: disc;
+        padding-inline-start: var(--space-screen);
+    }
+
+    .demo-panel li+li {
+        margin-top: var(--space-xs);
+    }
+
+    .demo-panel b {
+        color: var(--text);
+    }
+}
+
+/* ── Large text ────────────────────────────────────────────────────────── */
+/* The web's Dynamic Type. Once the screen is fewer than 16em wide - a large
+   font setting, or a small phone with a medium one - side-by-side stops
+   fitting. Decided here rather than discovered when it truncates: rows
+   stack their figure under the text, labels wrap, and the tab bar keeps its
+   icons and drops its labels, as the platforms do. */
+@container (max-width: 16em) {
+    .row {
+        flex-wrap: wrap;
+    }
+
+    a.row {
+        padding-inline-end: calc(var(--screen-inset) + var(--space-lg));
+    }
+
+    .row-body {
+        flex-basis: 50%;
+    }
+
+    .row-headline,
+    .row-subhead {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .row-trail {
+        flex: 1 0 100%;
+        max-width: none;
+        text-align: start;
+        padding-inline-start: calc(var(--icon-col) + var(--space-md));
+    }
+
+    .chevron {
+        position: absolute;
+        inset-block-start: 50%;
+        inset-inline-end: var(--screen-inset);
+        margin-top: -8px;
+    }
+
+    .kv dd,
+    .kv-value {
+        flex-basis: 100%;
+        text-align: start;
+    }
+
+    .tab-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+
+    .sheet-head {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .sheet-title {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        text-align: start;
+        padding-inline: var(--space-sm);
+    }
+
+    .sheet-head .btn-text.is-end {
+        grid-column: 2;
+    }
+
+    .nav-row {
+        grid-template-columns: auto minmax(0, 1fr) 0;
+    }
+
+    .nav-back-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+}

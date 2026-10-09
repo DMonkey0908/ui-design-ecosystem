@@ -1,0 +1,147 @@
+/* ==========================================================================
+   The same tokens as tokens.json, as custom properties, for React Native Web,
+   Ionic, Capacitor and mobile web.
+
+   tokens.json is the source. This is a view of it, and nothing else: every
+   declaration below is a custom property. If the two disagree, this one is
+   wrong.
+
+   The rules that USE these - safe areas, rows, pressed states - are in
+   patterns.css, because a token file that also styles components cannot claim
+   to be a view of a token file.
+
+   Load this first, then patterns.css, then your screen.
+   ========================================================================== */
+
+:root {
+    color-scheme: light dark;
+
+    /* ----- Accent ------------------------------------------------------
+       Two values, always. A brand colour picked against white disappears
+       against the dark theme's near-black, and dark mode is not optional on
+       a device people hold in bed. */
+    --accent: #5a31c4;
+    --accent-pressed: #46249c;
+    --on-accent: #ffffff;
+
+    /* ----- Surfaces ---------------------------------------------------- */
+    --bg: #ffffff;
+    --bg-grouped: #f2f2f7;
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
+
+    /* ----- Text -------------------------------------------------------- */
+    --text: #0b0b0f;
+    --text-secondary: #5b5b66;
+    --text-tertiary: #6e6e79;
+
+    /* ----- Lines and fills ---------------------------------------------
+       Two different jobs, two different requirements. --separator is
+       structural and may be a hairline; --border-control is the only thing
+       identifying a bordered control, so it clears 3:1. */
+    --separator: #d8d8de;
+    --border-control: #8b8b96;
+    --fill-quiet: #f2f2f7;
+    --pressed-overlay: rgba(0, 0, 0, 0.06);
+    --scrim: rgba(0, 0, 0, 0.30);
+
+    /* ----- Semantic ---------------------------------------------------- */
+    --success: #1a7f45;
+    --warning: #986400;
+    --danger: #c7212f;
+    --info: #5b5b66;
+
+    /* ----- Additions for the Brindle demo ------------------------------
+       Not in the pack file. Added here, and in tokens.json, because a
+       colour no token covers gets a token rather than a literal.
+       --chrome-bg is the translucent bar tint; its opaque fallback is --bg.
+       The inverse trio is the snackbar: an accent on an inverted surface
+       needs the OTHER theme accent value, or it fails contrast. */
+    --chrome-bg: rgba(255, 255, 255, 0.88);
+    --hover-overlay: rgba(0, 0, 0, 0.03);
+    --inverse-surface: #1c1c1e;
+    --on-inverse: #f2f2f7;
+    --accent-on-inverse: #b3a1ff;
+    --shadow-float: rgba(0, 0, 0, 0.16);
+    --demo-backdrop: #e4e4ea;
+
+    /* ----- Type - tokens.json text.*, in rem so the user font setting
+       scales it (pack/01-surfaces.md: mobile web sizes type in rem). ---- */
+    --type-large-title: 2.125rem;
+    --type-title: 1.375rem;
+    --type-body: 1.0625rem;
+    --type-subhead: 0.9375rem;
+    --type-footnote: 0.8125rem;
+    --type-caption: 0.75rem;
+
+    /* ----- Space — 4pt base. A value not here is the start of drift. ---- */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-screen: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+
+    /* ----- Corners ----------------------------------------------------- */
+    --radius-control: 10px;
+    --radius-card: 14px;
+    --radius-sheet: 16px;
+    --radius-pill: 999px;
+
+    /* ----- Targets — core/09-input.md sets 24; this pack raises it. ----- */
+    --target-min: 44px;
+    --target-gap: 8px;
+    --row-min-height: 44px;
+    --primary-height: 50px;
+
+    /* ----- Chrome. Add the runtime inset to these; never hardcode it. --- */
+    --nav-bar-height: 44px;
+    --tab-bar-height: 49px;
+
+    /* ----- Motion — core's bands, at the fast end. ---------------------- */
+    --press-ms: 80ms;
+    --state-ms: 150ms;
+    --sheet-ms: 250ms;
+    --push-ms: 300ms;
+}
+
+/* Pure black is right for the dark base here, against the general rule in
+   core/01-tokens.md: an OLED panel switches those pixels off, which is
+   battery the user notices, and the halation that makes pure black wrong on a
+   desktop monitor is far weaker on a small panel at arm's length. The
+   surfaces ABOVE the base are not black - elevation is still luminance. */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --accent: #b3a1ff;
+        --accent-pressed: #cfc4ff;
+        --on-accent: #0b0b0f;
+
+        --bg: #000000;
+        --bg-grouped: #0d0d0f;
+        --surface: #1c1c1e;
+        --surface-raised: #2c2c2e;
+
+        --text: #f2f2f7;
+        --text-secondary: #a1a1aa;
+        --text-tertiary: #92929d;
+
+        --separator: #38383c;
+        --border-control: #74747f;
+        --fill-quiet: #2c2c2e;
+        --pressed-overlay: rgba(255, 255, 255, 0.10);
+        --scrim: rgba(0, 0, 0, 0.50);
+
+        --success: #48d17e;
+        --warning: #f0b429;
+        --danger: #ff6b6b;
+        --info: #a1a1aa;
+
+        --chrome-bg: rgba(0, 0, 0, 0.82);
+        --hover-overlay: rgba(255, 255, 255, 0.05);
+        --inverse-surface: #f2f2f7;
+        --on-inverse: #0b0b0f;
+        --accent-on-inverse: #5a31c4;
+        --shadow-float: rgba(0, 0, 0, 0.60);
+        --demo-backdrop: #161618;
+    }
+}

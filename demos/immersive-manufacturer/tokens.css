@@ -1,0 +1,35 @@
+/* ==========================================================================
+   TOKENS - what this project adds to the pack's theme.css. Load second.
+   The palette itself is untouched: every colour the interface uses is still a
+   theme.css token.
+   ========================================================================== */
+
+:root {
+    /* The product's finishes. Each is read twice - by the swatch beside its
+       name, and by the scene's paint material - so the two cannot drift. */
+    --finish-pebble: #b9b8ab;
+    --finish-orange: #e2600f;
+    --finish-graphite: #4a4f57;
+
+    /* A motor is long, so the frame is wider than the pack's 4:3 default. */
+    --scene-ratio: 3 / 2;
+
+    /* The pack's hero step tops out at 5rem, which gives a 28rem text lane
+       about ten characters a line. Capped lower so a headline fits in three. */
+    --t-hero: clamp(2.5rem, 4.4vw, 3.75rem);
+
+    --header-h: 4rem;
+    --hero-top: calc(var(--header-h) + var(--gap-block));
+    --hero-bottom: clamp(2.5rem, 5vw, 4rem);
+    --gap-chapter: clamp(3.5rem, 7vw, 6rem);
+    --border-selected: 2px;
+    --stem: 1.25rem;                     /* a hotspot's stand-off from its part */
+}
+
+/* One column: a square frame keeps the model a usable size on a phone. The
+   mount widens the field of view to match, so the poster still lines up. */
+@media (max-width: 800px) {
+    :root {
+        --scene-ratio: 1 / 1;
+    }
+}

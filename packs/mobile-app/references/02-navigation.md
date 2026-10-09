@@ -25,8 +25,10 @@ Two asymmetries worth knowing, both of which the arc explains:
 
 - **The bottom corner opposite the thumb is not free.** For a right-handed
   grip that is the bottom-left; for a left-handed grip it is the bottom-right.
-  You do not know which, so do not put anything important in either — centre it
-  or span it.
+  You do not know which, so do not put a lone control in either — centre it
+  or span it. The tab bar spans, which is why its end tabs may sit there and
+  why each one's target runs edge to edge: the far tab is a stretch for one
+  grip and free for the other, and no ordering fixes that for both.
 - **The top corner opposite the thumb is the worst place on the screen.** It is
   also, by desktop convention, where the menu goes. That convention is the
   single most expensive import from the desktop.
@@ -50,7 +52,7 @@ Three to five destinations. Not two — a segmented control is honest about two
 floor.
 
 ```
-height       49pt, PLUS the bottom safe-area inset as padding
+height       49pt, PLUS the bottom safe-area inset as padding; a minimum on the web
 items        3-5, equal width, icon above a 12pt label
 target       the full item, edge to edge and top to bottom, not just the icon
 selected     accent icon, accent label, and one non-colour difference

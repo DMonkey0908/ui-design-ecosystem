@@ -20,14 +20,15 @@ This file is what a public page needs on top.
 - [ ] Base is 16px. Not shrunk.
 - [ ] Running text capped at 65ch, 75ch absolute maximum.
 - [ ] Line height rises as size falls — roughly 1.05 hero, 1.7 body.
-- [ ] Two families at most, and the display face is not used in buttons,
-      labels or form fields.
+- [ ] Two brand families at most, plus the system monospace for identifiers.
+      The display face is not used in buttons, labels, form fields or figures.
 - [ ] Hierarchy is carried by size, weight and space — not by colour.
 - [ ] No paragraph over three lines is centred.
 
 ### Rhythm
 - [ ] One section rhythm value, used everywhere.
-- [ ] At most two alternating backgrounds.
+- [ ] At most two light backgrounds alternate; inverted sections, one or two,
+      are counted apart.
 - [ ] Emphasis comes from width changes, not from extra padding.
 - [ ] Each screenful has exactly one thing that wins.
 - [ ] The closing action repeats the hero action rather than introducing a new one.
@@ -40,6 +41,11 @@ This file is what a public page needs on top.
 - [ ] Every inverted section uses the on-dark accent for text, buttons and the
       focus ring.
 - [ ] Shadows are warm; the accent shadow is on the primary action only.
+- [ ] The accent is a fill on the primary action only; elsewhere it is a link,
+      a focus ring or the recommended plan's border.
+- [ ] Input and secondary-button borders use `--line-control`.
+- [ ] After a rebrand, every derived accent value was recomputed and its pairs
+      measured.
 
 ### Components
 - [ ] Button labels are verbs the reader would use.
@@ -51,6 +57,7 @@ This file is what a public page needs on top.
 - [ ] Validation on blur, error beside the field, tied with `aria-describedby`.
 - [ ] Testimonials carry a name, role and company.
 - [ ] FAQ uses `<details>`, or matches its keyboard and screen-reader behaviour.
+- [ ] Footer links clear 44px and every one of them resolves.
 - [ ] Mobile menu is a `<button>` with `aria-expanded`, focus trapped, Escape
       closes, focus returns.
 
@@ -60,7 +67,8 @@ This file is what a public page needs on top.
 - [ ] CLS effectively zero: every image, embed and injected banner has its space
       reserved.
 - [ ] Fonts self-hosted, subset, variable where possible, `font-display: swap`
-      with metric-matched fallbacks.
+      with metric-matched fallbacks — or the system stack shipped on purpose,
+      with no `@font-face` or preload left pointing at a missing file.
 - [ ] Only above-the-fold fonts preloaded.
 - [ ] Hero has `fetchpriority="high"` and is **not** lazy-loaded; everything
       below the fold is.
@@ -115,7 +123,7 @@ Deciding it after three sections are built means rebuilding all three.
 
 ## Refusals
 
-`PACK.md` lists what this pack pushes back on — carousels, entry pop-ups,
+The table under *What this pack deliberately refuses* lists what this pack pushes back on — carousels, entry pop-ups,
 autoplaying sound, a colour per section, a third font, text in images, infinite
 scroll — and what to offer instead. Name the cost, offer the alternative, then
 build whatever is decided, and record the decision so nobody re-litigates it.

@@ -27,22 +27,38 @@
 
 .tab-bar {
     /* Height PLUS the inset, as padding. Not a margin, or the bar's own
-       background stops reaching the bottom of the screen. */
-    height: calc(var(--tab-bar-height) + var(--safe-bottom));
+       background stops reaching the bottom of the screen.
+       A MINIMUM height: on the web the label is text and scales with the
+       reader's font setting, and no system steps in to drop it. A fixed
+       height here is the fixed-height row again, in the bar. */
+    min-height: calc(var(--tab-bar-height) + var(--safe-bottom));
     padding-bottom: var(--safe-bottom);
 }
 
 .pinned-action {
     /* A primary action pinned above the keyboard when it is up, and above the
-       home indicator always. */
-    padding-bottom: max(var(--space-screen), var(--safe-bottom));
+       home indicator always.
+       All four sides are set here on purpose. Your screen's stylesheet loads
+       after this one, so a `padding` shorthand written there resets the
+       bottom to a fixed value and puts the button back under the indicator -
+       change a side with its longhand, never with the shorthand. */
+    padding: var(--space-md) max(var(--space-screen), var(--safe-left), var(--safe-right)) max(var(--space-screen), var(--safe-bottom));
+}
+
+/* Stacked on a tab bar, the tab bar is the bottom-most bar and already
+   carries the inset. Adding it twice leaves a band of nothing between the
+   button and the tabs. */
+.pinned-action.is-above-tab-bar {
+    padding-bottom: var(--space-md);
 }
 
 body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font-size: 17px;
+    /* rem, not px: this is the web's Dynamic Type. In px the body ignores the
+       reader's font setting and every size derived from it does too. */
+    font-size: var(--type-body);
     line-height: 1.4;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
     /* The page does not bounce or zoom; the content inside it scrolls. */

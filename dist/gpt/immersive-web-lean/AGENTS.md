@@ -108,8 +108,8 @@ what this system exists to prevent. Do not answer from this index.
 | File | What it is |
 |---|---|
 | `ui/assets/theme.css` | the token file - load first |
-| `ui/assets/scene.css` | the scene frame, its four states, the stage layout and the plate |
-| `ui/assets/scene-mount.js` | the reference mount in plain three.js - lazy import, capped pixel ratio, render on demand, context loss, disposal |
+| `ui/assets/scene.css` | the scene frame, its four states, the stage layout, hotspots and the plate |
+| `ui/assets/scene-mount.js` | the reference mount in plain three.js, for a glTF or a model built in code - lazy import, capped pixel ratio, render on demand, a per-frame hook for hotspots, context loss, disposal |
 
 Finish by running `ui/core/99-review.md` and `ui/pack/05-checklist.md`.
 

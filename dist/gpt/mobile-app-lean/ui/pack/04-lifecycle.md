@@ -50,10 +50,14 @@ exceptional failure.
 
 - **Show what you have.** Cached content, marked with when it was fetched.
   Blank is worse than old, as long as old admits to being old.
-- **Queue the write and say so.** The action appears to succeed, is marked as
-  pending, and is sent when there is a network. This is core's optimistic
-  update, and the three conditions in `08-feedback.md` apply unchanged —
-  including that a failure announces itself rather than quietly undoing.
+- **Queue the write and say so.** The action is accepted, is marked as
+  pending, and is sent when there is a network. Whether it may also be drawn
+  as *done* is core's optimistic update, and the three conditions in
+  `08-feedback.md` decide it unchanged: a toggle that passes them shows its
+  new state with the pending mark, while a write that fails them — a payment,
+  an order — shows only as queued, and no figure that depends on it moves
+  until the server has answered. Either way a failure announces itself rather than
+  quietly undoing.
 - **Three outcomes, not two.** Sent, queued, and *rejected after being
   queued* — the third has no desktop equivalent and it is the one that gets
   forgotten. Each lands on a different surface:

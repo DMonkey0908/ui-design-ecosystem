@@ -45,11 +45,37 @@
     --pressed-overlay: rgba(0, 0, 0, 0.06);
     --scrim: rgba(0, 0, 0, 0.30);
 
+    /* ----- Chrome tint --------------------------------------------------
+       The translucent bar. Its opaque fallback is --bg. The alpha is as low
+       as it goes: label text still clears 4.5:1 with the darkest content
+       this palette has scrolled underneath and no blur at all. */
+    --chrome-bg: rgba(255, 255, 255, 0.88);
+
+    /* ----- Inverse - the snackbar ---------------------------------------
+       A surface in the other theme's colours, so its action needs the other
+       theme's accent. --accent on --inverse-surface is 2.7:1. */
+    --inverse-surface: #1c1c1e;
+    --on-inverse: #f2f2f7;
+    --accent-on-inverse: #7aa7ff;
+
     /* ----- Semantic ---------------------------------------------------- */
     --success: #1a7f45;
     --warning: #986400;
     --danger: #c7212f;
     --info: #5b5b66;
+
+    /* ----- Type - tokens.json `text`, in rem so the reader's font setting
+       scales it. 16px root: 34pt is 2.125rem. Weights are unitless. ------ */
+    --type-large-title: 2.125rem;
+    --type-title: 1.375rem;
+    --type-headline: 1.0625rem;
+    --type-body: 1.0625rem;
+    --type-subhead: 0.9375rem;
+    --type-footnote: 0.8125rem;
+    --type-caption: 0.75rem;
+    --weight-regular: 400;
+    --weight-semibold: 600;
+    --weight-bold: 700;
 
     /* ----- Space — 4pt base. A value not here is the start of drift. ---- */
     --space-xs: 4px;
@@ -107,6 +133,11 @@
         --fill-quiet: #2c2c2e;
         --pressed-overlay: rgba(255, 255, 255, 0.10);
         --scrim: rgba(0, 0, 0, 0.50);
+        --chrome-bg: rgba(0, 0, 0, 0.82);
+
+        --inverse-surface: #f2f2f7;
+        --on-inverse: #0b0b0f;
+        --accent-on-inverse: #0a58d0;
 
         --success: #48d17e;
         --warning: #f0b429;

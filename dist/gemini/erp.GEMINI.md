@@ -169,8 +169,8 @@ If they hear the cost and still want it, build it. It is their product.
 1. Copy `assets/theme.css` in as the first stylesheet, then swap the accent
    block for the client's colour — and recompute the on-dark value.
 2. Start the page from `assets/page-template.html`, with `assets/erp-shell.css`
-   beside `theme.css`. The inline script in the template's
-   `<head>` is not optional; see the shell reference.
+   and `assets/erp-shell.js` beside `theme.css`. The inline script in the
+   template's `<head>` is not optional; see the shell reference.
 3. Keep the stylesheet order: theme → shell → page.
 
 ---
@@ -1757,7 +1757,7 @@ permanently.
 | Job | Recede. Frame the work. | Hold the work. |
 | Background | `#0a0a0c` – `#1c1c21` | `#ffffff`, page `#f6f7f9` |
 | Text ramp | `#f1f1f4` / `#b9b9c2` / `#7f7f8a` | `#0f172a` / `#475569` / `#94a3b8` |
-| Border | `#2a2a32` | `#e2e8f0`, inputs `#cbd5e1` |
+| Border | `#2a2a32` | `#e2e8f0`, buttons `#cbd5e1`, form fields `#7d8ba0` |
 | Hover | `rgba(255,255,255,0.06)` | `#f7f8fa` |
 | Corner radius | 2–4px (sharp) | 6–12px (soft) |
 | Shadow | none, ever | only when it floats |
@@ -1810,6 +1810,7 @@ Ships as `assets/theme.css`. The accent's two values are the part to get right �
   --paper: #ffffff;  --paper-2: #f7f8fa;  --paper-3: #f1f3f5;  --paper-bg: #f6f7f9;
   --paper-text: #0f172a;  --paper-text-2: #475569;  --paper-text-3: #617085;
   --paper-border: #e2e8f0;  --paper-border-strong: #cbd5e1;
+  --paper-border-control: #7d8ba0;   /* a form field's edge: 3.46:1 on paper */
 
   /* ----- Semantic ----- */
   --state-success: #16a34a;        /* marks: dots, bars, pill fills */
@@ -1847,18 +1848,26 @@ this and make info a neutral grey.
 (`ui-monospace, SFMono-Regular, Menlo, Consolas`) for keys, paths, IDs and
 anything copyable.
 
-Base `font-size` on `body` is **13px** — the high-density standard. Shell in
-`em` so the frame scales with it; content in `rem`.
+The template makes no font request: an internal tool often runs where a
+third-party font host is blocked. Self-host Inter, or the fallback stack is
+what ships.
 
-| rem | px @13 | Used for |
+Base `font-size` on `body` is **13px** — the high-density standard — written
+`0.8125rem`. Shell in `em` so the frame scales with it; content in `rem`.
+
+The 13px is on `body`, not on the root, so **`1rem` is still 16px**. The px
+column below is what each step renders at; reading `0.8125rem` as "0.8125 of
+13" gives a 10.6px table that nobody can work in for a day.
+
+| Size | px | Used for |
 |---|---|---|
-| 0.72 | 9.4 | Tile labels, table headers, metadata terms |
-| 0.75 | 9.8 | Field labels, small buttons, link buttons, tooltips |
-| 0.8125 | 10.6 | Table body, buttons, notes, status text |
-| 0.875 | 11.4 | Inputs, definition values |
-| 1.0 | 13 | Card titles |
-| 1.25 | 16.3 | Tile values (the number itself) |
-| 1.5 | 19.5 | Page `h1` |
+| 0.72rem | 11.5 | Tile labels, table headers, metadata terms |
+| 0.75rem | 12 | Field labels, small buttons, link buttons, tooltips |
+| 0.8125rem | 13 | Table body, buttons, notes, status text |
+| 0.875rem | 14 | Inputs, definition values |
+| 1rem | 16 | Card titles |
+| 1.25rem | 20 | Tile values (the number itself) |
+| 1.5em | 19.5 | Page `h1` — in the shell stylesheet, so `em` against the body |
 
 Weights: 400 input text, 500 nav, 600 labels and buttons, 700 titles and values,
 800 badge counts only. Prose capped at `max-width: 72ch`.
@@ -1900,6 +1909,7 @@ Flat by default. Shadow is slate, never black, and only for things that float:
                   0 6px 12px -6px  rgba(15, 23, 42, 0.12);
 --shadow-tooltip: 0 8px 24px rgba(15, 23, 42, 0.14);
 --shadow-raised:  0 1px 2px rgba(15, 23, 42, 0.12);
+--scrim:          rgba(15, 23, 42, 0.45);   /* behind a dialog */
 ```
 
 The sidebar and topbar have **no shadow** — a 1px hairline separates them. A
@@ -1923,16 +1933,24 @@ Within core's bands, this domain runs at the fast end:
 ### Focus
 
 ```css
-/* On ink — inset, so the ring is not clipped by a flush cell */
-:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+/* On ink — the on-dark accent (5.87:1; --brand is 2.84:1 there), and inset,
+   so the ring is not clipped by a flush cell */
+:focus-visible { outline: 2px solid var(--brand-on-dark); outline-offset: -2px; }
 
-/* On paper — outset, softer, paired with a border shift on inputs */
+/* On paper — the accent itself, outset */
+.btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* A field already has an edge to change, so the border carries the contrast
+   (6.96:1) and the ring can be the soft one */
 input:focus-visible {
   outline: 2px solid var(--brand-a35);
   outline-offset: 1px;
   border-color: var(--brand);
 }
 ```
+
+`--brand-a35` is a halo, never the indicator: on paper it composites to
+1.94:1. Anything without a border of its own to recolour takes the solid ring.
 
 ## The shell - sidebar, topbar, responsive
 
@@ -1944,8 +1962,8 @@ the full height of the viewport and the topbar starts to its right.
 ```css
 .erp-shell {
   display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;   /* 240px */
-  grid-template-rows:    var(--topbar-height) 1fr;   /*  64px */
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);   /* 240px */
+  grid-template-rows:    var(--topbar-height) minmax(0, 1fr);   /*  64px */
   grid-template-areas:
     "sidebar topbar"
     "sidebar main";
@@ -1953,7 +1971,7 @@ the full height of the viewport and the topbar starts to its right.
   transition: grid-template-columns 0.22s ease;
 }
 
-.erp-shell.is-collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; } /* 72px */
+.erp-shell.is-collapsed { grid-template-columns: var(--sidebar-collapsed) minmax(0, 1fr); } /* 72px */
 ```
 
 Both the sidebar and the topbar are `position: sticky; top: 0`, so a long table
@@ -1969,22 +1987,23 @@ Both are core rules — see `core/03-layout.md`. What this pack pins down:
 - The keys are `app.sidebar.collapsed`, `app.user` (for role-gated nav) and
   `app.preferences` (language). All three affect layout or visibility, so all
   three are applied to `<html>` inline in `<head>`, before the stylesheets.
-  `assets/page-template.html` ships the script, and `assets/erp-shell.css`
-  ships this whole section as a file.
+  `assets/page-template.html` ships the script, `assets/erp-shell.css` ships
+  this whole file as a stylesheet, and `assets/erp-shell.js` is the runtime
+  half: the toggle that writes the key the script reads, and the menus.
 - Order is `theme.css` -> `erp-shell.css` -> page `styles.css`. A page
   stylesheet may define tokens in terms of theme tokens, never as literals.
 - Because the class lands on `<html>` while the runtime toggle sets it on the
   shell container, every collapsed rule needs both selectors:
 
 ```css
-.erp-shell.is-collapsed .nav-label,
-html.sb-collapsed .erp-shell .nav-label { display: none; }
+.erp-shell.is-collapsed .nav-badge,
+html.sb-collapsed .erp-shell .nav-badge { display: none; }
 ```
 
 ### Sidebar
 
 ```
-brand         fixed height, logo swaps to a 26px mark when collapsed
+brand         fixed height, a 26px glyph and a wordmark; the glyph stays when collapsed
 nav           flex: 1, scrolls, thin scrollbar
   section     0.68em / 700 / uppercase / 1.4px tracking / muted
   item        8px 12px, 10px gap, icon 22px box with an 18px svg
@@ -2015,8 +2034,15 @@ footer        collapse toggle, separated by a hairline
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.nav-item:hover { background: var(--ink-hover); color: var(--brand-on-dark); }
+@media (hover: hover) {
+  .nav-item:hover { background: var(--ink-hover); color: var(--brand-on-dark); }
+}
+.nav-item:active { background: var(--ink-active); }
 ```
+
+Hover sits inside the media query everywhere in the shell. On a touchscreen a
+bare `:hover` sticks to the last item tapped, and in a nav list a row that
+stays lit reads as a second selection.
 
 **Reserve the 3px transparent border on every row, active or not.** That is what
 keeps the label from shifting sideways when the selection moves. Adding the
@@ -2032,10 +2058,13 @@ Two ways to mark it. Both keep the reserved border; pick one per project.
 .nav-item.is-active {
   background: var(--brand-a18);
   color: var(--brand-on-dark);
-  border-left-color: var(--brand);
+  border-left-color: var(--brand-on-dark);
   border-top-left-radius: 0; border-bottom-left-radius: 0;
 }
 ```
+
+The rail takes the on-dark value, like the label. It is the mark that says
+which page this is, and in `--brand` it is 2.84:1 against the sidebar.
 
 **Lit** — a rounded rail that emits, a bloom that falls off across the row.
 Costs nothing in layout and reads well on near-black:
@@ -2083,9 +2112,14 @@ Two mechanics to carry over:
 
 #### Collapsed state
 
-Hide `.nav-label`, `.nav-badge`, `.sidebar-section` and the toggle text; centre
-the item; swap the wordmark for the square mark. Keep the icons and the active
-rail. Collapse is icon-only navigation, not a different navigation.
+Hide `.nav-badge`, `.sidebar-section` and the wordmark text; centre the item;
+keep the glyph, the icons and the active rail. Collapse is icon-only
+navigation, not a different navigation.
+
+`.nav-label` and the toggle text are **clipped, not hidden** — the `.sr-only`
+declarations, applied by the collapsed selectors. At 72px the label is the
+only name the link has; `display: none` there leaves a column of links that
+each announce as "link".
 
 ### Topbar
 
@@ -2096,7 +2130,9 @@ full height so hover fills the bar edge to edge.
 [ page title ......................... ] [ 🔔 56px ] │ [ avatar · name · role ▾ ]
 ```
 
-- Title `1.15em / 700`, truncates with an ellipsis, never wraps.
+- Title `1.15em / 700`, truncates with an ellipsis, never wraps. It is a
+  `<p>`: the page's one `<h1>` is the page title block in the main area, and a
+  second in the frame gives every screen two headings of the same rank.
 - Icon buttons are a fixed 56px wide (48px under 640px), `border-radius: 0`,
   `align-self: stretch`. Hover fills the whole cell.
 - **Exactly one vertical divider**, before the user menu. It separates identity
@@ -2115,16 +2151,22 @@ they hang off dark chrome. They hold content, so they follow the content rules.
 
 ```css
 .dropdown {
-  opacity: 0; transform: translateY(-6px) scale(0.98);
+  opacity: 0; visibility: hidden; transform: translateY(-6px) scale(0.98);
   pointer-events: none;
   transform-origin: top right;
-  transition: opacity 0.16s ease, transform 0.16s ease;
+  transition: opacity 0.16s ease, transform 0.16s ease, visibility 0s linear 0.16s;
 }
-.dropdown.is-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.dropdown.is-open {
+  opacity: 1; visibility: visible; transform: translateY(0) scale(1);
+  pointer-events: auto; transition-delay: 0s;
+}
 ```
 
-Animate opacity and transform, never `display`. Under 640px, let them span the
-viewport with `left: 8px; right: 8px; width: auto; max-width: 380px`.
+Animate opacity and transform, never `display`. `visibility`, switched after
+the fade, is what takes a closed menu out of the tab order — opacity and
+`pointer-events` alone leave its items focusable and invisible, and a keyboard
+user tabs into nothing between the topbar and the page. Under 640px, let them
+span the viewport with `left: 8px; right: 8px; width: auto; max-width: 380px`.
 
 ### Main area
 
@@ -2169,8 +2211,9 @@ expands it. Navigation must stay reachable without a hamburger.
   the announcement.
 - Suppress reload when the already-active tab is clicked. A full navigation to
   the current URL re-runs every page script and throws away unsaved state.
-- The `.sr-only` utility from core ships in `assets/theme.css`; the collapsed
-  sidebar depends on it, since at 72px the visible label is gone.
+- The `.sr-only` utility from core ships in `assets/theme.css`. The collapsed
+  sidebar applies the same declarations to its labels rather than the class,
+  because the state lives on an ancestor.
 
 ### Internationalisation
 
@@ -2228,13 +2271,24 @@ Three variants, and that is the whole set.
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
-.btn:hover:not(:disabled) { background: var(--paper-2); }
-.btn:disabled             { opacity: 0.55; cursor: default; }
+.btn:active:not(:disabled) { background: var(--paper-3); }
+
+/* Stated colours, not opacity - and after the variants in the cascade, so a
+   disabled primary gives up its fill. */
+.btn:disabled {
+  border-color: var(--paper-border); background: var(--paper-2);
+  color: var(--paper-text-3); cursor: default;
+}
 
 .btn-primary {
   border-color: var(--brand); background: var(--brand); color: var(--text-on-brand);
 }
-.btn-primary:hover:not(:disabled) { background: var(--brand-hover); border-color: var(--brand-hover); }
+.btn-primary:active:not(:disabled) { background: var(--brand-dark); border-color: var(--brand-dark); }
+
+@media (hover: hover) {
+  .btn:hover:not(:disabled) { background: var(--paper-2); }
+  .btn-primary:hover:not(:disabled) { background: var(--brand-hover); border-color: var(--brand-hover); }
+}
 
 .btn-sm { padding: 5px 12px; font-size: 0.75rem; }
 
@@ -2247,7 +2301,7 @@ Three variants, and that is the whole set.
 }
 
 .btn:focus-visible, .link-btn:focus-visible {
-  outline: 2px solid var(--brand-a35); outline-offset: 2px;
+  outline: 2px solid var(--brand); outline-offset: 2px;
 }
 ```
 
@@ -2256,6 +2310,11 @@ them on one surface means neither does.
 
 `:hover:not(:disabled)` matters — a disabled button that still lights up on
 hover reads as broken.
+
+**Disabled is a pair of colours, not an opacity.** At `opacity: 0.55` a
+disabled primary's label is 2.96:1 and a default one's is 4.0:1; grey text on
+`--paper-2` is 4.75:1 and still plainly unavailable. Someone has to be able to
+read what it is they cannot do.
 
 ### Forms
 
@@ -2277,7 +2336,7 @@ control and their spacing, so nothing can drift out of alignment.
 .field input, .field select, .field textarea {
   width: 100%; box-sizing: border-box;
   padding: 8px 10px;
-  border: 1px solid var(--paper-border-strong);
+  border: 1px solid var(--paper-border-control);
   border-radius: 6px;
   background: var(--paper); color: var(--paper-text);
   font: inherit; font-size: 0.875rem; font-weight: 400;
@@ -2298,6 +2357,11 @@ gets scanned; labels are reference material.
 
 `min-width: 0` on the field stops a long value from blowing out its grid column.
 
+The field's edge is `--paper-border-control`, not the button border. An empty
+field is nothing but its edge, so the edge has to reach 3:1 — it is 3.46:1,
+where `--paper-border-strong` is 1.48:1 and an empty input on a white card is
+a guess.
+
 #### Form grid
 
 ```css
@@ -2305,7 +2369,7 @@ gets scanned; labels are reference material.
 .field-wide { grid-column: span 2; }
 
 @media (max-width: 860px) { .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } .field-wide { grid-column: auto; } }
+@media (max-width: 520px) { .form-grid { grid-template-columns: minmax(0, 1fr); } .field-wide { grid-column: auto; } }
 ```
 
 `minmax(0, 1fr)`, never plain `1fr` — the default `min-width: auto` makes a
@@ -2326,7 +2390,7 @@ form submission work for free.
   background: var(--paper); color: var(--paper-text);
   box-shadow: var(--shadow-raised);
 }
-.segment input:focus-visible + span { outline: 2px solid var(--brand-a35); }
+.segment input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 1px; }
 ```
 
 The selected option is raised out of a recessed track — no accent needed.
@@ -2336,7 +2400,8 @@ The selected option is raised out of a recessed track — no accent needed.
 The centre of gravity of an ERP. Get the density right and the rest follows.
 
 ```css
-.table-wrap { overflow-x: auto; border: 1px solid var(--paper-border); border-radius: 8px; }
+.table-wrap { position: relative; overflow-x: auto;
+              border: 1px solid var(--paper-border); border-radius: 8px; }
 .table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
 
 .table th {
@@ -2346,8 +2411,10 @@ The centre of gravity of an ERP. Get the density right and the rest follows.
   border-bottom: 1px solid var(--paper-border);
   white-space: nowrap;
 }
-.table td { padding: 8px 12px; color: var(--paper-text); border-bottom: 1px solid var(--paper-border); }
+.table td { padding: 8px 12px; color: var(--paper-text); border-bottom: 1px solid var(--paper-border);
+            height: 2.125rem; box-sizing: border-box; white-space: nowrap; }
 .table tr:last-child td { border-bottom: 0; }
+.table code { line-height: 1; }
 
 .table .num {
   text-align: right;
@@ -2372,6 +2439,17 @@ Rules that carry the weight:
   is how an unreadable table happens.
 - **`white-space: nowrap` on headers**, so a two-word header never doubles the
   header height.
+- **The row is as tall as its text: 34px.** Anything else on the line grows
+  the line box and the row with it — a monospace ID, a pill, a button — and at
+  38px a screen loses two rows in twenty. So `code` in a cell gets
+  `line-height: 1`, the pill and the row action each carry their own fix
+  below, and the `height` on `td` is the floor a skeleton row needs in order
+  to be the height of the row that replaces it.
+- **`position: relative` on the wrapper.** An absolutely positioned child —
+  the `.sr-only` label of an icon-only header — otherwise resolves against the
+  page, escapes the scroller, and the page grows a horizontal scrollbar as
+  wide as the table at exactly the widths where the wrapper was meant to
+  contain it.
 
 #### Row actions
 
@@ -2381,6 +2459,7 @@ out. So it is specified here rather than left to be reinvented.
 
 ```css
 .table .col-action { width: 1%; text-align: end; }   /* shrink to content */
+.table td.col-action { padding-block: 3px; }         /* 26 + 6: the button must not set the row height */
 
 .row-action {
   min-height: 26px;
@@ -2392,7 +2471,9 @@ out. So it is specified here rather than left to be reinvented.
   font: inherit; font-size: 0.72rem; font-weight: 600;
   white-space: nowrap; cursor: pointer;
 }
-.row-action:hover:not(:disabled) { background: var(--paper-2); color: var(--paper-text); }
+@media (hover: hover) {
+  .row-action:hover:not(:disabled) { background: var(--paper-2); color: var(--paper-text); }
+}
 .row-action:active:not(:disabled) { background: var(--paper-3); }
 
 /* Inset, because the action column sits flush against the right edge of a
@@ -2416,7 +2497,10 @@ Four rules:
   out-shouts the data they act on, which is why this is one step down from
   `.btn-sm` in size and uses the muted text colour until hovered.
 - **One per row.** More than one and the column becomes a toolbar; put the
-  rest behind a single overflow menu.
+  rest behind a single overflow menu. The overflow trigger sits beside the
+  action and is not a second one — it is where the second one went. Give it
+  the same size and a real accessible name, because a bare `⋯` announces as
+  "button".
 - **A toggle carries `aria-pressed` and changes its label.** "Hold" becomes
   "Release". A button whose text never changes cannot tell a screen reader
   what it just did.
@@ -2435,25 +2519,28 @@ most waits.
   display: block;
   height: 11px;                                   /* the cap height of a row */
   border-radius: 3px;
-  background: linear-gradient(90deg,
-              var(--paper-3) 0%, var(--paper-2) 50%, var(--paper-3) 100%);
-  background-size: 200% 100%;
-  animation: skeleton-sweep 1.1s ease-in-out infinite;
+  background: var(--paper-3);
+  animation: skeleton-pulse 1.1s ease-in-out infinite;
 }
 .skeleton-cell.is-short { width: 45%; }
 .skeleton-cell.is-right { margin-inline-start: auto; width: 60%; }
 
-@keyframes skeleton-sweep {
-  from { background-position: 100% 0; }
-  to   { background-position: -100% 0; }
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
 }
 
 /* The global guard kills the animation and does not supply an end state.
    Without this the cells inherit whatever frame they stopped on. */
 @media (prefers-reduced-motion: reduce) {
-  .skeleton-cell { animation: none; background: var(--paper-3); opacity: 1; }
+  .skeleton-cell { animation: none; opacity: 1; }
 }
 ```
+
+A pulse, not a travelling highlight. A reloading table is a few hundred of
+these cells at once, and a highlight is a background repainted in every one of
+them on every frame — the many-elements case `core/04-motion.md` rules out.
+Opacity is composited, so the count stops mattering.
 
 The rules that make it honest:
 
@@ -2466,8 +2553,12 @@ The rules that make it honest:
 - **`aria-hidden` on the skeleton rows.** They carry no information, and a
   screen reader announcing eight rows of nothing is worse than silence. Put the
   word in the live region instead - the same one that carries the match count.
-- **The table header stays.** Only the body is unknown, and keeping the header
-  means the columns do not move when the data arrives.
+- **The table header stays, and so do its columns.** Only the body is unknown.
+  But an auto-layout table sizes its columns from the body, so with the data
+  gone every column re-flows to fit its header, and re-flows again when the
+  answer lands. Before swapping the rows out, copy each `th`'s measured width
+  into a `<colgroup>` and set `table-layout: fixed`; remove both when the data
+  arrives.
 
 ### KPI tiles
 
@@ -2508,10 +2599,12 @@ Three weights of the same idea. Pick by how loud it needs to be.
 
 @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-/* Louder — a filled pill */
+/* Louder — a filled pill. Hung from the top of the line with its own line
+   height, so in a table cell it sits inside the row instead of stretching it. */
 .pill { display: inline-flex; align-items: center; gap: 4px;
         padding: 2px 8px; border-radius: 999px;
-        font-size: 0.7rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        font-size: 0.7rem; font-weight: 600; white-space: nowrap; flex-shrink: 0;
+        line-height: 1; vertical-align: top; margin-top: 1px; }
 .pill-success { background: var(--pill-success-bg); color: var(--pill-success-text); }
 .pill-warning { background: var(--pill-warning-bg); color: var(--pill-warning-text); }
 .pill-danger  { background: var(--pill-danger-bg);  color: var(--pill-danger-text); }
@@ -2531,9 +2624,18 @@ text. A row of saturated pills in a table drowns the data next to them.
 
 ### Dropdown / popover
 
-See `02-shell.md` for positioning. Item spec:
+See `02-shell.md` for positioning and the open/closed states;
+`assets/erp-shell.css` ships all of it. The container, then the item:
 
 ```css
+.dropdown {
+  padding: 6px;
+  border: 1px solid var(--paper-border);
+  border-radius: var(--radius-float);
+  background: var(--paper); color: var(--paper-text);
+  box-shadow: var(--shadow-float);
+}
+
 .dropdown-item {
   display: flex; align-items: center; gap: 12px; width: 100%;
   padding: 10px 12px; border-radius: 8px;
@@ -2543,12 +2645,19 @@ See `02-shell.md` for positioning. Item spec:
   cursor: pointer;
   transition: background 0.12s ease, color 0.12s ease;
 }
-.dropdown-item:hover { background: var(--paper-3); }
 .dropdown-item .icon { width: 20px; height: 20px; color: var(--paper-text-3); flex-shrink: 0; }
-.dropdown-item:hover .icon { color: var(--brand); }
-
 .dropdown-item.is-danger { color: var(--state-danger-dark); }
-.dropdown-item.is-danger:hover { background: var(--danger-tint); }
+
+@media (hover: hover) {
+  .dropdown-item:hover { background: var(--paper-3); }
+  .dropdown-item:hover .icon { color: var(--brand); }
+  .dropdown-item.is-danger:hover { background: var(--danger-tint); }
+}
+.dropdown-item:active { background: var(--paper-border); }
+
+/* Inset: the item runs to within 6px of a container that clips nothing but
+   sits against the viewport edge under 640px. */
+.dropdown-item:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
 
 .dropdown-divider { height: 1px; background: var(--paper-border); margin: 4px 6px; }
 ```
@@ -2584,6 +2693,55 @@ summoned it.
 
 `overflow-wrap: anywhere` on the title: file names and IDs have no spaces to
 break at.
+
+### Dialog
+
+A card that floats, and the native element: `<dialog>` opened with
+`showModal()` supplies the focus handling `core/05-accessibility.md` asks for,
+which a positioned `<div>` has to reimplement and usually gets half of.
+
+```css
+.dialog {
+  width: min(30rem, calc(100vw - 32px));
+  padding: 20px 22px;
+  border: 1px solid var(--paper-border);
+  border-radius: var(--radius-float);
+  background: var(--paper); color: var(--paper-text);
+  box-shadow: var(--shadow-float);
+}
+.dialog::backdrop { background: var(--scrim); }
+```
+
+Card padding, the floating radius and shadow, a slate scrim. Actions bottom
+right, the primary last, and one primary — the card rule holds on every
+surface. Say in the body what will change and how many records it touches;
+an operator confirming the fortieth dialog of the day reads the number, not
+the title.
+
+### Toast
+
+For one job: an action that looked done and was not.
+
+```css
+.toast {
+  position: fixed; inset-block-end: 20px; inset-inline-end: 20px;
+  width: min(26rem, calc(100vw - 32px));
+  padding: 12px 14px;
+  border: 1px solid var(--paper-border-strong);
+  border-inline-start: 3px solid var(--state-danger);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  box-shadow: var(--shadow-float);
+}
+```
+
+`role="alert"`, the record's ID in the title, the actual reason in the body,
+and it stays until dismissed — a rollback notice that times out is a silent
+rollback with extra steps. Paper, like everything else that holds words.
+
+A success does not get one. It goes in the live line beside the match count:
+someone approving forty invoices needs to see the fortieth row, not forty
+toasts stacked over it.
 
 ### Filter row
 
@@ -2818,6 +2976,8 @@ This file is what an operational tool needs on top.
 - [ ] Last row has no bottom border.
 - [ ] The wrapper scrolls; columns are not squeezed.
 - [ ] Headers do not wrap.
+- [ ] Every body row is the same height: no pill, button or monospace ID is
+      setting it.
 
 #### The shell
 - [ ] The 3px transparent left border is reserved on **every** nav row.
@@ -2827,12 +2987,17 @@ This file is what an operational tool needs on top.
 - [ ] Topbar dropdowns are `position: fixed`, not absolute.
 - [ ] Collapsed sidebar keeps icons and the active rail; navigation is still
       navigation, not a hamburger.
+- [ ] Collapsed nav labels are clipped, not `display: none` — each link still
+      has a name.
+- [ ] A closed topbar menu is out of the tab order.
 - [ ] Both selector forms exist for every collapsed rule
       (`.is-collapsed` and `html.sb-collapsed`).
 
 #### Components
 - [ ] One primary button per card.
-- [ ] `:hover:not(:disabled)` on every button.
+- [ ] `:hover:not(:disabled)` on every button; disabled is a stated pair of
+      colours, not an opacity.
+- [ ] A form field's edge is `--paper-border-control`.
 - [ ] The `<label>` wraps its control; label quieter than the value.
 - [ ] KPI tile numbers are **not** coloured; judgement lives in the sub-line.
 - [ ] Status pills are tinted background with dark text, not saturated fill.
@@ -2841,7 +3006,8 @@ This file is what an operational tool needs on top.
 - [ ] Row actions are visible without hovering, one per row, quieter than a
       button, and a toggle changes its own label.
 - [ ] A reloading table shows skeleton rows in the real row structure, on a
-      ~300ms timer, with the header left in place.
+      ~300ms timer, with the header left in place and the column widths
+      pinned.
 - [ ] Non-matching rows dim on the chart rather than vanishing.
 
 ### Failure modes specific to this domain
@@ -2851,7 +3017,9 @@ Core covers the universal ones. These are the ERP-shaped versions.
 **The accent on the wrong surface.** The domain-specific instance: an active
 sidebar item painted in `--brand` instead of `--brand-on-dark`. It
 passes a brand review and is invisible against `#0a0a0c`. Check this first on
-any dark-chrome build.
+any dark-chrome build — the rail and the focus ring as well as the label. This
+pack's own shell once shipped its rail in `--brand`, with this paragraph
+sitting above it.
 
 **The border that only exists when active.** A left border added to the selected
 nav row shifts every label 3px as the selection moves. Reserve a transparent
@@ -2885,7 +3053,7 @@ If markup no longer ships, delete the rule and the markup together.
 
 ### Refusals
 
-The table in `PACK.md` lists what this pack pushes back on and what to offer
+The table under *What this pack deliberately refuses* lists what this pack pushes back on and what to offer
 instead. Name the cost, offer the alternative, then build whatever is decided —
 and record the decision so nobody re-litigates it next quarter.
 

@@ -72,9 +72,6 @@
     cursor: pointer;
 }
 
-.scene-load:hover {
-    background: var(--stage-3);
-}
 
 /* Gone once the scene is running, and gone for good if it cannot. */
 .scene[data-state="loading"] .scene-load,
@@ -128,22 +125,36 @@
     cursor: pointer;
 }
 
+/* Pressed is a second edge and a heavier weight as well as a colour, so it is
+   still the pressed one in greyscale. */
 .scene-views button[aria-pressed="true"] {
     border-color: var(--accent-on-stage);
+    box-shadow: inset 0 0 0 1px var(--accent-on-stage);
     color: var(--accent-on-stage);
     background: var(--stage-3);
+    font-weight: 700;
 }
 
 /* ----- The stage: scene and text in separate lanes ---------------------- */
 
+/* The content is capped; the surface is not. The cap lives in the padding, so
+   a section that is both .stage and .on-stage is dark from edge to edge. As a
+   max-width it stopped the stage colour at the page width, with the light
+   page showing either side of it on a wide screen. */
 .stage {
     display: grid;
     grid-template-columns: var(--lane-text) minmax(0, 1fr);
     gap: var(--gap-block);
     align-items: center;
-    max-width: var(--width-page);
-    margin-inline: auto;
-    padding: var(--gap-section) var(--pad-page);
+    padding-block: var(--gap-section);
+    padding-inline: max(var(--pad-page), calc((100% - var(--width-page)) / 2 + var(--pad-page)));
+}
+
+/* The stage under the floating header. It clears the header and no more: the
+   full section gap above and below puts the view bar and the option picker
+   under the fold of a laptop. */
+.stage--hero {
+    padding-block: calc(var(--header-h) + var(--gap-block)) calc(var(--gap-section) / 2);
 }
 
 .stage > * {
@@ -215,26 +226,21 @@
     transition: background var(--d-fast) ease;
 }
 
-.btn-primary:hover {
-    background: var(--accent-hover);
-}
-
 .on-stage .btn-primary {
     background: var(--accent-on-stage);
     color: var(--text-on-accent-stage);   /* white here is 2.09:1 */
 }
 
-.on-stage .btn-primary:hover {
-    background: var(--stage-text);
-}
-
-/* ----- Hotspots: HTML buttons over the canvas, placed by script --------- */
+/* ----- Hotspots: HTML buttons over the canvas, placed by script ---------
+   --x and --y are the point on the model. The pill stands above it on a stem:
+   centred on the point, the label covers the part it names. */
 
 .hotspot {
     position: absolute;
     left: 0;
     top: 0;
-    transform: translate(var(--x, 0), var(--y, 0)) translate(-50%, -50%);
+    transform: translate(var(--x, 0), var(--y, 0)) translate(-50%, calc(-100% - var(--stem)));
+    white-space: nowrap;
     min-height: var(--target);
     padding: 0 0.875rem;
     border: 1px solid var(--stage-control);
@@ -247,6 +253,42 @@
 
 .hotspot[hidden] {
     display: none;                        /* the point it marks is facing away */
+}
+
+.hotspot::after {                         /* the stem */
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 1px;
+    height: var(--stem);
+    background: var(--stage-text-2);
+    pointer-events: none;
+}
+
+.hotspot::before {                        /* its foot: the exact point */
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: calc(100% + var(--stem));
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border: 1px solid var(--stage);
+    border-radius: var(--r-pill);
+    background: var(--stage-text);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.hotspot[aria-expanded="true"] {
+    border-color: var(--accent-on-stage);
+    box-shadow: inset 0 0 0 1px var(--accent-on-stage);
+    background: var(--stage-3);
+}
+
+/* A label with no canvas under it points at nothing. */
+.scene:not([data-state="ready"]) .hotspot {
+    display: none;
 }
 
 /* ----- The plate: the only way text goes over a render ------------------ */
@@ -288,6 +330,7 @@
 
 .option:has(input:checked) {
     border-color: var(--accent-on-stage);
+    box-shadow: inset 0 0 0 1px var(--accent-on-stage);
     background: var(--stage-3);
 }
 
@@ -304,6 +347,52 @@
     border: 1px solid var(--stage-control);
     background: var(--swatch, transparent);
     flex: none;
+}
+
+/* ----- What the pointer does ---------------------------------------------
+   Hover sits inside the query: on a touchscreen a bare :hover is applied by a
+   tap and stays until the next one, which reads as a second selected state. */
+
+@media (hover: hover) {
+    .scene-load:hover,
+    .scene-views button:hover,
+    .hotspot:hover,
+    .option:hover {
+        background: var(--stage-3);
+        border-color: var(--stage-text-2);
+    }
+
+    .btn-primary:hover {
+        background: var(--accent-hover);
+    }
+
+    .on-stage .btn-primary:hover {
+        background: var(--stage-text);
+    }
+}
+
+.scene-load:active,
+.scene-views button:active,
+.hotspot:active {
+    background: var(--stage-3);
+    border-color: var(--stage-text);
+}
+
+.btn-primary:active {
+    background: var(--accent-hover);
+}
+
+.on-stage .btn-primary:active {
+    background: var(--stage-text-2);
+}
+
+/* The system's palette replaces every colour above; the edge survives. */
+@media (forced-colors: active) {
+    .scene-views button[aria-pressed="true"],
+    .hotspot[aria-expanded="true"],
+    .option:has(input:checked) {
+        border: 2px solid Highlight;
+    }
 }
 
 /* ----- Reduced motion ---------------------------------------------------

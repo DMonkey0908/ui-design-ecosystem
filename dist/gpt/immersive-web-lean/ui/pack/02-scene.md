@@ -53,7 +53,9 @@ them.
 - **Every option is a form control beside the scene**, and choosing one
   changes the model. The price and the specification update as text.
 - **Photographs stay.** A render does not show texture, wear or scale against a
-  hand. The scene is one item in the gallery, not a replacement for it.
+  hand. The scene is one item in the gallery, not a replacement for it. With
+  no photographs yet, the page ships without a gallery: a still rendered from
+  the same model answers none of what the photograph was there for.
 - A **review** page needs one thing a shop page does not: named views that
   match the review's argument. "The port is on the wrong side" should be a
   button that turns the model to that port.
@@ -101,7 +103,7 @@ The scene and the words get separate space. This is the default layout and it
 needs a reason to be anything else.
 
 ```html
-<section class="stage on-stage">
+<section class="stage stage--hero on-stage">
   <div class="stage-text">
     <h1>The Kestrel chair, rebuilt from the frame out</h1>
     <p>Eight zones of tension in the back, and none of them is foam.</p>
@@ -109,12 +111,12 @@ needs a reason to be anything else.
   </div>
 
   <figure class="scene" data-state="poster">
-    <img class="scene-poster" src="aeron-hero.avif" width="1200" height="900"
+    <img class="scene-poster" src="kestrel-hero.avif" width="1200" height="900"
          alt="Kestrel chair in graphite, seen from the front left" fetchpriority="high">
     <canvas class="scene-canvas" role="img"
             aria-label="Kestrel chair, 3D view. Use the view buttons to turn it."></canvas>
     <div class="scene-progress" aria-hidden="true"></div>
-    <button class="scene-load" type="button">View in 3D</button>
+    <button class="scene-load" type="button" hidden>View in 3D</button>
     <div class="scene-views" role="group" aria-label="View">
       <button type="button" data-view="front" aria-pressed="false">Front</button>
       <button type="button" data-view="side" aria-pressed="false">Side</button>
@@ -124,7 +126,7 @@ needs a reason to be anything else.
 </section>
 ```
 
-Three things in that markup are load-bearing:
+Four things in that markup are load-bearing:
 
 - **The image is a real `<img>` with dimensions and `fetchpriority="high"`.**
   It is the largest thing on the first screen, so it is what the browser times
@@ -134,9 +136,14 @@ Three things in that markup are load-bearing:
   stranger needs off the screen.
 - **The frame has a state, and starts in `poster`.** Everything the visitor
   sees is driven from that attribute; see below.
+- **The button ships `hidden`.** The mount reveals it once it knows the scene
+  can be delivered. Visible in the HTML, it is a control that does nothing for
+  everyone whose script failed - the visitors the poster exists for.
 
 `assets/scene.css` has the grid. Text lane `minmax(20rem, 28rem)`, scene lane
-the rest, one column under 800px.
+the rest, one column under 800px. `.stage--hero` is the stage under the
+floating header: it clears the header and no more, where the full section gap
+would put the view bar and the option picker under the fold of a laptop.
 
 ## The frame has four states
 
@@ -162,6 +169,12 @@ lighting, same crop. Then the swap is a cross-fade the eye reads as the picture
 coming alive. A studio photograph as the poster makes the swap a jump cut to a
 different object.
 
+With no modelling tool to render it from - a model built in code, or one that
+arrives only as a `.glb` - the poster is a capture of the running canvas: mount
+the scene, hide the view bar and the hotspots, and screenshot the frame at
+twice its size. So the scene exists before its poster does. Until then the
+frame holds its reserved box, and the page is reviewed in that state.
+
 ## Which scene mounts itself
 
 - **The hero scene** mounts on its own, once the frame is near the viewport and
@@ -169,7 +182,7 @@ different object.
 - **Every other scene** waits for its button. A gallery of six products is six
   images and six buttons, and one engine on the first press.
 - **Neither mounts** when the visitor has asked for reduced data, or the
-  browser has no WebGL 2. Then the button is removed, because offering what
+  browser has no WebGL 2. Then the button stays hidden, because offering what
   cannot be delivered is worse than not offering it.
 
 `03-budget.md` has the loading order behind this.
@@ -206,12 +219,16 @@ re-stage it once as each section arrives. This is the default here.
 ```js
 const chapters = new IntersectionObserver((entries) => {
   for (const e of entries) {
-    if (e.isIntersecting) handle.view(e.target.dataset.view);   // one draw per chapter
+    if (e.isIntersecting && handle) handle.view(e.target.dataset.view);   // one draw per chapter
   }
 }, { rootMargin: '-45% 0px -45% 0px' });                        // fires at the viewport's middle
 
 document.querySelectorAll('.chapter').forEach((c) => chapters.observe(c));
 ```
+
+`handle` is what `mountWhenWanted(…).ready` resolved to - the loading snippet
+in `03-budget.md` - and it stays `null` when there is no scene, which is why
+every snippet that uses it checks first.
 
 Why chapters win as a default:
 
@@ -233,7 +250,7 @@ chaptered version as its reduced-motion form.
 A point on the model with something to say about it.
 
 ```html
-<button class="hotspot" type="button" aria-expanded="false" aria-controls="spot-pivot">
+<button class="hotspot" type="button" data-spot="pivot" aria-expanded="false" aria-controls="spot-pivot">
   Tilt pivot
 </button>
 <div class="plate" id="spot-pivot" hidden>
@@ -251,6 +268,27 @@ A point on the model with something to say about it.
 - **Its popover is a plate.** It opens over the render, so it is opaque.
 - **Five at most on screen at once.** Past that they collide, and the scene has
   become a diagram that should have been drawn as one.
+- **It stands off the point on a stem.** A pill centred on its anchor covers
+  the part it names. `scene.css` draws it above the point, with a line down.
+
+The mount says where each point is after every draw, and how squarely it faces
+the camera:
+
+```js
+const SPOTS = { pivot: { at: [0, 0.42, -0.1], normal: [0, 0, -1] } };   // model space
+
+mountWhenWanted(frame, {
+  onFrame({ toScreen }) {
+    for (const button of frame.querySelectorAll('.hotspot')) {
+      const spot = SPOTS[button.dataset.spot];
+      const { x, y, facing } = toScreen(spot.at, spot.normal);
+      button.hidden = facing < 0;                       // the part is on the far side
+      button.style.setProperty('--x', `${x}px`);
+      button.style.setProperty('--y', `${y}px`);
+    }
+  },
+});
+```
 
 ## Components this pack does not have
 

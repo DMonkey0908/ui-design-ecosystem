@@ -184,8 +184,8 @@ human will use this with a different tool than you, install that tool's format.
 | Assistant | Install | Always in context |
 |---|---|---|
 | Claude Code, Claude Desktop | `dist/claude/<skill-name>/` -> `.claude/skills/<skill-name>/` | ~200 tokens (the description only) |
-| Gemini CLI / Code Assist | `dist/gemini/<id>-lean/` -> repo root | **~2,300 tokens** |
-| Codex, Cursor, any `AGENTS.md` tool | `dist/gpt/<id>-lean/` -> repo root | **~2,300 tokens** |
+| Gemini CLI / Code Assist | `dist/gemini/<id>-lean/` -> repo root | **~2,350 tokens** |
+| Codex, Cursor, any `AGENTS.md` tool | `dist/gpt/<id>-lean/` -> repo root | **~2,350 tokens** |
 | Gemini Gem | `dist/gemini/<id>.GEMINI.md` | whole file - paste-in only |
 | Custom GPT | `dist/gpt/<id>.custom-gpt-instructions.md` | Fenced block -> Instructions; `<id>.AGENTS.md` -> Knowledge |
 <!-- COST:END:install -->
@@ -198,7 +198,7 @@ the activation block, the thesis, the hard rules, and an index. The assistant
 opens the one reference its task needs, the way the Claude skill already does.
 
 <!-- COST:START:install-note -->
-That is **~2,300 tokens instead of ~33,850 tokens**, on every request, including every
+That is **~2,350 tokens instead of ~35,300 tokens**, on every request, including every
 request with nothing to do with UI.
 <!-- COST:END:install-note -->
 

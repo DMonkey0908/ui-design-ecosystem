@@ -11,21 +11,31 @@
      <figure class="scene" data-state="poster">
        <img class="scene-poster" src="chair.avif" width="1200" height="900" alt="...">
        <canvas class="scene-canvas" role="img" aria-label="..."></canvas>
-       <button class="scene-load" type="button">View in 3D</button>
+       <button class="scene-load" type="button" hidden>View in 3D</button>
      </figure>
+
+   The button ships `hidden` and is revealed here, once the scene can be
+   delivered. Without script it would be a control that does nothing.
 
    The frame reports itself through data-state, and CSS does the rest:
      poster   the image. The page is complete in this state.
      loading  the image, plus progress. Still complete.
      ready    the canvas is drawn and the image is gone.
      failed   the image again, for good. Not an error the visitor has to read.
+
+   The model is either a file or a function:
+     src            a glTF or GLB, loaded with the decoders it names
+     build(THREE)   geometry made in code. Returns an Object3D, or
+                    { object, lights? } - anything else on it is yours, and
+                    comes back as the third argument of set().
    ========================================================================== */
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)');
 const COARSE = matchMedia('(pointer: coarse)');
 
 /* Named camera positions, as a direction from the model's centre. A visitor
-   who cannot drag reaches every one of these from a button. */
+   who cannot drag reaches every one of these from a button. Pass `views` to
+   replace them: which way is "front" belongs to the model. */
 const VIEWS = {
   front: [0, 0.15, 1],
   side: [1, 0.15, 0],
@@ -46,18 +56,31 @@ export function canMount() {
  *
  *   auto: true   the one hero scene. Mounts itself once it is nearly on screen.
  *   auto: false  every other scene. Waits for the button.
+ *
+ * Returns { start, ready }. `ready` resolves to the handle once the scene is
+ * running, however it was started - and to null if it cannot run, so the
+ * caller's `if (handle)` is the whole of its error handling.
  */
 export function mountWhenWanted(frame, options = {}) {
   const button = frame.querySelector('.scene-load');
   let handle = null;
-  const start = () => { handle = handle || mountScene(frame, options); return handle; };
+  let resolve;
+  const ready = new Promise((r) => { resolve = r; });
+  const start = () => {
+    if (!handle) { handle = mountScene(frame, options); handle.then(resolve); }
+    return handle;
+  };
 
   if (!canMount()) {
     if (button) button.hidden = true;        // never offer what cannot be delivered
-    return { start: () => null };
+    resolve(null);
+    return { start: () => null, ready };
   }
 
-  if (button) button.addEventListener('click', start, { once: true });
+  if (button) {
+    button.hidden = false;                   // it ships hidden - see the markup above
+    button.addEventListener('click', start, { once: true });
+  }
 
   if (options.auto) {
     const io = new IntersectionObserver((entries) => {
@@ -69,34 +92,43 @@ export function mountWhenWanted(frame, options = {}) {
     io.observe(frame);
   }
 
-  return { start };
+  return { start, ready };
 }
 
 /**
  * Load the engine and the model, then hand the frame over to the canvas.
- * Resolves to a handle: { view, set, dispose }.
+ * Resolves to a handle: { view, set, info, dispose }.
  */
 export async function mountScene(frame, {
   src,
+  build,
   // What the model was compressed with. Each one is a separate download, so
   // name only what this model needs - see 03-budget.md for what each costs.
   decoders = ['meshopt'],
   dracoPath = '/vendor/draco/',
   ktx2Path = '/vendor/basis/',
+  views = VIEWS,
   initialView = 'hero',
+  fit = 1.4,                 // distance, in bounding radii. 1.4 leaves room below for the view bar
+  lift = 0,                  // raise the model in the frame, as a fraction of its radius
+  shadows = false,           // switch the shadow map on for the model's one casting light
   onProgress,
+  onFrame,                   // ({ toScreen }) after every draw - where HTML over the canvas is placed
+  onInteract,                // a drag has started: the camera has left its named view
 } = {}) {
   const canvas = frame.querySelector('.scene-canvas');
+  const poster = frame.querySelector('.scene-poster');
   frame.dataset.state = 'loading';
 
   let renderer;
   try {
-    const [THREE, { GLTFLoader }, { OrbitControls }, { RoomEnvironment }] =
+    const [THREE, { OrbitControls }, { RoomEnvironment }, { GLTFLoader }] =
       await Promise.all([
         import('three'),
-        import('three/addons/loaders/GLTFLoader.js'),
         import('three/addons/controls/OrbitControls.js'),
         import('three/addons/environments/RoomEnvironment.js'),
+        // Geometry made in code needs no loader, so it does not pay for one.
+        build ? {} : import('three/addons/loaders/GLTFLoader.js'),
       ]);
 
     renderer = new THREE.WebGLRenderer({
@@ -115,43 +147,60 @@ export async function mountScene(frame, {
     // filmic curves shift hue in the highlights.
     renderer.toneMapping = THREE.NeutralToneMapping;
 
+    if (shadows) {
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFShadowMap;   // the soft variant is gone from current three.js
+    }
+
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+    const fov = 35;
+    const camera = new THREE.PerspectiveCamera(fov, 1, 0.1, 100);
 
     // Lighting from a generated room: no HDR file to download.
     const pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
-    const loader = new GLTFLoader();
     const owned = [];                    // loaders holding workers, to dispose later
-    if (decoders.includes('meshopt')) {
-      const { MeshoptDecoder } = await import('three/addons/libs/meshopt_decoder.module.js');
-      loader.setMeshoptDecoder(MeshoptDecoder);
-    }
-    if (decoders.includes('draco')) {
-      const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
-      const draco = new DRACOLoader().setDecoderPath(dracoPath);
-      loader.setDRACOLoader(draco);
-      owned.push(draco);
-    }
-    if (decoders.includes('ktx2')) {
-      const { KTX2Loader } = await import('three/addons/loaders/KTX2Loader.js');
-      const ktx2 = new KTX2Loader().setTranscoderPath(ktx2Path).detectSupport(renderer);
-      loader.setKTX2Loader(ktx2);
-      owned.push(ktx2);
-    }
+    let built = null;
+    let model;
 
-    const gltf = await loader.loadAsync(src, (e) => {
-      if (onProgress && e.lengthComputable) onProgress(e.loaded / e.total);
-    });
-    const model = gltf.scene;
+    if (build) {
+      built = await build(THREE);
+      model = built.isObject3D ? built : built.object;
+      if (built.lights) scene.add(built.lights);
+      if (onProgress) onProgress(1);
+    } else {
+      const loader = new GLTFLoader();
+      if (decoders.includes('meshopt')) {
+        const { MeshoptDecoder } = await import('three/addons/libs/meshopt_decoder.module.js');
+        loader.setMeshoptDecoder(MeshoptDecoder);
+      }
+      if (decoders.includes('draco')) {
+        const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
+        const draco = new DRACOLoader().setDecoderPath(dracoPath);
+        loader.setDRACOLoader(draco);
+        owned.push(draco);
+      }
+      if (decoders.includes('ktx2')) {
+        const { KTX2Loader } = await import('three/addons/loaders/KTX2Loader.js');
+        const ktx2 = new KTX2Loader().setTranscoderPath(ktx2Path).detectSupport(renderer);
+        loader.setKTX2Loader(ktx2);
+        owned.push(ktx2);
+      }
+
+      const gltf = await loader.loadAsync(src, (e) => {
+        if (onProgress && e.lengthComputable) onProgress(e.loaded / e.total);
+      });
+      model = gltf.scene;
+    }
     scene.add(model);
 
-    // Frame the model whatever units it was exported in.
+    // Frame the model whatever units it was made in.
     const box = new THREE.Box3().setFromObject(model);
     const centre = box.getCenter(new THREE.Vector3());
     const radius = box.getSize(new THREE.Vector3()).length() / 2 || 1;
-    const distance = radius / Math.sin((camera.fov * Math.PI) / 360) * 1.4;   // room below the model for the view bar
+    const distance = radius / Math.sin((fov * Math.PI) / 360) * fit;
+    centre.y -= radius * lift;
     camera.near = distance / 100;
     camera.far = distance * 10;
 
@@ -168,14 +217,42 @@ export async function mountScene(frame, {
     // the page that a thumb cannot scroll across. Give vertical back.
     canvas.style.touchAction = 'pan-y';
 
+    // ---- HTML over the canvas --------------------------------------------
+    // A hotspot is a button in the page. This is how it finds its place.
+    const probe = new THREE.Vector3();
+    const toward = new THREE.Vector3();
+    const overlay = {
+      /** A point on the model as CSS pixels in the frame, and how squarely
+          `normal` faces the camera: 1 head-on, 0 edge-on, negative facing away. */
+      toScreen(point, normal) {
+        probe.set(point[0], point[1], point[2]);
+        let facing = 1;
+        if (normal) {
+          toward.copy(camera.position).sub(probe).normalize();
+          const length = Math.hypot(normal[0], normal[1], normal[2]) || 1;
+          facing = (toward.x * normal[0] + toward.y * normal[1] + toward.z * normal[2]) / length;
+        }
+        probe.project(camera);
+        return {
+          x: (probe.x * 0.5 + 0.5) * frame.clientWidth,
+          y: (-probe.y * 0.5 + 0.5) * frame.clientHeight,
+          facing,
+        };
+      },
+    };
+
     // ---- Render on demand ------------------------------------------------
     // No animation loop. A frame is drawn when something changed, and while
     // damping is still settling. Idle costs nothing, which is the point.
     let queued = false;
+    const paint = () => {
+      renderer.render(scene, camera);
+      if (onFrame) onFrame(overlay);
+    };
     const draw = () => {
       queued = false;
       controls.update();                 // while damping, this fires 'change' again
-      renderer.render(scene, camera);
+      paint();
     };
     const invalidate = () => {
       if (queued) return;
@@ -183,21 +260,33 @@ export async function mountScene(frame, {
       requestAnimationFrame(draw);
     };
     controls.addEventListener('change', invalidate);
+    if (onInteract) controls.addEventListener('start', onInteract);
 
-    const fit = () => {
+    // The poster's own proportions. A frame narrower than that - a square one
+    // on a phone - widens the field of view, so the canvas shows what the
+    // poster showed and the swap is still not a jump.
+    const posterAspect = poster && poster.getAttribute('height') > 0
+      ? poster.getAttribute('width') / poster.getAttribute('height')
+      : 0;
+
+    const resizeToFrame = () => {
       const { clientWidth: w, clientHeight: h } = frame;
       if (!w || !h) return;
       renderer.setSize(w, h, false);     // false: CSS owns the layout size
-      camera.aspect = w / h;
+      const aspect = w / h;
+      camera.aspect = aspect;
+      camera.fov = posterAspect && aspect < posterAspect
+        ? (Math.atan(Math.tan((fov * Math.PI) / 360) * posterAspect / aspect) * 360) / Math.PI
+        : fov;
       camera.updateProjectionMatrix();
       invalidate();
     };
-    fit();                               // now, so the first frame is the right size
-    const resize = new ResizeObserver(fit);
+    resizeToFrame();                     // now, so the first frame is the right size
+    const resize = new ResizeObserver(resizeToFrame);
     resize.observe(frame);
 
     const view = (name) => {
-      const dir = VIEWS[name];
+      const dir = views[name];
       if (!dir) return;
       camera.position.set(dir[0], dir[1], dir[2]).normalize().multiplyScalar(distance).add(centre);
       camera.lookAt(centre);
@@ -218,13 +307,24 @@ export async function mountScene(frame, {
     REDUCED.addEventListener('change', onMotionPref);
 
     // Draw once before revealing, so the swap from image to canvas is not a flash.
-    renderer.render(scene, camera);
+    paint();
     frame.dataset.state = 'ready';
 
     return {
       view,
-      /** Apply a change to the model, then redraw. `fn` receives the glTF scene. */
-      set(fn) { fn(model, THREE); invalidate(); },
+      /** Apply a change to the model, then redraw. `fn` receives the model,
+          THREE, and whatever build() returned. */
+      set(fn) { fn(model, THREE, built); invalidate(); },
+      /** What the last frame cost. Read it; do not estimate it. */
+      info() {
+        const { render, memory } = renderer.info;
+        return {
+          drawCalls: render.calls,       // every pass: a shadow-casting light draws the model twice
+          triangles: render.triangles,
+          geometries: memory.geometries,
+          textures: memory.textures,
+        };
+      },
       /** Call on route change. three.js frees nothing on its own. */
       dispose() {
         resize.disconnect();
@@ -234,6 +334,7 @@ export async function mountScene(frame, {
         controls.dispose();
         scene.traverse((o) => {
           if (o.geometry) o.geometry.dispose();
+          if (o.shadow && o.shadow.map) o.shadow.map.dispose();
           for (const m of [].concat(o.material || [])) {
             for (const v of Object.values(m)) if (v && v.isTexture) v.dispose();
             m.dispose();
@@ -247,7 +348,8 @@ export async function mountScene(frame, {
       },
     };
   } catch (err) {
-    // No WebGL, a blocked decoder, a model that 404s: all the same outcome.
+    // No WebGL, a blocked decoder, a model that 404s, a build that throws:
+    // all the same outcome.
     if (renderer) renderer.dispose();
     frame.dataset.state = 'failed';
     console.warn('scene: staying on the poster -', err);

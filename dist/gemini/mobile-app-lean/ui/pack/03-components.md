@@ -98,6 +98,9 @@ loading        the label is replaced in place; the button keeps its width
 - **The primary action is pinned to the bottom** on a screen where it is the
   point — a checkout, a form, a confirmation. Pinned above the keyboard when
   the keyboard is up, and above the safe-area inset always.
+- **On a tabbed screen it sits directly above the tab bar**, and the tab bar
+  keeps the inset. Two stacked bars that each add it leave a band of nothing
+  between the button and the tabs, on the device that has least room for one.
 - **It keeps its width while busy.** A button that shrinks to a spinner moves
   everything around it, and the user's thumb is already travelling.
 - **Never disable a primary action without saying why**, as core requires. On a
@@ -198,8 +201,15 @@ specific here:
 - **Offline is not an error state.** It is a normal condition of this domain
   and `04-lifecycle.md` covers it.
 - **A snackbar or toast is for something already done**, and it carries an
-  undo. Anything requiring a decision is a sheet, because a toast leaves while
+  undo whenever the action has one. An action with none — a payment that has
+  left, a message delivered — is confirmed where it happened, in the row's own
+  state, and gets no snackbar: one that only reports is a message that leaves
+  before it is read, and one that offers an undo it cannot honour is worse.
+  Anything requiring a decision is a sheet, because a toast leaves while
   the user is still reading it.
+- **It sits above whatever is pinned at the bottom** — the tab bar, and the
+  primary action if there is one — on `inverse-surface`, with its action in
+  `accent-on-inverse`. See `01-surfaces.md` for why not `accent`.
 
 ## Lists at length
 

@@ -107,6 +107,16 @@ label kept is 2.09:1.
 it is tight on purpose rather than by accident: a darker control edge reads as
 a heavy outline on a light form. It leaves no room to lighten the page.
 
+## Colours inside the model
+
+The token file is the interface's palette. A material's base colour - in a
+`.glb` or in a function that builds the model - is product data, like a pixel
+in a photograph, and stays with the model.
+
+The exception is a finish the visitor chooses. It is drawn twice, as the swatch
+beside its name and as the paint on the model, so it is one token that both
+read. Typed in two places, the swatch and the product drift apart.
+
 ## Nothing in this table covers text on the render
 
 Every ratio above is against a flat surface. The scene is not one. A model's
@@ -146,9 +156,13 @@ voice; a display face beside it is a second voice.
 --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
 ```
 
+Inter is named, not shipped. The stack falls through to the system face until
+the project self-hosts one file - the "one font" in the page's budget in
+`03-budget.md`. A link to a font CDN is a second origin on the critical path.
+
 | Step | Size | Line height | Used for |
 |---|---|---|---|
-| `--t-hero` | `clamp(2.5rem, 7vw, 5rem)` | 1.0 | The one headline beside the scene |
+| `--t-hero` | `clamp(2.5rem, 4.5vw, 3.75rem)` | 1.0 | The one headline beside the scene |
 | `--t-h2` | `clamp(1.75rem, 4vw, 2.75rem)` | 1.15 | Chapter and section headings |
 | `--t-h3` | `1.375rem` | 1.25 | Sub-headings, the option group title |
 | `--t-lead` | `1.25rem` | 1.5 | The paragraph under a headline |
@@ -160,6 +174,10 @@ Base is 16px. The text lane is `minmax(20rem, 28rem)` wide, and running text is
 capped at `--measure: 60ch` - a little tighter than a text-only page would use,
 because the eye is leaving the column for the scene and has to find its place
 again each time it comes back.
+
+The hero step is sized for that lane, not for the viewport. At 5rem a 28rem
+column holds about ten characters, and a headline that names the product
+breaks into a word a line.
 
 Dimensions, weights and prices beside a model are `--font-mono` with tabular
 figures: they change as the visitor configures, and they are compared.
@@ -173,17 +191,21 @@ figures: they change as the visitor configures, and they are compared.
 | `--gap-item` | `1rem` | Between options, between view buttons and the frame edge |
 | `--gap-tight` | `0.5rem` | Swatch to label, between view buttons |
 | `--pad-page` | `clamp(1.25rem, 5vw, 2.5rem)` | Horizontal page padding |
+| `--header-h` | `4rem` | The floating header. The hero stage pads its top by this and one block, and its bottom by half a section: the full gap at both ends puts the view bar under the fold of a laptop |
 
 Content max-width **1280px**. The scene may run to the viewport edge; text
-never does.
+never does. The stage's surface always does: `.stage` caps its content with
+padding, not a `max-width`, or the stage colour stops at 1280px with the page
+showing either side.
 
 ## The scene frame
 
 | Token | Value | Why |
 |---|---|---|
-| `--scene-ratio` | `4 / 3` | Reserved on the frame before the image or the engine arrives, so neither moves the page when it lands. Change it per model; never leave it out. |
+| `--scene-ratio` | `4 / 3` | Reserved on the frame before the image or the engine arrives, so neither moves the page when it lands. Change it per model; never leave it out. If it changes at a breakpoint, the mount widens the field of view in a frame narrower than the poster, so the canvas still shows what the poster showed. |
 | `--stage-h` | `min(100svh, 56rem)` | A full-height stage, in `svh` so a phone's collapsing address bar does not resize the canvas - and with it the render target - on every scroll. |
 | `--target` | `44px` | View buttons, options, the load button, hotspots. |
+| `--stem` | `1.25rem` | How far a hotspot's pill stands off the point it names. |
 
 ## Radii
 

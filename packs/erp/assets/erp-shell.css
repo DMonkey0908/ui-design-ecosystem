@@ -14,6 +14,12 @@
      - `min-width: 0` on .erp-main, without which one wide table stretches the
        grid track and pushes the sidebar off screen
 
+   Hover is always inside `@media (hover: hover)`. On a touchscreen a bare
+   :hover sticks to the last thing tapped, and a nav item that stays lit
+   reads as a second selection.
+
+   The behaviour this file assumes - the toggle, the menus - is erp-shell.js.
+
    The collapsed rules are written twice on purpose - once for the class the
    runtime toggle sets on the shell, once for the class the pre-paint script
    sets on <html>. Drop either and the sidebar flashes on every navigation.
@@ -21,8 +27,8 @@
 
 .erp-shell {
     display: grid;
-    grid-template-columns: var(--sidebar-width) 1fr;
-    grid-template-rows: var(--topbar-height) 1fr;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    grid-template-rows: var(--topbar-height) minmax(0, 1fr);
     grid-template-areas:
         "sidebar topbar"
         "sidebar main";
@@ -32,7 +38,7 @@
 
 .erp-shell.is-collapsed,
 html.sb-collapsed .erp-shell {
-    grid-template-columns: var(--sidebar-collapsed) 1fr;
+    grid-template-columns: var(--sidebar-collapsed) minmax(0, 1fr);
 }
 
 /* Layout transitions plus a window drag equals a visibly lagging interface.
@@ -62,10 +68,6 @@ html.sb-collapsed .erp-shell {
     padding: 0 14px;
     border-bottom: 1px solid var(--ink-border-soft);
     flex-shrink: 0;
-}
-
-.brand-mark {
-    display: none;
 }
 
 .brand-wordmark {
@@ -126,9 +128,15 @@ html.sb-collapsed .erp-shell {
     transition: background 0.15s ease, color 0.15s ease;
 }
 
-.nav-item:hover {
-    background: var(--ink-hover);
-    color: var(--brand-on-dark);
+@media (hover: hover) {
+    .nav-item:hover {
+        background: var(--ink-hover);
+        color: var(--brand-on-dark);
+    }
+}
+
+.nav-item:active {
+    background: var(--ink-active);
 }
 
 .nav-item:focus-visible {
@@ -136,11 +144,13 @@ html.sb-collapsed .erp-shell {
     outline-offset: -2px;
 }
 
-/* The flat variant — the stated default for a dense, quiet tool. */
+/* The flat variant — the stated default for a dense, quiet tool. The rail
+   is on ink, so it takes the on-dark accent like the label beside it:
+   --brand is 2.84:1 against the sidebar, --brand-on-dark is 5.87:1. */
 .nav-item.is-active {
     background: var(--brand-a18);
     color: var(--brand-on-dark);
-    border-left-color: var(--brand);
+    border-left-color: var(--brand-on-dark);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
@@ -192,6 +202,8 @@ html.sb-collapsed .erp-shell {
     border: 0;
     border-radius: var(--radius-chrome);
     background: none;
+    /* The containing block for its own label once that label is clipped. */
+    position: relative;
     color: var(--ink-text-muted);
     font: inherit;
     font-size: 0.85em;
@@ -200,9 +212,15 @@ html.sb-collapsed .erp-shell {
     transition: background 0.15s ease, color 0.15s ease;
 }
 
-.sidebar-toggle:hover {
-    background: var(--ink-hover);
-    color: var(--ink-text-dim);
+@media (hover: hover) {
+    .sidebar-toggle:hover {
+        background: var(--ink-hover);
+        color: var(--ink-text-dim);
+    }
+}
+
+.sidebar-toggle:active {
+    background: var(--ink-active);
 }
 
 .sidebar-toggle:focus-visible {
@@ -222,17 +240,28 @@ html.sb-collapsed .erp-shell {
 /* Both selectors: the anti-flash class lands on <html>, the runtime toggle
    sets it on the shell container. pack/02-shell.md names this cost. */
 
-.erp-shell.is-collapsed .nav-label,
 .erp-shell.is-collapsed .nav-badge,
 .erp-shell.is-collapsed .sidebar-section,
-.erp-shell.is-collapsed .toggle-label,
 .erp-shell.is-collapsed .brand-wordmark span,
-html.sb-collapsed .erp-shell .nav-label,
 html.sb-collapsed .erp-shell .nav-badge,
 html.sb-collapsed .erp-shell .sidebar-section,
-html.sb-collapsed .erp-shell .toggle-label,
 html.sb-collapsed .erp-shell .brand-wordmark span {
     display: none;
+}
+
+/* The labels are clipped, not removed. At 72px the label is the only name a
+   link has, and `display: none` would take it out of the accessibility tree
+   and leave a column of links that all announce as "link". */
+.erp-shell.is-collapsed .nav-label,
+.erp-shell.is-collapsed .toggle-label,
+html.sb-collapsed .erp-shell .nav-label,
+html.sb-collapsed .erp-shell .toggle-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
 }
 
 .erp-shell.is-collapsed .nav-item,
@@ -302,9 +331,15 @@ html.sb-collapsed .erp-shell .toggle-icon {
     transition: background 0.15s ease, color 0.15s ease;
 }
 
-.icon-btn:hover {
-    background: var(--ink-hover);
-    color: var(--ink-text);
+@media (hover: hover) {
+    .icon-btn:hover {
+        background: var(--ink-hover);
+        color: var(--ink-text);
+    }
+}
+
+.icon-btn:active {
+    background: var(--ink-active);
 }
 
 .icon-btn:focus-visible {
@@ -346,8 +381,14 @@ html.sb-collapsed .erp-shell .toggle-icon {
     transition: background 0.15s ease;
 }
 
-.user-menu:hover {
-    background: var(--ink-hover);
+@media (hover: hover) {
+    .user-menu:hover {
+        background: var(--ink-hover);
+    }
+}
+
+.user-menu:active {
+    background: var(--ink-active);
 }
 
 .user-menu:focus-visible {
@@ -390,6 +431,90 @@ html.sb-collapsed .erp-shell .toggle-icon {
 .user-caret {
     color: var(--ink-text-muted);
     font-size: 0.72em;
+}
+
+/* ── Topbar dropdowns ──────────────────────────────────────────────────── */
+/* Paper, although they hang off ink: they hold content. Fixed, because the
+   topbar is a flex container and would clip an absolute child. */
+
+.dropdown {
+    position: fixed;
+    top: calc(var(--topbar-height) - 4px);
+    inset-inline-end: 16px;
+    z-index: 4;
+    min-width: 220px;
+    box-sizing: border-box;
+    padding: 6px;
+    border: 1px solid var(--paper-border);
+    border-radius: var(--radius-float);
+    background: var(--paper);
+    color: var(--paper-text);
+    box-shadow: var(--shadow-float);
+    opacity: 0;
+    /* What takes a closed menu out of the tab order. Opacity and
+       pointer-events alone leave its items focusable and invisible. */
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.98);
+    pointer-events: none;
+    transform-origin: top right;
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0s linear 0.16s;
+}
+
+.dropdown.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--paper-text);
+    text-decoration: none;
+    font: inherit;
+    font-size: 0.9em;
+    font-weight: 500;
+    text-align: start;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+}
+
+@media (hover: hover) {
+    .dropdown-item:hover {
+        background: var(--paper-3);
+    }
+
+    .dropdown-item.is-danger:hover {
+        background: var(--danger-tint);
+    }
+}
+
+.dropdown-item:active {
+    background: var(--paper-border);
+}
+
+.dropdown-item:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -2px;
+}
+
+.dropdown-item.is-danger {
+    color: var(--state-danger-dark);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--paper-border);
+    margin: 4px 6px;
 }
 
 /* ── Main ──────────────────────────────────────────────────────────────── */
@@ -447,6 +572,12 @@ html.sb-collapsed .erp-shell .toggle-icon {
     outline-offset: 2px;
 }
 
+/* Role-gated navigation. The pre-paint script puts `role-user` on <html>
+   from the cached session, so these never appear and vanish. */
+html.role-user [data-admin-only] {
+    display: none;
+}
+
 /* ── Responsive ────────────────────────────────────────────────────────── */
 /* Each breakpoint has a stated job. core/03-layout.md. */
 
@@ -461,19 +592,28 @@ html.sb-collapsed .erp-shell .toggle-icon {
    footer toggle still expands it. Navigation is never removed. */
 @media (max-width: 820px) {
     .erp-shell {
-        grid-template-columns: var(--sidebar-collapsed) 1fr;
+        grid-template-columns: var(--sidebar-collapsed) minmax(0, 1fr);
     }
 
     .erp-shell.is-expanded {
-        grid-template-columns: var(--sidebar-width) 1fr;
+        grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
     }
 
-    .erp-shell:not(.is-expanded) .nav-label,
     .erp-shell:not(.is-expanded) .nav-badge,
     .erp-shell:not(.is-expanded) .sidebar-section,
-    .erp-shell:not(.is-expanded) .toggle-label,
     .erp-shell:not(.is-expanded) .brand-wordmark span {
         display: none;
+    }
+
+    /* Clipped, not removed - see the collapsed rules above. */
+    .erp-shell:not(.is-expanded) .nav-label,
+    .erp-shell:not(.is-expanded) .toggle-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
     }
 
     .erp-shell:not(.is-expanded) .nav-item,
@@ -487,10 +627,17 @@ html.sb-collapsed .erp-shell .toggle-icon {
     }
 }
 
-/* 640px — icon buttons narrow */
+/* 640px — icon buttons narrow, edge-anchored menus span the viewport */
 @media (max-width: 640px) {
     .icon-btn {
         width: 48px;
+    }
+
+    .dropdown {
+        inset-inline: 8px;
+        width: auto;
+        max-width: 380px;
+        margin-inline-start: auto;
     }
 
     .topbar {

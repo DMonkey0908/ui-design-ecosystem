@@ -148,7 +148,14 @@ face is the cheapest way to stop a page reading as a template. Core's objection
 is real, so the cost is paid explicitly rather than ignored: both families are
 self-hosted and subset, the display face is preloaded, both declare
 `font-display: swap` with metric-matched fallbacks, and the pairing stops at
-two. A third family is not a style decision, it is a bug.
+two. A third brand family is not a style decision, it is a bug.
+
+The override replaces "one family", not "plus a monospace". Where a page shows
+an identifier a reader will copy — a model code, a part number — core's
+monospace still applies, taken from the system stack so it costs no request.
+
+The font files are not in this pack. The builder supplies them, or ships the
+system fallback stack deliberately; `04-performance.md` says which is which.
 
 Nothing else in core is overridden. The accessibility minimums and the chart
 honesty rules are not overridable at all.
@@ -181,7 +188,7 @@ Say so briefly, offer the alternative, and build whatever is decided.
 | An entry pop-up | It interrupts before the page has earned anything | An inline offer after the first section, or on exit |
 | Autoplaying video with sound | Bounce, and an accessibility failure | Muted, poster-first, play on intent |
 | Every section a different colour | Nothing stands out, so the eye stops navigating | One accent; vary rhythm and scale instead |
-| A third type family | Brand voice does not compound; page weight does | Use the second family's other weights |
+| A third brand family | Brand voice does not compound; page weight does | Use the second family's other weights |
 | Text baked into images | Unreadable to search, screen readers, and translation | Real text over an image, or an `svg` with a title |
 | Infinite scroll on a marketing page | The footer becomes unreachable, and so does the pricing link | Pagination, or a shorter page |
 
@@ -190,7 +197,8 @@ If they hear the cost and still want it, build it. It is their product.
 ### Getting started on a new project
 
 1. Copy `assets/theme.css` in as the first stylesheet, then swap the accent and
-   recompute the on-dark value.
+   recompute everything derived from it — hover, active, on-dark, tints, alpha
+   steps — and measure the pairs. `01-surfaces.md` lists them.
 2. Set the type scale before writing any component. On this kind of page the
    scale *is* the design, and retrofitting one means touching every section.
 3. Decide the section rhythm once — one spacing value, used everywhere — and do
@@ -1778,7 +1786,7 @@ method and the reasoning; this file holds what this domain picked.
 | **content** | The canvas. No container by default. | A card is for grouping things that belong together, not for holding every paragraph. |
 | **chrome** | A header that floats over the canvas, transparent until scrolled | Permanent chrome frames a workspace. There is no workspace here — there is a page. |
 | **floating** | Menus, dialogs: white, 16px radius, warm soft shadow | Rare. If a page needs many, the page is doing too much. |
-| **accent** | One saturated teal | Reserved for the primary action and nothing else. |
+| **accent** | One saturated teal | As a fill, the primary action and nothing else. As a line it also marks a text link, the focus ring and the one recommended plan. Never decoration: no accent headings, icons or section backgrounds. |
 | **semantic** | Success, warning, danger | Forms and system messages only. Not decoration. |
 
 **The contrast move of this pack is a dark section, not a card.** Where the
@@ -1799,12 +1807,12 @@ core gives: `#0d7a6f` on `#14100e` is muddy and hard to read.
   --accent-active:  #084a44;
   --accent-on-dark: #5eead4;   /* the same accent, legible on the ink surface */
 
-  --accent-tint:   #f0faf8;    /* section washes, hover on light */
+  --accent-tint:   #f0faf8;    /* hover and small washes - not a section background */
   --accent-tint-2: #d5f2ec;
 
   --accent-a10: rgba(13, 122, 111, 0.10);
   --accent-a20: rgba(13, 122, 111, 0.20);
-  --accent-a35: rgba(13, 122, 111, 0.35);   /* focus ring */
+  --accent-a35: rgba(13, 122, 111, 0.35);   /* the call-to-action shadow */
 
   /* ----- Canvas: warm, not grey ----- */
   --canvas:    #fbfaf8;
@@ -1816,7 +1824,8 @@ core gives: `#0d7a6f` on `#14100e` is muddy and hard to read.
   --text-3:    #766d64;   /* captions, meta - quiet, and still 4.5:1 */
 
   --line:      #e8e3dc;   /* hairline, used sparingly */
-  --line-2:    #d5cec4;   /* input borders */
+  --line-2:    #d5cec4;   /* a heavier divider - not a control edge */
+  --line-control: #8c8379; /* input and secondary-button borders */
 
   /* ----- Ink: the inverted section ----- */
   --ink:       #14100e;
@@ -1831,6 +1840,22 @@ core gives: `#0d7a6f` on `#14100e` is muddy and hard to read.
   --danger:  #be123c;
 }
 ```
+
+**A control's edge is `--line-control`, not `--line-2`.** An input is found by
+its border, and `--line-2` is 1.56:1 on the white surface — a field that is
+there and cannot be seen. `--line-control` is the lightest warm grey that clears
+core's 3:1 on all three light surfaces: 3.72:1 on `--surface`, 3.57:1 on
+`--canvas`, 3.33:1 on `--canvas-2`. The hairlines stay faint on purpose; they
+separate, nobody aims at them.
+
+**Rebranding moves more than one line.** Core's `01-tokens.md` has the
+procedure. In this file it means: `--accent`, its hover and active steps,
+`--accent-on-dark`, both tints and the three alpha steps, which carry the
+accent's RGB literally. Then compute, do not eyeball: `--text-on-accent` on the
+accent fill, the accent as link text on `--canvas` and `--canvas-2`,
+`--accent-on-dark` on `--ink` and `--ink-2`, and `--ink` on the on-dark fill.
+The shipped teal gives 5.21, 4.99, 4.66, 12.79, 11.65 and 12.79; a swapped
+accent that skips this step usually fails as link text first.
 
 **Never `#000` for text.** Pure black on an off-white canvas vibrates and reads
 as harsh at large sizes — and this pack uses large sizes. `#14100e` carries the
@@ -1847,16 +1872,33 @@ the way metadata is supposed to look — which is exactly why nobody noticed.
 
 ### Type
 
-Two families, which is an override of core — see `PACK.md`.
+Two brand families, which is an override of core — see the *Overrides* section.
 
 ```css
 --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
---font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+--font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+--font-mono:    ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
 ```
+
+**The pack ships the names, not the files.** The two brand faces are the
+builder's to supply — see `04-performance.md`. Until they are, everything
+after the first name in each stack is what renders, and it is a complete
+fallback: a system serif for display, the system sans for body.
 
 The display face is for headings and the one pull quote. Everything else is the
 body face. A display face in a button or a form label is where this pairing
 starts to look like an accident.
+
+**Figures are set in the body face** — prices, statistics, the number in a
+proof line — even at heading size. A display serif often ships old-style or
+proportional digits and no tabular set, and Georgia in the fallback stack has
+old-style digits only, so a price in the display face is a price core's
+numeral rule cannot reach.
+
+**The monospace is not a third brand face.** It is the one core asks for
+wherever a reader copies an identifier — a model code, a part number, a
+version. It comes from the system, so it adds no request, and it is not for
+decoration.
 
 Base `font-size` is **16px** — the browser default, not a shrunk one. A visitor
 who has enlarged their default did so for a reason.
@@ -2015,8 +2057,10 @@ consistency is what makes it feel designed rather than assembled.
 - **Vary width, not spacing, to create emphasis.** A full-bleed image or an
   inverted section stands out because its width changed, not because it got
   extra padding.
-- **Alternate at most two backgrounds.** Canvas and one other. A third is where
-  a page starts to look like a template gallery.
+- **Alternate at most two light backgrounds:** `--canvas` and `--canvas-2`. A
+  third light tone is where a page starts to look like a template gallery. The
+  inverted section is not part of the alternation — it is the contrast move,
+  once or twice a page, and it only works because it is not a pattern.
 
 ### Section shapes that carry weight
 
@@ -2084,6 +2128,15 @@ pricing, contact, status, terms, a job. Make it findable and complete. This is
 the one place on the page where density is correct — a compact, well-grouped
 footer is a service, not a wall.
 
+- **Dense means grouped and smaller type, not smaller targets.** Each footer
+  link still clears the 44px this pack assumes, by padding the link rather than
+  enlarging the text. The footer is where a thumb is aiming at one line among
+  twelve.
+- **Link only to what exists.** On a one-page site the footer still owes the
+  reader contact, terms and the rest — as in-page anchors, `mailto:` and
+  `tel:` links, or a plain line saying where to ask. A footer link to a page
+  nobody built costs more trust than the gap it was hiding.
+
 ### Responsive
 
 The page is designed at 360px and at 1440px. The middle takes care of itself if
@@ -2149,7 +2202,7 @@ Fewer components than an operational tool needs, each carrying more weight.
 
 .btn-secondary {
   background: transparent; color: var(--text);
-  border: 1px solid var(--line-2);
+  border: 1px solid var(--line-control);   /* 3:1 - see 01-surfaces.md */
 }
 .btn-secondary:hover { background: var(--canvas-2); }
 
@@ -2212,7 +2265,7 @@ list, it is two features.
 .plans { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .plan { border: 1px solid var(--line); border-radius: 16px; padding: 2rem; background: var(--surface); }
 .plan.is-featured { border-color: var(--accent); box-shadow: var(--shadow-md); }
-.plan-price { font: 700 var(--t-h2)/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.plan-price { font: 700 var(--t-h2)/1 var(--font-body); font-variant-numeric: tabular-nums; }   /* body face: see 01-surfaces.md */
 ```
 
 - **Show the price.** "Contact us" on every tier is read as "expensive, and you
@@ -2237,12 +2290,12 @@ Every field costs conversions. Ask for what you will use this week.
 .field label { font: 600 var(--t-small)/1.4 var(--font-body); color: var(--text-2); }
 .field input, .field textarea {
   padding: .875rem 1rem;
-  border: 1px solid var(--line-2);
+  border: 1px solid var(--line-control);   /* the field is found by this edge */
   border-radius: 8px;
   background: var(--surface);
   font: 400 1.0625rem/1.5 var(--font-body);   /* >=16px: iOS zooms below that */
 }
-.field input:focus-visible { outline: 2px solid var(--accent-a35); outline-offset: 2px; border-color: var(--accent); }
+.field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
 .field .error { color: var(--danger); font-size: var(--t-caption); }
 ```
 
@@ -2375,6 +2428,14 @@ The four causes, and their fixes:
 This pack overrides core to use two families, and this is where that cost is
 paid. Skip these and the override is not justified.
 
+**The pack ships no font files.** `theme.css` names the two faces; the builder
+supplies them — one subset variable `woff2` per family, and the `@font-face`
+rules below. If the project has no licence, no files or no network, delete the
+two names and ship the rest of each stack: a system serif and the system sans
+cost nothing and shift nothing. What is never right is the half-way state — an
+`@font-face` or a preload pointing at a file that is not there, which is a
+failed request on the critical path for a font nobody will see.
+
 ```css
 @font-face {
   font-family: 'Fraunces';
@@ -2469,14 +2530,15 @@ This file is what a public page needs on top.
 - [ ] Base is 16px. Not shrunk.
 - [ ] Running text capped at 65ch, 75ch absolute maximum.
 - [ ] Line height rises as size falls — roughly 1.05 hero, 1.7 body.
-- [ ] Two families at most, and the display face is not used in buttons,
-      labels or form fields.
+- [ ] Two brand families at most, plus the system monospace for identifiers.
+      The display face is not used in buttons, labels, form fields or figures.
 - [ ] Hierarchy is carried by size, weight and space — not by colour.
 - [ ] No paragraph over three lines is centred.
 
 #### Rhythm
 - [ ] One section rhythm value, used everywhere.
-- [ ] At most two alternating backgrounds.
+- [ ] At most two light backgrounds alternate; inverted sections, one or two,
+      are counted apart.
 - [ ] Emphasis comes from width changes, not from extra padding.
 - [ ] Each screenful has exactly one thing that wins.
 - [ ] The closing action repeats the hero action rather than introducing a new one.
@@ -2489,6 +2551,11 @@ This file is what a public page needs on top.
 - [ ] Every inverted section uses the on-dark accent for text, buttons and the
       focus ring.
 - [ ] Shadows are warm; the accent shadow is on the primary action only.
+- [ ] The accent is a fill on the primary action only; elsewhere it is a link,
+      a focus ring or the recommended plan's border.
+- [ ] Input and secondary-button borders use `--line-control`.
+- [ ] After a rebrand, every derived accent value was recomputed and its pairs
+      measured.
 
 #### Components
 - [ ] Button labels are verbs the reader would use.
@@ -2500,6 +2567,7 @@ This file is what a public page needs on top.
 - [ ] Validation on blur, error beside the field, tied with `aria-describedby`.
 - [ ] Testimonials carry a name, role and company.
 - [ ] FAQ uses `<details>`, or matches its keyboard and screen-reader behaviour.
+- [ ] Footer links clear 44px and every one of them resolves.
 - [ ] Mobile menu is a `<button>` with `aria-expanded`, focus trapped, Escape
       closes, focus returns.
 
@@ -2509,7 +2577,8 @@ This file is what a public page needs on top.
 - [ ] CLS effectively zero: every image, embed and injected banner has its space
       reserved.
 - [ ] Fonts self-hosted, subset, variable where possible, `font-display: swap`
-      with metric-matched fallbacks.
+      with metric-matched fallbacks — or the system stack shipped on purpose,
+      with no `@font-face` or preload left pointing at a missing file.
 - [ ] Only above-the-fold fonts preloaded.
 - [ ] Hero has `fetchpriority="high"` and is **not** lazy-loaded; everything
       below the fold is.
@@ -2564,7 +2633,7 @@ Deciding it after three sections are built means rebuilding all three.
 
 ### Refusals
 
-`PACK.md` lists what this pack pushes back on — carousels, entry pop-ups,
+The table under *What this pack deliberately refuses* lists what this pack pushes back on — carousels, entry pop-ups,
 autoplaying sound, a colour per section, a third font, text in images, infinite
 scroll — and what to offer instead. Name the cost, offer the alternative, then
 build whatever is decided, and record the decision so nobody re-litigates it.

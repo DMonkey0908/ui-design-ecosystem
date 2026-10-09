@@ -8,8 +8,8 @@ the full height of the viewport and the topbar starts to its right.
 ```css
 .erp-shell {
   display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;   /* 240px */
-  grid-template-rows:    var(--topbar-height) 1fr;   /*  64px */
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);   /* 240px */
+  grid-template-rows:    var(--topbar-height) minmax(0, 1fr);   /*  64px */
   grid-template-areas:
     "sidebar topbar"
     "sidebar main";
@@ -17,7 +17,7 @@ the full height of the viewport and the topbar starts to its right.
   transition: grid-template-columns 0.22s ease;
 }
 
-.erp-shell.is-collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; } /* 72px */
+.erp-shell.is-collapsed { grid-template-columns: var(--sidebar-collapsed) minmax(0, 1fr); } /* 72px */
 ```
 
 Both the sidebar and the topbar are `position: sticky; top: 0`, so a long table
@@ -33,22 +33,23 @@ Both are core rules — see `core/03-layout.md`. What this pack pins down:
 - The keys are `app.sidebar.collapsed`, `app.user` (for role-gated nav) and
   `app.preferences` (language). All three affect layout or visibility, so all
   three are applied to `<html>` inline in `<head>`, before the stylesheets.
-  `assets/page-template.html` ships the script, and `assets/erp-shell.css`
-  ships this whole section as a file.
+  `assets/page-template.html` ships the script, `assets/erp-shell.css` ships
+  this whole file as a stylesheet, and `assets/erp-shell.js` is the runtime
+  half: the toggle that writes the key the script reads, and the menus.
 - Order is `theme.css` -> `erp-shell.css` -> page `styles.css`. A page
   stylesheet may define tokens in terms of theme tokens, never as literals.
 - Because the class lands on `<html>` while the runtime toggle sets it on the
   shell container, every collapsed rule needs both selectors:
 
 ```css
-.erp-shell.is-collapsed .nav-label,
-html.sb-collapsed .erp-shell .nav-label { display: none; }
+.erp-shell.is-collapsed .nav-badge,
+html.sb-collapsed .erp-shell .nav-badge { display: none; }
 ```
 
 ## Sidebar
 
 ```
-brand         fixed height, logo swaps to a 26px mark when collapsed
+brand         fixed height, a 26px glyph and a wordmark; the glyph stays when collapsed
 nav           flex: 1, scrolls, thin scrollbar
   section     0.68em / 700 / uppercase / 1.4px tracking / muted
   item        8px 12px, 10px gap, icon 22px box with an 18px svg
@@ -79,8 +80,15 @@ footer        collapse toggle, separated by a hairline
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.nav-item:hover { background: var(--ink-hover); color: var(--brand-on-dark); }
+@media (hover: hover) {
+  .nav-item:hover { background: var(--ink-hover); color: var(--brand-on-dark); }
+}
+.nav-item:active { background: var(--ink-active); }
 ```
+
+Hover sits inside the media query everywhere in the shell. On a touchscreen a
+bare `:hover` sticks to the last item tapped, and in a nav list a row that
+stays lit reads as a second selection.
 
 **Reserve the 3px transparent border on every row, active or not.** That is what
 keeps the label from shifting sideways when the selection moves. Adding the
@@ -96,10 +104,13 @@ Two ways to mark it. Both keep the reserved border; pick one per project.
 .nav-item.is-active {
   background: var(--brand-a18);
   color: var(--brand-on-dark);
-  border-left-color: var(--brand);
+  border-left-color: var(--brand-on-dark);
   border-top-left-radius: 0; border-bottom-left-radius: 0;
 }
 ```
+
+The rail takes the on-dark value, like the label. It is the mark that says
+which page this is, and in `--brand` it is 2.84:1 against the sidebar.
 
 **Lit** — a rounded rail that emits, a bloom that falls off across the row.
 Costs nothing in layout and reads well on near-black:
@@ -147,9 +158,14 @@ Two mechanics to carry over:
 
 ### Collapsed state
 
-Hide `.nav-label`, `.nav-badge`, `.sidebar-section` and the toggle text; centre
-the item; swap the wordmark for the square mark. Keep the icons and the active
-rail. Collapse is icon-only navigation, not a different navigation.
+Hide `.nav-badge`, `.sidebar-section` and the wordmark text; centre the item;
+keep the glyph, the icons and the active rail. Collapse is icon-only
+navigation, not a different navigation.
+
+`.nav-label` and the toggle text are **clipped, not hidden** — the `.sr-only`
+declarations, applied by the collapsed selectors. At 72px the label is the
+only name the link has; `display: none` there leaves a column of links that
+each announce as "link".
 
 ## Topbar
 
@@ -160,7 +176,9 @@ full height so hover fills the bar edge to edge.
 [ page title ......................... ] [ 🔔 56px ] │ [ avatar · name · role ▾ ]
 ```
 
-- Title `1.15em / 700`, truncates with an ellipsis, never wraps.
+- Title `1.15em / 700`, truncates with an ellipsis, never wraps. It is a
+  `<p>`: the page's one `<h1>` is the page title block in the main area, and a
+  second in the frame gives every screen two headings of the same rank.
 - Icon buttons are a fixed 56px wide (48px under 640px), `border-radius: 0`,
   `align-self: stretch`. Hover fills the whole cell.
 - **Exactly one vertical divider**, before the user menu. It separates identity
@@ -179,16 +197,22 @@ they hang off dark chrome. They hold content, so they follow the content rules.
 
 ```css
 .dropdown {
-  opacity: 0; transform: translateY(-6px) scale(0.98);
+  opacity: 0; visibility: hidden; transform: translateY(-6px) scale(0.98);
   pointer-events: none;
   transform-origin: top right;
-  transition: opacity 0.16s ease, transform 0.16s ease;
+  transition: opacity 0.16s ease, transform 0.16s ease, visibility 0s linear 0.16s;
 }
-.dropdown.is-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.dropdown.is-open {
+  opacity: 1; visibility: visible; transform: translateY(0) scale(1);
+  pointer-events: auto; transition-delay: 0s;
+}
 ```
 
-Animate opacity and transform, never `display`. Under 640px, let them span the
-viewport with `left: 8px; right: 8px; width: auto; max-width: 380px`.
+Animate opacity and transform, never `display`. `visibility`, switched after
+the fade, is what takes a closed menu out of the tab order — opacity and
+`pointer-events` alone leave its items focusable and invisible, and a keyboard
+user tabs into nothing between the topbar and the page. Under 640px, let them
+span the viewport with `left: 8px; right: 8px; width: auto; max-width: 380px`.
 
 ## Main area
 
@@ -233,8 +257,9 @@ expands it. Navigation must stay reachable without a hamburger.
   the announcement.
 - Suppress reload when the already-active tab is clicked. A full navigation to
   the current URL re-runs every page script and throws away unsaved state.
-- The `.sr-only` utility from core ships in `assets/theme.css`; the collapsed
-  sidebar depends on it, since at 72px the visible label is gone.
+- The `.sr-only` utility from core ships in `assets/theme.css`. The collapsed
+  sidebar applies the same declarations to its labels rather than the class,
+  because the state lives on an ancestor.
 
 ## Internationalisation
 

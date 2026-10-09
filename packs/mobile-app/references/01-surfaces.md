@@ -48,6 +48,10 @@ number that somebody else supplied, and a palette with opinions fights it.
   "border-control": { "light": "#8b8b96", "dark": "#74747f" },
   "fill-quiet":     { "light": "#f2f2f7", "dark": "#2c2c2e" },
 
+  "inverse-surface":   { "light": "#1c1c1e", "dark": "#f2f2f7" },
+  "on-inverse":        { "light": "#f2f2f7", "dark": "#0b0b0f" },
+  "accent-on-inverse": { "light": "#7aa7ff", "dark": "#0a58d0" },
+
   "success":        { "light": "#1a7f45", "dark": "#48d17e" },
   "warning":        { "light": "#986400", "dark": "#f0b429" },
   "danger":         { "light": "#c7212f", "dark": "#ff6b6b" },
@@ -71,6 +75,19 @@ different standards, which is the distinction that gets collapsed.
 Reach for `separator` by default and `border-control` the moment the line is
 the edge of something tappable. If a control's fill already differs from the
 surface, neither applies and the fill is doing the work.
+
+### The two surfaces that are not in the ramp
+
+- **`chrome-bg` is the bar's translucent tint** — the base colour at 88% in
+  light and 82% in dark, with `bg` as the opaque fallback core
+  `10-visual-language.md` requires. The alpha is a floor, not a taste: at
+  those values a 12pt tab label in `text-secondary` holds 5.2:1 and 5.5:1 with
+  the darkest thing in this palette scrolled underneath and no blur at all.
+  Lower it and the label's contrast depends on what the user scrolled to.
+- **The inverse trio is the snackbar.** It is drawn in the other theme's
+  colours so it separates from the content without a border, which means
+  `accent` is on the wrong surface there — 2.7:1 in light, 2.1:1 in dark.
+  `accent-on-inverse` is the accent's two values swapped, at 7.1:1 and 5.7:1.
 
 Three more things that are specific to this domain:
 
@@ -104,6 +121,11 @@ names is most of the work of supporting that.
 | Footnote | 13pt | 400 | Timestamps, helper text, metadata |
 | Caption | 12pt | 400 | Tab bar labels, the smallest legible label |
 
+There is no eighth role for a hero figure. A screen that is about one number —
+a balance, a total — sets it at the large-title size and gives the title to
+the navigation bar inline. Stacking the two puts a pair of 34pt lines at the
+top of the screen, and the one that loses the argument is the number.
+
 **Nothing below 12pt, and nothing important at 12pt.** A phone is held at
 arm's length by people of every age and in every lighting condition, including
 sunlight, which costs perceived contrast before it costs anything else.
@@ -123,7 +145,10 @@ What this actually requires:
   finding out when it truncates.
 - **The tab bar is the exception**, and the platform handles it: at large
   scales the system drops the labels and keeps the icons. Which is why the
-  icons must be meaningful on their own.
+  icons must be meaningful on their own. On the web no system does this, so
+  the bar is a minimum height that grows with its label, and hiding the
+  label at large scales — visually, not from the accessible name — is yours
+  to do.
 - **Test at the largest step**, not at the default. It takes ten seconds and it
   is the fastest way to find every fixed height in the app.
 
@@ -181,6 +206,7 @@ runtime values, all of them different on every device:
 ```
 content            respects the leading and trailing insets
 bottom bar         its own height PLUS the bottom inset, as padding not margin
+stacked bars       only the bottom-most adds the inset; the one above it adds none
 scroll content     scrolls UNDER the bars, with the inset added as content padding
 full-bleed media   ignores the insets, and puts nothing important in them
 ```

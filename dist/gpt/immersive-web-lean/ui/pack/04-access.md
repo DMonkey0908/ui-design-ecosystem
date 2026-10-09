@@ -66,8 +66,8 @@ A configurator is a form whose preview happens to be 3D. Build the form.
 ```js
 form.addEventListener('change', () => {
   const choice = new FormData(form).get('frame');
-  handle.set((model) => applyFrameColour(model, choice));   // one redraw
-  summary.textContent = describe(choice);                    // announced, politely
+  summary.textContent = describe(choice);                    // announced, politely - scene or no scene
+  if (handle) handle.set((model) => applyFrameColour(model, choice));   // one redraw
 });
 ```
 
@@ -97,7 +97,7 @@ form.addEventListener('change', () => {
 ```js
 views.addEventListener('click', (e) => {
   const button = e.target.closest('button[data-view]');
-  if (!button) return;
+  if (!button || !handle) return;
   handle.view(button.dataset.view);
   for (const b of views.querySelectorAll('button')) {
     b.setAttribute('aria-pressed', String(b === button));
@@ -114,6 +114,16 @@ how the text points at the model.
 **The set of views is the set of things worth seeing.** If the back has the
 ports, there is a Back button. If the visitor can open the lid by dragging,
 there is an Open button.
+
+Which way is "front" belongs to the model, so the mount takes the directions as
+`views`. A drag leaves whichever view was pressed: clear `aria-pressed` from
+the mount's `onInteract`, or the bar goes on naming a view the camera has left.
+
+**A toggle that changes the picture and not the order is a view.** A cutaway,
+an exploded state, a lid: a button with its own `aria-pressed`, in the view bar
+but in a group of its own, because it combines with every camera position. In
+the form it would be submitted with the order. Its change is announced from a
+status region, as an option's is.
 
 ## Touch: the page owns vertical
 
@@ -193,7 +203,7 @@ Not an edge case. Each row below is an ordinary visit.
 | Situation | What happens | The visitor sees |
 |---|---|---|
 | Script failed or is blocked | Nothing mounts | The poster and the whole page |
-| No WebGL 2 | `canMount()` is false; the button is removed | The poster |
+| No WebGL 2 | `canMount()` is false; the button stays hidden | The poster |
 | Reduced-data preference | The same | The poster |
 | The model 404s or a decoder is blocked | State becomes `failed` | The poster |
 | The context is lost mid-visit | State returns to `poster` until restored | The poster, then the scene again |
@@ -203,8 +213,9 @@ Every row ends in the same place, which is the reason to build the page first.
 There is one fallback, it is the page, and it was reviewed before the scene
 existed.
 
-**A hidden "Load 3D" button must be hidden from everyone.** Use the `hidden`
-attribute, not a class that only sets `opacity`. A button a screen reader can
+**A hidden "Load 3D" button must be hidden from everyone.** It ships with the
+`hidden` attribute and the mount takes it off, so it is also hidden when script
+never ran. Not a class that only sets `opacity`. A button a screen reader can
 still find, that does nothing, is worse than no button.
 
 ## Four passes before calling it done

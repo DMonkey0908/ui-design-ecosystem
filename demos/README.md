@@ -8,6 +8,10 @@ These are showcases, not evals. Nothing here is scored the way
 [`evals/`](../evals/) runs are, and the assistant was told which skill to use,
 so they say nothing about whether a pack activates on its own.
 
+Building them turned up defects in all four packs, since fixed at the source.
+The demos predate those fixes: each carries its own workarounds in its copied
+assets and will not match the current `dist/` line for line.
+
 Every company, person, product and figure is invented.
 
 | Demo | Pack | What it is | Open it |

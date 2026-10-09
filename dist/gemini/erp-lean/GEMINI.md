@@ -109,6 +109,7 @@ what this system exists to prevent. Do not answer from this index.
 |---|---|
 | `ui/assets/theme.css` | the token file - drop into a new project |
 | `ui/assets/erp-shell.css` | the shell - grid, sidebar, topbar, main; written entirely in theme tokens |
+| `ui/assets/erp-shell.js` | the shell's behaviour - sidebar toggle, topbar menus, the active-item guard; no dependencies |
 | `ui/assets/page-template.html` | the page template, including the pre-paint script |
 
 Finish by running `ui/core/99-review.md` and `ui/pack/05-checklist.md`.

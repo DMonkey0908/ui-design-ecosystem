@@ -1867,6 +1867,10 @@ number that somebody else supplied, and a palette with opinions fights it.
   "border-control": { "light": "#8b8b96", "dark": "#74747f" },
   "fill-quiet":     { "light": "#f2f2f7", "dark": "#2c2c2e" },
 
+  "inverse-surface":   { "light": "#1c1c1e", "dark": "#f2f2f7" },
+  "on-inverse":        { "light": "#f2f2f7", "dark": "#0b0b0f" },
+  "accent-on-inverse": { "light": "#7aa7ff", "dark": "#0a58d0" },
+
   "success":        { "light": "#1a7f45", "dark": "#48d17e" },
   "warning":        { "light": "#986400", "dark": "#f0b429" },
   "danger":         { "light": "#c7212f", "dark": "#ff6b6b" },
@@ -1890,6 +1894,19 @@ different standards, which is the distinction that gets collapsed.
 Reach for `separator` by default and `border-control` the moment the line is
 the edge of something tappable. If a control's fill already differs from the
 surface, neither applies and the fill is doing the work.
+
+#### The two surfaces that are not in the ramp
+
+- **`chrome-bg` is the bar's translucent tint** — the base colour at 88% in
+  light and 82% in dark, with `bg` as the opaque fallback core
+  `10-visual-language.md` requires. The alpha is a floor, not a taste: at
+  those values a 12pt tab label in `text-secondary` holds 5.2:1 and 5.5:1 with
+  the darkest thing in this palette scrolled underneath and no blur at all.
+  Lower it and the label's contrast depends on what the user scrolled to.
+- **The inverse trio is the snackbar.** It is drawn in the other theme's
+  colours so it separates from the content without a border, which means
+  `accent` is on the wrong surface there — 2.7:1 in light, 2.1:1 in dark.
+  `accent-on-inverse` is the accent's two values swapped, at 7.1:1 and 5.7:1.
 
 Three more things that are specific to this domain:
 
@@ -1923,6 +1940,11 @@ names is most of the work of supporting that.
 | Footnote | 13pt | 400 | Timestamps, helper text, metadata |
 | Caption | 12pt | 400 | Tab bar labels, the smallest legible label |
 
+There is no eighth role for a hero figure. A screen that is about one number —
+a balance, a total — sets it at the large-title size and gives the title to
+the navigation bar inline. Stacking the two puts a pair of 34pt lines at the
+top of the screen, and the one that loses the argument is the number.
+
 **Nothing below 12pt, and nothing important at 12pt.** A phone is held at
 arm's length by people of every age and in every lighting condition, including
 sunlight, which costs perceived contrast before it costs anything else.
@@ -1942,7 +1964,10 @@ What this actually requires:
   finding out when it truncates.
 - **The tab bar is the exception**, and the platform handles it: at large
   scales the system drops the labels and keeps the icons. Which is why the
-  icons must be meaningful on their own.
+  icons must be meaningful on their own. On the web no system does this, so
+  the bar is a minimum height that grows with its label, and hiding the
+  label at large scales — visually, not from the accessible name — is yours
+  to do.
 - **Test at the largest step**, not at the default. It takes ten seconds and it
   is the fastest way to find every fixed height in the app.
 
@@ -2000,6 +2025,7 @@ runtime values, all of them different on every device:
 ```
 content            respects the leading and trailing insets
 bottom bar         its own height PLUS the bottom inset, as padding not margin
+stacked bars       only the bottom-most adds the inset; the one above it adds none
 scroll content     scrolls UNDER the bars, with the inset added as content padding
 full-bleed media   ignores the insets, and puts nothing important in them
 ```
@@ -2057,8 +2083,10 @@ Two asymmetries worth knowing, both of which the arc explains:
 
 - **The bottom corner opposite the thumb is not free.** For a right-handed
   grip that is the bottom-left; for a left-handed grip it is the bottom-right.
-  You do not know which, so do not put anything important in either — centre it
-  or span it.
+  You do not know which, so do not put a lone control in either — centre it
+  or span it. The tab bar spans, which is why its end tabs may sit there and
+  why each one's target runs edge to edge: the far tab is a stretch for one
+  grip and free for the other, and no ordering fixes that for both.
 - **The top corner opposite the thumb is the worst place on the screen.** It is
   also, by desktop convention, where the menu goes. That convention is the
   single most expensive import from the desktop.
@@ -2082,7 +2110,7 @@ Three to five destinations. Not two — a segmented control is honest about two
 floor.
 
 ```
-height       49pt, PLUS the bottom safe-area inset as padding
+height       49pt, PLUS the bottom safe-area inset as padding; a minimum on the web
 items        3-5, equal width, icon above a 12pt label
 target       the full item, edge to edge and top to bottom, not just the icon
 selected     accent icon, accent label, and one non-colour difference
@@ -2287,6 +2315,9 @@ loading        the label is replaced in place; the button keeps its width
 - **The primary action is pinned to the bottom** on a screen where it is the
   point — a checkout, a form, a confirmation. Pinned above the keyboard when
   the keyboard is up, and above the safe-area inset always.
+- **On a tabbed screen it sits directly above the tab bar**, and the tab bar
+  keeps the inset. Two stacked bars that each add it leave a band of nothing
+  between the button and the tabs, on the device that has least room for one.
 - **It keeps its width while busy.** A button that shrinks to a spinner moves
   everything around it, and the user's thumb is already travelling.
 - **Never disable a primary action without saying why**, as core requires. On a
@@ -2387,8 +2418,15 @@ specific here:
 - **Offline is not an error state.** It is a normal condition of this domain
   and `04-lifecycle.md` covers it.
 - **A snackbar or toast is for something already done**, and it carries an
-  undo. Anything requiring a decision is a sheet, because a toast leaves while
+  undo whenever the action has one. An action with none — a payment that has
+  left, a message delivered — is confirmed where it happened, in the row's own
+  state, and gets no snackbar: one that only reports is a message that leaves
+  before it is read, and one that offers an undo it cannot honour is worse.
+  Anything requiring a decision is a sheet, because a toast leaves while
   the user is still reading it.
+- **It sits above whatever is pinned at the bottom** — the tab bar, and the
+  primary action if there is one — on `inverse-surface`, with its action in
+  `accent-on-inverse`. See `01-surfaces.md` for why not `accent`.
 
 ### Lists at length
 
@@ -2454,10 +2492,14 @@ exceptional failure.
 
 - **Show what you have.** Cached content, marked with when it was fetched.
   Blank is worse than old, as long as old admits to being old.
-- **Queue the write and say so.** The action appears to succeed, is marked as
-  pending, and is sent when there is a network. This is core's optimistic
-  update, and the three conditions in `08-feedback.md` apply unchanged —
-  including that a failure announces itself rather than quietly undoing.
+- **Queue the write and say so.** The action is accepted, is marked as
+  pending, and is sent when there is a network. Whether it may also be drawn
+  as *done* is core's optimistic update, and the three conditions in
+  `08-feedback.md` decide it unchanged: a toggle that passes them shows its
+  new state with the pending mark, while a write that fails them — a payment,
+  an order — shows only as queued, and no figure that depends on it moves
+  until the server has answered. Either way a failure announces itself rather than
+  quietly undoing.
 - **Three outcomes, not two.** Sent, queued, and *rejected after being
   queued* — the third has no desktop equivalent and it is the one that gets
   forgotten. Each lands on a different surface:
@@ -2556,7 +2598,8 @@ This file is what a phone needs on top.
 - [ ] The primary action is in the bottom third, full width or near it.
 - [ ] Nothing used more than once per screen sits in a top corner.
 - [ ] No destructive action is adjacent to a frequent one.
-- [ ] Nothing important sits in either bottom corner, since the grip is unknown.
+- [ ] No lone control sits in a bottom corner, since the grip is unknown —
+      it is centred or it spans, as the tab bar does.
 
 #### Targets and text
 - [ ] Every target is at least 44pt / 48dp, counting padding rather than the
@@ -2575,8 +2618,9 @@ This file is what a phone needs on top.
 
 #### Safe areas
 - [ ] Insets are read at runtime, never hardcoded.
-- [ ] The bottom bar adds the bottom inset as padding, so nothing sits under
-      the home indicator.
+- [ ] The bottom-most bar adds the bottom inset as padding, so nothing sits
+      under the home indicator — and a bar stacked above it does not add it
+      again.
 - [ ] Scroll content passes under the bars, with the inset added as content
       padding.
 - [ ] Checked on a device with a notch and on one without.
@@ -2667,8 +2711,8 @@ like it — which is worse than the honest absence this pack's override allows.
 
 ### Refusals
 
-The table in `PACK.md` lists what this pack pushes back on and what to offer
-instead. Name the cost, offer the alternative, then build whatever is decided —
+The table under *What this pack deliberately refuses* lists what this pack
+pushes back on and what to offer instead. Name the cost, offer the alternative, then build whatever is decided —
 and record the decision so nobody re-litigates it next quarter.
 
 ---

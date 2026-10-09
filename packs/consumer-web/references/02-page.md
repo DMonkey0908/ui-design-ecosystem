@@ -47,8 +47,10 @@ consistency is what makes it feel designed rather than assembled.
 - **Vary width, not spacing, to create emphasis.** A full-bleed image or an
   inverted section stands out because its width changed, not because it got
   extra padding.
-- **Alternate at most two backgrounds.** Canvas and one other. A third is where
-  a page starts to look like a template gallery.
+- **Alternate at most two light backgrounds:** `--canvas` and `--canvas-2`. A
+  third light tone is where a page starts to look like a template gallery. The
+  inverted section is not part of the alternation — it is the contrast move,
+  once or twice a page, and it only works because it is not a pattern.
 
 ## Section shapes that carry weight
 
@@ -115,6 +117,15 @@ The footer is where people go when they are looking for something specific:
 pricing, contact, status, terms, a job. Make it findable and complete. This is
 the one place on the page where density is correct — a compact, well-grouped
 footer is a service, not a wall.
+
+- **Dense means grouped and smaller type, not smaller targets.** Each footer
+  link still clears the 44px this pack assumes, by padding the link rather than
+  enlarging the text. The footer is where a thumb is aiming at one line among
+  twelve.
+- **Link only to what exists.** On a one-page site the footer still owes the
+  reader contact, terms and the rest — as in-page anchors, `mailto:` and
+  `tel:` links, or a plain line saying where to ask. A footer link to a page
+  nobody built costs more trust than the gap it was hiding.
 
 ## Responsive
 

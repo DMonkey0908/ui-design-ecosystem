@@ -90,6 +90,18 @@ per mesh: three hundred draw calls for a chair. Merging meshes that share a
 material is the largest single win available, and it is done in the modelling
 tool or with a glTF optimiser, not in the browser.
 
+**The shadow pass is inside the count.** `renderer.info.render.calls` adds up
+every pass, and a shadow-casting light draws the model once more into its map:
+fifteen meshes read as thirty. The budget is the figure as read, so the one
+permitted light costs half of it. Ask for it with the mount's `shadows` option,
+which sets `PCFShadowMap`. `PCFSoftShadowMap`, the type most tutorials name,
+has been removed: three.js r186 logs a warning and falls back.
+
+**A model built in code is held to the same table.** Give the mount
+`build(THREE)` in place of `src`; it returns the object, and its one light if
+it has one. There is no loader or decoder to pay for, and the merge is yours to
+do: one mesh per material, not one per part.
+
 **Do not estimate these. Read them.**
 
 ```js
@@ -103,7 +115,8 @@ console.table({
 ```
 
 Print that after the first frame and put the output in the pull request. A
-budget nobody measured is a wish.
+budget nobody measured is a wish. The mount returns the same four from
+`handle.info()`.
 
 ## Compression is two separate decisions
 
@@ -164,15 +177,22 @@ script from someone else running in the page.
 ```js
 import { mountWhenWanted } from './scene-mount.js';        // 2KB. The engine is not in it.
 
+const handles = new Map();                                 // frame -> handle, once its scene runs
+
 for (const frame of document.querySelectorAll('.scene')) {
   const bar = frame.querySelector('.scene-progress');
   mountWhenWanted(frame, {
     src: frame.dataset.model,
     auto: frame.hasAttribute('data-hero'),                 // one per page
     onProgress: (p) => bar && bar.style.setProperty('--scene-progress', p),
-  });
+  }).ready.then((handle) => handle && handles.set(frame, handle));
 }
 ```
+
+`ready` resolves whichever way the scene started - by itself or from its
+button - and resolves to `null` when it cannot run. The `handle` in the
+snippets of `02-scene.md` and `04-access.md` is this one, and is why each of
+them checks it before using it.
 
 ## Pixel ratio
 

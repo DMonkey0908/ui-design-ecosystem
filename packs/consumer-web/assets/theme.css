@@ -7,14 +7,21 @@
    deciding whether to keep scrolling. Space does the separating that a border
    would do in an operational tool.
 
-   TO REBRAND: change the accent block and recompute --accent-on-dark and the
-   alpha steps. Nothing below that needs to move.
+   TO REBRAND: change --accent, then recompute everything derived from it:
+   --accent-hover and --accent-active, --accent-on-dark, the two tints and the
+   three alpha steps (they carry the accent's RGB literally). Then compute the
+   pairs again - see 01-surfaces.md. Nothing below the accent block moves.
+
+   FONTS: this file names two brand families and ships neither. Supply the two
+   woff2 files and their @font-face rules (04-performance.md) or delete the
+   two names; the rest of each stack is a complete fallback, not a stopgap.
    ========================================================================== */
 
 :root {
     /* ----- Accent -------------------------------------------------------
-       One saturated colour, reserved for the primary action. Every other use
-       spends the distinction that makes the action findable. */
+       One saturated colour. As a FILL it is the primary action and nothing
+       else. As a line it may also mark a text link, the focus ring and the
+       one recommended plan - all "act here". Never decoration. */
     --accent: #0d7a6f;
     --accent-hover: #0a5f57;
     --accent-active: #084a44;
@@ -26,6 +33,7 @@
     /* Text that sits ON the accent fill — the primary call to action. */
     --text-on-accent: #ffffff;
 
+    /* hover and small washes - not a section background */
     --accent-tint: #f0faf8;
     --accent-tint-2: #d5f2ec;
 
@@ -45,10 +53,15 @@
     --text: #14100e;
     --text-2: #57514c;
     --text-3: #766d64;
-    /* captions and meta ONLY — fails contrast as body copy */
+    /* captions and meta only. It clears 4.5:1 on every light surface; it is
+       quiet because of its role, and that role is not body copy. */
 
     --line: #e8e3dc;
     --line-2: #d5cec4;
+    /* The edge of a control: inputs, secondary buttons. --line-2 is 1.4-1.6:1
+       and marks a divider, not something to aim at. This is 3.33:1 on
+       --canvas-2, 3.57:1 on --canvas, 3.72:1 on --surface. */
+    --line-control: #8c8379;
 
     /* ----- Ink: the inverted section, this pack's one contrast move ----- */
     --ink: #14100e;
@@ -63,10 +76,13 @@
     --danger: #be123c;
 
     /* ----- Type ---------------------------------------------------------
-       Two families, which overrides core. The cost is paid in
-       04-performance.md: self-hosted, subset, preloaded, metric-matched. */
+       Two brand families, which overrides core. The cost is paid in
+       04-performance.md: self-hosted, subset, preloaded, metric-matched.
+       The monospace is the one core requires for identifiers; it is the
+       system's own, so it costs no request and is not a third brand face. */
     --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
 
     --t-hero: clamp(2.5rem, 6vw, 4.5rem);
     --t-h2: clamp(2rem, 4vw, 3rem);

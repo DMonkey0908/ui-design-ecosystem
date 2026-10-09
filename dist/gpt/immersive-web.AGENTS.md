@@ -234,7 +234,8 @@ If they hear the cost and still want it, build it. It is their product.
 
 1. Answer the three questions at the top of `02-scene.md` before opening a
    modelling tool. Two of the three usual requests end at "that is a video".
-2. Build the page first, with the poster image where the scene will go, and
+2. Build the page first, with the frame where the scene will go - holding the
+   poster, or empty at its ratio until one can be captured from the scene - and
    ship-check it in that state. This is the step that gets skipped, and it is
    the one the whole pack rests on.
 3. Load `assets/theme.css`, then `assets/scene.css`. Swap the accent pair and
@@ -1920,6 +1921,16 @@ label kept is 2.09:1.
 it is tight on purpose rather than by accident: a darker control edge reads as
 a heavy outline on a light form. It leaves no room to lighten the page.
 
+### Colours inside the model
+
+The token file is the interface's palette. A material's base colour - in a
+`.glb` or in a function that builds the model - is product data, like a pixel
+in a photograph, and stays with the model.
+
+The exception is a finish the visitor chooses. It is drawn twice, as the swatch
+beside its name and as the paint on the model, so it is one token that both
+read. Typed in two places, the swatch and the product drift apart.
+
 ### Nothing in this table covers text on the render
 
 Every ratio above is against a flat surface. The scene is not one. A model's
@@ -1959,9 +1970,13 @@ voice; a display face beside it is a second voice.
 --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
 ```
 
+Inter is named, not shipped. The stack falls through to the system face until
+the project self-hosts one file - the "one font" in the page's budget in
+`03-budget.md`. A link to a font CDN is a second origin on the critical path.
+
 | Step | Size | Line height | Used for |
 |---|---|---|---|
-| `--t-hero` | `clamp(2.5rem, 7vw, 5rem)` | 1.0 | The one headline beside the scene |
+| `--t-hero` | `clamp(2.5rem, 4.5vw, 3.75rem)` | 1.0 | The one headline beside the scene |
 | `--t-h2` | `clamp(1.75rem, 4vw, 2.75rem)` | 1.15 | Chapter and section headings |
 | `--t-h3` | `1.375rem` | 1.25 | Sub-headings, the option group title |
 | `--t-lead` | `1.25rem` | 1.5 | The paragraph under a headline |
@@ -1973,6 +1988,10 @@ Base is 16px. The text lane is `minmax(20rem, 28rem)` wide, and running text is
 capped at `--measure: 60ch` - a little tighter than a text-only page would use,
 because the eye is leaving the column for the scene and has to find its place
 again each time it comes back.
+
+The hero step is sized for that lane, not for the viewport. At 5rem a 28rem
+column holds about ten characters, and a headline that names the product
+breaks into a word a line.
 
 Dimensions, weights and prices beside a model are `--font-mono` with tabular
 figures: they change as the visitor configures, and they are compared.
@@ -1986,17 +2005,21 @@ figures: they change as the visitor configures, and they are compared.
 | `--gap-item` | `1rem` | Between options, between view buttons and the frame edge |
 | `--gap-tight` | `0.5rem` | Swatch to label, between view buttons |
 | `--pad-page` | `clamp(1.25rem, 5vw, 2.5rem)` | Horizontal page padding |
+| `--header-h` | `4rem` | The floating header. The hero stage pads its top by this and one block, and its bottom by half a section: the full gap at both ends puts the view bar under the fold of a laptop |
 
 Content max-width **1280px**. The scene may run to the viewport edge; text
-never does.
+never does. The stage's surface always does: `.stage` caps its content with
+padding, not a `max-width`, or the stage colour stops at 1280px with the page
+showing either side.
 
 ### The scene frame
 
 | Token | Value | Why |
 |---|---|---|
-| `--scene-ratio` | `4 / 3` | Reserved on the frame before the image or the engine arrives, so neither moves the page when it lands. Change it per model; never leave it out. |
+| `--scene-ratio` | `4 / 3` | Reserved on the frame before the image or the engine arrives, so neither moves the page when it lands. Change it per model; never leave it out. If it changes at a breakpoint, the mount widens the field of view in a frame narrower than the poster, so the canvas still shows what the poster showed. |
 | `--stage-h` | `min(100svh, 56rem)` | A full-height stage, in `svh` so a phone's collapsing address bar does not resize the canvas - and with it the render target - on every scroll. |
 | `--target` | `44px` | View buttons, options, the load button, hotspots. |
+| `--stem` | `1.25rem` | How far a hotspot's pill stands off the point it names. |
 
 ### Radii
 
@@ -2117,7 +2140,9 @@ them.
 - **Every option is a form control beside the scene**, and choosing one
   changes the model. The price and the specification update as text.
 - **Photographs stay.** A render does not show texture, wear or scale against a
-  hand. The scene is one item in the gallery, not a replacement for it.
+  hand. The scene is one item in the gallery, not a replacement for it. With
+  no photographs yet, the page ships without a gallery: a still rendered from
+  the same model answers none of what the photograph was there for.
 - A **review** page needs one thing a shop page does not: named views that
   match the review's argument. "The port is on the wrong side" should be a
   button that turns the model to that port.
@@ -2165,7 +2190,7 @@ The scene and the words get separate space. This is the default layout and it
 needs a reason to be anything else.
 
 ```html
-<section class="stage on-stage">
+<section class="stage stage--hero on-stage">
   <div class="stage-text">
     <h1>The Kestrel chair, rebuilt from the frame out</h1>
     <p>Eight zones of tension in the back, and none of them is foam.</p>
@@ -2173,12 +2198,12 @@ needs a reason to be anything else.
   </div>
 
   <figure class="scene" data-state="poster">
-    <img class="scene-poster" src="aeron-hero.avif" width="1200" height="900"
+    <img class="scene-poster" src="kestrel-hero.avif" width="1200" height="900"
          alt="Kestrel chair in graphite, seen from the front left" fetchpriority="high">
     <canvas class="scene-canvas" role="img"
             aria-label="Kestrel chair, 3D view. Use the view buttons to turn it."></canvas>
     <div class="scene-progress" aria-hidden="true"></div>
-    <button class="scene-load" type="button">View in 3D</button>
+    <button class="scene-load" type="button" hidden>View in 3D</button>
     <div class="scene-views" role="group" aria-label="View">
       <button type="button" data-view="front" aria-pressed="false">Front</button>
       <button type="button" data-view="side" aria-pressed="false">Side</button>
@@ -2188,7 +2213,7 @@ needs a reason to be anything else.
 </section>
 ```
 
-Three things in that markup are load-bearing:
+Four things in that markup are load-bearing:
 
 - **The image is a real `<img>` with dimensions and `fetchpriority="high"`.**
   It is the largest thing on the first screen, so it is what the browser times
@@ -2198,9 +2223,14 @@ Three things in that markup are load-bearing:
   stranger needs off the screen.
 - **The frame has a state, and starts in `poster`.** Everything the visitor
   sees is driven from that attribute; see below.
+- **The button ships `hidden`.** The mount reveals it once it knows the scene
+  can be delivered. Visible in the HTML, it is a control that does nothing for
+  everyone whose script failed - the visitors the poster exists for.
 
 `assets/scene.css` has the grid. Text lane `minmax(20rem, 28rem)`, scene lane
-the rest, one column under 800px.
+the rest, one column under 800px. `.stage--hero` is the stage under the
+floating header: it clears the header and no more, where the full section gap
+would put the view bar and the option picker under the fold of a laptop.
 
 ### The frame has four states
 
@@ -2226,6 +2256,12 @@ lighting, same crop. Then the swap is a cross-fade the eye reads as the picture
 coming alive. A studio photograph as the poster makes the swap a jump cut to a
 different object.
 
+With no modelling tool to render it from - a model built in code, or one that
+arrives only as a `.glb` - the poster is a capture of the running canvas: mount
+the scene, hide the view bar and the hotspots, and screenshot the frame at
+twice its size. So the scene exists before its poster does. Until then the
+frame holds its reserved box, and the page is reviewed in that state.
+
 ### Which scene mounts itself
 
 - **The hero scene** mounts on its own, once the frame is near the viewport and
@@ -2233,7 +2269,7 @@ different object.
 - **Every other scene** waits for its button. A gallery of six products is six
   images and six buttons, and one engine on the first press.
 - **Neither mounts** when the visitor has asked for reduced data, or the
-  browser has no WebGL 2. Then the button is removed, because offering what
+  browser has no WebGL 2. Then the button stays hidden, because offering what
   cannot be delivered is worse than not offering it.
 
 `03-budget.md` has the loading order behind this.
@@ -2270,12 +2306,16 @@ re-stage it once as each section arrives. This is the default here.
 ```js
 const chapters = new IntersectionObserver((entries) => {
   for (const e of entries) {
-    if (e.isIntersecting) handle.view(e.target.dataset.view);   // one draw per chapter
+    if (e.isIntersecting && handle) handle.view(e.target.dataset.view);   // one draw per chapter
   }
 }, { rootMargin: '-45% 0px -45% 0px' });                        // fires at the viewport's middle
 
 document.querySelectorAll('.chapter').forEach((c) => chapters.observe(c));
 ```
+
+`handle` is what `mountWhenWanted(…).ready` resolved to - the loading snippet
+in `03-budget.md` - and it stays `null` when there is no scene, which is why
+every snippet that uses it checks first.
 
 Why chapters win as a default:
 
@@ -2297,7 +2337,7 @@ chaptered version as its reduced-motion form.
 A point on the model with something to say about it.
 
 ```html
-<button class="hotspot" type="button" aria-expanded="false" aria-controls="spot-pivot">
+<button class="hotspot" type="button" data-spot="pivot" aria-expanded="false" aria-controls="spot-pivot">
   Tilt pivot
 </button>
 <div class="plate" id="spot-pivot" hidden>
@@ -2315,6 +2355,27 @@ A point on the model with something to say about it.
 - **Its popover is a plate.** It opens over the render, so it is opaque.
 - **Five at most on screen at once.** Past that they collide, and the scene has
   become a diagram that should have been drawn as one.
+- **It stands off the point on a stem.** A pill centred on its anchor covers
+  the part it names. `scene.css` draws it above the point, with a line down.
+
+The mount says where each point is after every draw, and how squarely it faces
+the camera:
+
+```js
+const SPOTS = { pivot: { at: [0, 0.42, -0.1], normal: [0, 0, -1] } };   // model space
+
+mountWhenWanted(frame, {
+  onFrame({ toScreen }) {
+    for (const button of frame.querySelectorAll('.hotspot')) {
+      const spot = SPOTS[button.dataset.spot];
+      const { x, y, facing } = toScreen(spot.at, spot.normal);
+      button.hidden = facing < 0;                       // the part is on the far side
+      button.style.setProperty('--x', `${x}px`);
+      button.style.setProperty('--y', `${y}px`);
+    }
+  },
+});
+```
 
 ### Components this pack does not have
 
@@ -2418,6 +2479,18 @@ per mesh: three hundred draw calls for a chair. Merging meshes that share a
 material is the largest single win available, and it is done in the modelling
 tool or with a glTF optimiser, not in the browser.
 
+**The shadow pass is inside the count.** `renderer.info.render.calls` adds up
+every pass, and a shadow-casting light draws the model once more into its map:
+fifteen meshes read as thirty. The budget is the figure as read, so the one
+permitted light costs half of it. Ask for it with the mount's `shadows` option,
+which sets `PCFShadowMap`. `PCFSoftShadowMap`, the type most tutorials name,
+has been removed: three.js r186 logs a warning and falls back.
+
+**A model built in code is held to the same table.** Give the mount
+`build(THREE)` in place of `src`; it returns the object, and its one light if
+it has one. There is no loader or decoder to pay for, and the merge is yours to
+do: one mesh per material, not one per part.
+
 **Do not estimate these. Read them.**
 
 ```js
@@ -2431,7 +2504,8 @@ console.table({
 ```
 
 Print that after the first frame and put the output in the pull request. A
-budget nobody measured is a wish.
+budget nobody measured is a wish. The mount returns the same four from
+`handle.info()`.
 
 ### Compression is two separate decisions
 
@@ -2492,15 +2566,22 @@ script from someone else running in the page.
 ```js
 import { mountWhenWanted } from './scene-mount.js';        // 2KB. The engine is not in it.
 
+const handles = new Map();                                 // frame -> handle, once its scene runs
+
 for (const frame of document.querySelectorAll('.scene')) {
   const bar = frame.querySelector('.scene-progress');
   mountWhenWanted(frame, {
     src: frame.dataset.model,
     auto: frame.hasAttribute('data-hero'),                 // one per page
     onProgress: (p) => bar && bar.style.setProperty('--scene-progress', p),
-  });
+  }).ready.then((handle) => handle && handles.set(frame, handle));
 }
 ```
+
+`ready` resolves whichever way the scene started - by itself or from its
+button - and resolves to `null` when it cannot run. The `handle` in the
+snippets of `02-scene.md` and `04-access.md` is this one, and is why each of
+them checks it before using it.
 
 ### Pixel ratio
 
@@ -2726,8 +2807,8 @@ A configurator is a form whose preview happens to be 3D. Build the form.
 ```js
 form.addEventListener('change', () => {
   const choice = new FormData(form).get('frame');
-  handle.set((model) => applyFrameColour(model, choice));   // one redraw
-  summary.textContent = describe(choice);                    // announced, politely
+  summary.textContent = describe(choice);                    // announced, politely - scene or no scene
+  if (handle) handle.set((model) => applyFrameColour(model, choice));   // one redraw
 });
 ```
 
@@ -2757,7 +2838,7 @@ form.addEventListener('change', () => {
 ```js
 views.addEventListener('click', (e) => {
   const button = e.target.closest('button[data-view]');
-  if (!button) return;
+  if (!button || !handle) return;
   handle.view(button.dataset.view);
   for (const b of views.querySelectorAll('button')) {
     b.setAttribute('aria-pressed', String(b === button));
@@ -2774,6 +2855,16 @@ how the text points at the model.
 **The set of views is the set of things worth seeing.** If the back has the
 ports, there is a Back button. If the visitor can open the lid by dragging,
 there is an Open button.
+
+Which way is "front" belongs to the model, so the mount takes the directions as
+`views`. A drag leaves whichever view was pressed: clear `aria-pressed` from
+the mount's `onInteract`, or the bar goes on naming a view the camera has left.
+
+**A toggle that changes the picture and not the order is a view.** A cutaway,
+an exploded state, a lid: a button with its own `aria-pressed`, in the view bar
+but in a group of its own, because it combines with every camera position. In
+the form it would be submitted with the order. Its change is announced from a
+status region, as an option's is.
 
 ### Touch: the page owns vertical
 
@@ -2853,7 +2944,7 @@ Not an edge case. Each row below is an ordinary visit.
 | Situation | What happens | The visitor sees |
 |---|---|---|
 | Script failed or is blocked | Nothing mounts | The poster and the whole page |
-| No WebGL 2 | `canMount()` is false; the button is removed | The poster |
+| No WebGL 2 | `canMount()` is false; the button stays hidden | The poster |
 | Reduced-data preference | The same | The poster |
 | The model 404s or a decoder is blocked | State becomes `failed` | The poster |
 | The context is lost mid-visit | State returns to `poster` until restored | The poster, then the scene again |
@@ -2863,8 +2954,9 @@ Every row ends in the same place, which is the reason to build the page first.
 There is one fallback, it is the page, and it was reviewed before the scene
 existed.
 
-**A hidden "Load 3D" button must be hidden from everyone.** Use the `hidden`
-attribute, not a class that only sets `opacity`. A button a screen reader can
+**A hidden "Load 3D" button must be hidden from everyone.** It ships with the
+`hidden` attribute and the mount takes it off, so it is also hidden when script
+never ran. Not a class that only sets `opacity`. A button a screen reader can
 still find, that does nothing, is worse than no button.
 
 ### Four passes before calling it done
@@ -2893,8 +2985,9 @@ This file is what a page built around a scene needs on top.
 - [ ] The three questions in `02-scene.md` have written answers: the verb, why
       it could not be recorded, what the visitor learns.
 - [ ] The answer was not "watch it". If it was, this is a video.
-- [ ] The page was built and reviewed with the poster in place, before the
-      scene was mounted.
+- [ ] The page was reviewed with the scene absent: the poster in the frame, or
+      the empty frame at its ratio if the poster had yet to be captured from
+      the scene.
 - [ ] There is one scene on the page.
 
 #### The page without the scene
@@ -2917,6 +3010,8 @@ This file is what a page built around a scene needs on top.
 - [ ] A scroll-driven scene uses chapters on native scroll. No scroll-jacking,
       no smooth-scroll library owning the page.
 - [ ] Buttons on the stage use the stage accent with the dark label.
+- [ ] On a wide screen the stage colour reaches both edges; only its content is
+      capped.
 
 #### Loading
 - [ ] The engine is a dynamic import. Nothing from three.js is in the page's
@@ -2932,7 +3027,8 @@ This file is what a page built around a scene needs on top.
 - [ ] Critical path under 350KB; script on it under 30KB.
 - [ ] Engine, loader and controls under 250KB compressed.
 - [ ] Model under 2MB. Triangles, draw calls and texture count read from
-      `renderer.info`, not estimated, and within `03-budget.md`.
+      `renderer.info`, not estimated, and within `03-budget.md`. The draw-call
+      figure includes the shadow pass.
 - [ ] Texture format chosen by GPU memory, not file size; no 4096px textures.
 - [ ] Pixel ratio capped at 2, and 1.5 on a coarse pointer.
 - [ ] No animation loop. Frames are drawn on change only.
@@ -2945,7 +3041,9 @@ This file is what a page built around a scene needs on top.
 - [ ] `touch-action: pan-y` is set on the canvas after the controls are
       constructed.
 - [ ] Wheel zoom is off outside full-screen mode. Pinch-zoom of the page works.
-- [ ] Every view a drag can reach is a button in the view bar.
+- [ ] Every view a drag can reach is a button in the view bar. So is a toggle
+      that changes the picture and not the order - a cutaway, an exploded
+      state.
 - [ ] Every option is a form control outside the canvas, with a text label
       beside any swatch.
 - [ ] Hotspots are HTML buttons with visible labels, in reading order, and hide
@@ -2966,7 +3064,8 @@ This file is what a page built around a scene needs on top.
       poster, with no error message.
 - [ ] `webglcontextlost` calls `preventDefault()`, and the scene returns on
       restore.
-- [ ] The load button is removed with `hidden` when the scene cannot mount.
+- [ ] The load button ships `hidden`, and script reveals it only when the scene
+      can mount.
 - [ ] In a single-page app, leaving the route calls `dispose()`.
 
 ### Failure modes specific to this domain
@@ -3022,7 +3121,7 @@ company has a website.
 
 ### Refusals
 
-`PACK.md` lists what this pack pushes back on - the percentage preloader, the
+The table under *What this pack deliberately refuses* lists what this pack pushes back on - the percentage preloader, the
 whole site in the canvas, a scene per section, scroll-jacking, auto-rotation,
 real-time for a fixed fly-through, mouse-follow parallax, the unoptimised
 model, WebGPU for its own sake, a 3D hero for a subject that is not spatial -

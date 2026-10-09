@@ -54,6 +54,14 @@ The four causes, and their fixes:
 This pack overrides core to use two families, and this is where that cost is
 paid. Skip these and the override is not justified.
 
+**The pack ships no font files.** `theme.css` names the two faces; the builder
+supplies them — one subset variable `woff2` per family, and the `@font-face`
+rules below. If the project has no licence, no files or no network, delete the
+two names and ship the rest of each stack: a system serif and the system sans
+cost nothing and shift nothing. What is never right is the half-way state — an
+`@font-face` or a preload pointing at a file that is not there, which is a
+failed request on the critical path for a font nobody will see.
+
 ```css
 @font-face {
   font-family: 'Fraunces';

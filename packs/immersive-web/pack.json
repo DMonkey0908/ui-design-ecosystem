@@ -71,8 +71,8 @@
   ],
   "assets": [
     { "file": "theme.css", "note": "the token file - load first" },
-    { "file": "scene.css", "note": "the scene frame, its four states, the stage layout and the plate" },
-    { "file": "scene-mount.js", "note": "the reference mount in plain three.js - lazy import, capped pixel ratio, render on demand, context loss, disposal" }
+    { "file": "scene.css", "note": "the scene frame, its four states, the stage layout, hotspots and the plate" },
+    { "file": "scene-mount.js", "note": "the reference mount in plain three.js, for a glTF or a model built in code - lazy import, capped pixel ratio, render on demand, a per-frame hook for hotspots, context loss, disposal" }
   ],
   "customGpt": null
 }

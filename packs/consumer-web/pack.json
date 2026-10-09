@@ -40,7 +40,7 @@
     "canvas": "warm off-white, or a dark section used deliberately for contrast",
     "content": "the canvas itself; cards are used sparingly, not as the default container",
     "floating": "menus and dialogs, generous radius, soft warm shadow",
-    "accent": "one saturated teal, reserved for the primary action",
+    "accent": "one saturated teal: as a fill, the primary action only; as a line, links, focus and the recommended plan",
     "semantic": "success/warning/danger, used only in forms and system messages"
   },
   "platform": {
@@ -58,7 +58,7 @@
     "overrides": [
       {
         "rule": "core/02-typography.md: one family, plus a monospace",
-        "why": "Brand voice is a deliverable here, not a nice-to-have, and a display face is the cheapest way to stop a page reading as a template. The cost core names is real and is paid explicitly: both families are self-hosted, subset, preloaded and declared font-display: swap with metric-matched fallbacks, and the pairing is capped at two families total."
+        "why": "Brand voice is a deliverable here, not a nice-to-have, and a display face is the cheapest way to stop a page reading as a template. The cost core names is real and is paid explicitly: both families are self-hosted, subset, preloaded and declared font-display: swap with metric-matched fallbacks, and the pairing is capped at two brand families. Core's monospace for identifiers still applies, from the system stack."
       }
     ]
   },

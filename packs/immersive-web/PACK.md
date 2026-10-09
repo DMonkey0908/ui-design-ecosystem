@@ -137,7 +137,8 @@ If they hear the cost and still want it, build it. It is their product.
 
 1. Answer the three questions at the top of `02-scene.md` before opening a
    modelling tool. Two of the three usual requests end at "that is a video".
-2. Build the page first, with the poster image where the scene will go, and
+2. Build the page first, with the frame where the scene will go - holding the
+   poster, or empty at its ratio until one can be captured from the scene - and
    ship-check it in that state. This is the step that gets skipped, and it is
    the one the whole pack rests on.
 3. Load `assets/theme.css`, then `assets/scene.css`. Swap the accent pair and

@@ -11,7 +11,7 @@ method and the reasoning; this file holds what this domain picked.
 | **content** | The canvas. No container by default. | A card is for grouping things that belong together, not for holding every paragraph. |
 | **chrome** | A header that floats over the canvas, transparent until scrolled | Permanent chrome frames a workspace. There is no workspace here — there is a page. |
 | **floating** | Menus, dialogs: white, 16px radius, warm soft shadow | Rare. If a page needs many, the page is doing too much. |
-| **accent** | One saturated teal | Reserved for the primary action and nothing else. |
+| **accent** | One saturated teal | As a fill, the primary action and nothing else. As a line it also marks a text link, the focus ring and the one recommended plan. Never decoration: no accent headings, icons or section backgrounds. |
 | **semantic** | Success, warning, danger | Forms and system messages only. Not decoration. |
 
 **The contrast move of this pack is a dark section, not a card.** Where the
@@ -32,12 +32,12 @@ core gives: `#0d7a6f` on `#14100e` is muddy and hard to read.
   --accent-active:  #084a44;
   --accent-on-dark: #5eead4;   /* the same accent, legible on the ink surface */
 
-  --accent-tint:   #f0faf8;    /* section washes, hover on light */
+  --accent-tint:   #f0faf8;    /* hover and small washes - not a section background */
   --accent-tint-2: #d5f2ec;
 
   --accent-a10: rgba(13, 122, 111, 0.10);
   --accent-a20: rgba(13, 122, 111, 0.20);
-  --accent-a35: rgba(13, 122, 111, 0.35);   /* focus ring */
+  --accent-a35: rgba(13, 122, 111, 0.35);   /* the call-to-action shadow */
 
   /* ----- Canvas: warm, not grey ----- */
   --canvas:    #fbfaf8;
@@ -49,7 +49,8 @@ core gives: `#0d7a6f` on `#14100e` is muddy and hard to read.
   --text-3:    #766d64;   /* captions, meta - quiet, and still 4.5:1 */
 
   --line:      #e8e3dc;   /* hairline, used sparingly */
-  --line-2:    #d5cec4;   /* input borders */
+  --line-2:    #d5cec4;   /* a heavier divider - not a control edge */
+  --line-control: #8c8379; /* input and secondary-button borders */
 
   /* ----- Ink: the inverted section ----- */
   --ink:       #14100e;
@@ -64,6 +65,22 @@ core gives: `#0d7a6f` on `#14100e` is muddy and hard to read.
   --danger:  #be123c;
 }
 ```
+
+**A control's edge is `--line-control`, not `--line-2`.** An input is found by
+its border, and `--line-2` is 1.56:1 on the white surface — a field that is
+there and cannot be seen. `--line-control` is the lightest warm grey that clears
+core's 3:1 on all three light surfaces: 3.72:1 on `--surface`, 3.57:1 on
+`--canvas`, 3.33:1 on `--canvas-2`. The hairlines stay faint on purpose; they
+separate, nobody aims at them.
+
+**Rebranding moves more than one line.** Core's `01-tokens.md` has the
+procedure. In this file it means: `--accent`, its hover and active steps,
+`--accent-on-dark`, both tints and the three alpha steps, which carry the
+accent's RGB literally. Then compute, do not eyeball: `--text-on-accent` on the
+accent fill, the accent as link text on `--canvas` and `--canvas-2`,
+`--accent-on-dark` on `--ink` and `--ink-2`, and `--ink` on the on-dark fill.
+The shipped teal gives 5.21, 4.99, 4.66, 12.79, 11.65 and 12.79; a swapped
+accent that skips this step usually fails as link text first.
 
 **Never `#000` for text.** Pure black on an off-white canvas vibrates and reads
 as harsh at large sizes — and this pack uses large sizes. `#14100e` carries the
@@ -80,16 +97,33 @@ the way metadata is supposed to look — which is exactly why nobody noticed.
 
 ## Type
 
-Two families, which is an override of core — see `PACK.md`.
+Two brand families, which is an override of core — see the *Overrides* section.
 
 ```css
 --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
---font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+--font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+--font-mono:    ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
 ```
+
+**The pack ships the names, not the files.** The two brand faces are the
+builder's to supply — see `04-performance.md`. Until they are, everything
+after the first name in each stack is what renders, and it is a complete
+fallback: a system serif for display, the system sans for body.
 
 The display face is for headings and the one pull quote. Everything else is the
 body face. A display face in a button or a form label is where this pairing
 starts to look like an accident.
+
+**Figures are set in the body face** — prices, statistics, the number in a
+proof line — even at heading size. A display serif often ships old-style or
+proportional digits and no tabular set, and Georgia in the fallback stack has
+old-style digits only, so a price in the display face is a price core's
+numeral rule cannot reach.
+
+**The monospace is not a third brand face.** It is the one core asks for
+wherever a reader copies an identifier — a model code, a part number, a
+version. It comes from the system, so it adds no request, and it is not for
+decoration.
 
 Base `font-size` is **16px** — the browser default, not a shrunk one. A visitor
 who has enlarged their default did so for a reason.

@@ -24,7 +24,7 @@ Fewer components than an operational tool needs, each carrying more weight.
 
 .btn-secondary {
   background: transparent; color: var(--text);
-  border: 1px solid var(--line-2);
+  border: 1px solid var(--line-control);   /* 3:1 - see 01-surfaces.md */
 }
 .btn-secondary:hover { background: var(--canvas-2); }
 
@@ -87,7 +87,7 @@ list, it is two features.
 .plans { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .plan { border: 1px solid var(--line); border-radius: 16px; padding: 2rem; background: var(--surface); }
 .plan.is-featured { border-color: var(--accent); box-shadow: var(--shadow-md); }
-.plan-price { font: 700 var(--t-h2)/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.plan-price { font: 700 var(--t-h2)/1 var(--font-body); font-variant-numeric: tabular-nums; }   /* body face: see 01-surfaces.md */
 ```
 
 - **Show the price.** "Contact us" on every tier is read as "expensive, and you
@@ -112,12 +112,12 @@ Every field costs conversions. Ask for what you will use this week.
 .field label { font: 600 var(--t-small)/1.4 var(--font-body); color: var(--text-2); }
 .field input, .field textarea {
   padding: .875rem 1rem;
-  border: 1px solid var(--line-2);
+  border: 1px solid var(--line-control);   /* the field is found by this edge */
   border-radius: 8px;
   background: var(--surface);
   font: 400 1.0625rem/1.5 var(--font-body);   /* >=16px: iOS zooms below that */
 }
-.field input:focus-visible { outline: 2px solid var(--accent-a35); outline-offset: 2px; border-color: var(--accent); }
+.field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
 .field .error { color: var(--danger); font-size: var(--t-caption); }
 ```
 

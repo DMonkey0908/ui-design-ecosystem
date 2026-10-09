@@ -12,7 +12,8 @@ This file is what a phone needs on top.
 - [ ] The primary action is in the bottom third, full width or near it.
 - [ ] Nothing used more than once per screen sits in a top corner.
 - [ ] No destructive action is adjacent to a frequent one.
-- [ ] Nothing important sits in either bottom corner, since the grip is unknown.
+- [ ] No lone control sits in a bottom corner, since the grip is unknown —
+      it is centred or it spans, as the tab bar does.
 
 ### Targets and text
 - [ ] Every target is at least 44pt / 48dp, counting padding rather than the
@@ -31,8 +32,9 @@ This file is what a phone needs on top.
 
 ### Safe areas
 - [ ] Insets are read at runtime, never hardcoded.
-- [ ] The bottom bar adds the bottom inset as padding, so nothing sits under
-      the home indicator.
+- [ ] The bottom-most bar adds the bottom inset as padding, so nothing sits
+      under the home indicator — and a bar stacked above it does not add it
+      again.
 - [ ] Scroll content passes under the bars, with the inset added as content
       padding.
 - [ ] Checked on a device with a notch and on one without.
@@ -123,6 +125,6 @@ like it — which is worse than the honest absence this pack's override allows.
 
 ## Refusals
 
-The table in `PACK.md` lists what this pack pushes back on and what to offer
-instead. Name the cost, offer the alternative, then build whatever is decided —
+The table under *What this pack deliberately refuses* lists what this pack
+pushes back on and what to offer instead. Name the cost, offer the alternative, then build whatever is decided —
 and record the decision so nobody re-litigates it next quarter.

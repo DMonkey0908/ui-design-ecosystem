@@ -64,10 +64,12 @@
     --danger-on-stage: #ff7a7a;
 
     /* ----- Type: one family and a monospace ----------------------------- */
+    /* Inter is named, not shipped: the stack falls through to the system face
+       until the project self-hosts one file. Never a font CDN link. */
     --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
 
-    --t-hero: clamp(2.5rem, 7vw, 5rem);
+    --t-hero: clamp(2.5rem, 4.5vw, 3.75rem);   /* sized for the 28rem lane, not the viewport */
     --t-h2: clamp(1.75rem, 4vw, 2.75rem);
     --t-h3: 1.375rem;
     --t-lead: 1.25rem;
@@ -89,6 +91,8 @@
     --scene-ratio: 4 / 3;                /* reserved before anything loads */
     --stage-h: min(100svh, 56rem);
     --target: 44px;
+    --stem: 1.25rem;                     /* a hotspot's stand-off from the point it names */
+    --header-h: 4rem;                    /* the floating header; the hero stage clears it */
 
     /* ----- Radii -------------------------------------------------------- */
     --r-control: 8px;

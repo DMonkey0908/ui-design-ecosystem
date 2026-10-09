@@ -128,7 +128,14 @@ face is the cheapest way to stop a page reading as a template. Core's objection
 is real, so the cost is paid explicitly rather than ignored: both families are
 self-hosted and subset, the display face is preloaded, both declare
 `font-display: swap` with metric-matched fallbacks, and the pairing stops at
-two. A third family is not a style decision, it is a bug.
+two. A third brand family is not a style decision, it is a bug.
+
+The override replaces "one family", not "plus a monospace". Where a page shows
+an identifier a reader will copy — a model code, a part number — core's
+monospace still applies, taken from the system stack so it costs no request.
+
+The font files are not in this pack. The builder supplies them, or ships the
+system fallback stack deliberately; `04-performance.md` says which is which.
 
 Nothing else in core is overridden. The accessibility minimums and the chart
 honesty rules are not overridable at all.
@@ -161,7 +168,7 @@ Say so briefly, offer the alternative, and build whatever is decided.
 | An entry pop-up | It interrupts before the page has earned anything | An inline offer after the first section, or on exit |
 | Autoplaying video with sound | Bounce, and an accessibility failure | Muted, poster-first, play on intent |
 | Every section a different colour | Nothing stands out, so the eye stops navigating | One accent; vary rhythm and scale instead |
-| A third type family | Brand voice does not compound; page weight does | Use the second family's other weights |
+| A third brand family | Brand voice does not compound; page weight does | Use the second family's other weights |
 | Text baked into images | Unreadable to search, screen readers, and translation | Real text over an image, or an `svg` with a title |
 | Infinite scroll on a marketing page | The footer becomes unreachable, and so does the pricing link | Pagination, or a shorter page |
 
@@ -170,7 +177,8 @@ If they hear the cost and still want it, build it. It is their product.
 ## Getting started on a new project
 
 1. Copy `assets/theme.css` in as the first stylesheet, then swap the accent and
-   recompute the on-dark value.
+   recompute everything derived from it — hover, active, on-dark, tints, alpha
+   steps — and measure the pairs. `01-surfaces.md` lists them.
 2. Set the type scale before writing any component. On this kind of page the
    scale *is* the design, and retrofitting one means touching every section.
 3. Decide the section rhythm once — one spacing value, used everywhere — and do

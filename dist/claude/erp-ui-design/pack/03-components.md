@@ -43,13 +43,24 @@ Three variants, and that is the whole set.
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
-.btn:hover:not(:disabled) { background: var(--paper-2); }
-.btn:disabled             { opacity: 0.55; cursor: default; }
+.btn:active:not(:disabled) { background: var(--paper-3); }
+
+/* Stated colours, not opacity - and after the variants in the cascade, so a
+   disabled primary gives up its fill. */
+.btn:disabled {
+  border-color: var(--paper-border); background: var(--paper-2);
+  color: var(--paper-text-3); cursor: default;
+}
 
 .btn-primary {
   border-color: var(--brand); background: var(--brand); color: var(--text-on-brand);
 }
-.btn-primary:hover:not(:disabled) { background: var(--brand-hover); border-color: var(--brand-hover); }
+.btn-primary:active:not(:disabled) { background: var(--brand-dark); border-color: var(--brand-dark); }
+
+@media (hover: hover) {
+  .btn:hover:not(:disabled) { background: var(--paper-2); }
+  .btn-primary:hover:not(:disabled) { background: var(--brand-hover); border-color: var(--brand-hover); }
+}
 
 .btn-sm { padding: 5px 12px; font-size: 0.75rem; }
 
@@ -62,7 +73,7 @@ Three variants, and that is the whole set.
 }
 
 .btn:focus-visible, .link-btn:focus-visible {
-  outline: 2px solid var(--brand-a35); outline-offset: 2px;
+  outline: 2px solid var(--brand); outline-offset: 2px;
 }
 ```
 
@@ -71,6 +82,11 @@ them on one surface means neither does.
 
 `:hover:not(:disabled)` matters — a disabled button that still lights up on
 hover reads as broken.
+
+**Disabled is a pair of colours, not an opacity.** At `opacity: 0.55` a
+disabled primary's label is 2.96:1 and a default one's is 4.0:1; grey text on
+`--paper-2` is 4.75:1 and still plainly unavailable. Someone has to be able to
+read what it is they cannot do.
 
 ## Forms
 
@@ -92,7 +108,7 @@ control and their spacing, so nothing can drift out of alignment.
 .field input, .field select, .field textarea {
   width: 100%; box-sizing: border-box;
   padding: 8px 10px;
-  border: 1px solid var(--paper-border-strong);
+  border: 1px solid var(--paper-border-control);
   border-radius: 6px;
   background: var(--paper); color: var(--paper-text);
   font: inherit; font-size: 0.875rem; font-weight: 400;
@@ -113,6 +129,11 @@ gets scanned; labels are reference material.
 
 `min-width: 0` on the field stops a long value from blowing out its grid column.
 
+The field's edge is `--paper-border-control`, not the button border. An empty
+field is nothing but its edge, so the edge has to reach 3:1 — it is 3.46:1,
+where `--paper-border-strong` is 1.48:1 and an empty input on a white card is
+a guess.
+
 ### Form grid
 
 ```css
@@ -120,7 +141,7 @@ gets scanned; labels are reference material.
 .field-wide { grid-column: span 2; }
 
 @media (max-width: 860px) { .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } .field-wide { grid-column: auto; } }
+@media (max-width: 520px) { .form-grid { grid-template-columns: minmax(0, 1fr); } .field-wide { grid-column: auto; } }
 ```
 
 `minmax(0, 1fr)`, never plain `1fr` — the default `min-width: auto` makes a
@@ -141,7 +162,7 @@ form submission work for free.
   background: var(--paper); color: var(--paper-text);
   box-shadow: var(--shadow-raised);
 }
-.segment input:focus-visible + span { outline: 2px solid var(--brand-a35); }
+.segment input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 1px; }
 ```
 
 The selected option is raised out of a recessed track — no accent needed.
@@ -151,7 +172,8 @@ The selected option is raised out of a recessed track — no accent needed.
 The centre of gravity of an ERP. Get the density right and the rest follows.
 
 ```css
-.table-wrap { overflow-x: auto; border: 1px solid var(--paper-border); border-radius: 8px; }
+.table-wrap { position: relative; overflow-x: auto;
+              border: 1px solid var(--paper-border); border-radius: 8px; }
 .table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
 
 .table th {
@@ -161,8 +183,10 @@ The centre of gravity of an ERP. Get the density right and the rest follows.
   border-bottom: 1px solid var(--paper-border);
   white-space: nowrap;
 }
-.table td { padding: 8px 12px; color: var(--paper-text); border-bottom: 1px solid var(--paper-border); }
+.table td { padding: 8px 12px; color: var(--paper-text); border-bottom: 1px solid var(--paper-border);
+            height: 2.125rem; box-sizing: border-box; white-space: nowrap; }
 .table tr:last-child td { border-bottom: 0; }
+.table code { line-height: 1; }
 
 .table .num {
   text-align: right;
@@ -187,6 +211,17 @@ Rules that carry the weight:
   is how an unreadable table happens.
 - **`white-space: nowrap` on headers**, so a two-word header never doubles the
   header height.
+- **The row is as tall as its text: 34px.** Anything else on the line grows
+  the line box and the row with it — a monospace ID, a pill, a button — and at
+  38px a screen loses two rows in twenty. So `code` in a cell gets
+  `line-height: 1`, the pill and the row action each carry their own fix
+  below, and the `height` on `td` is the floor a skeleton row needs in order
+  to be the height of the row that replaces it.
+- **`position: relative` on the wrapper.** An absolutely positioned child —
+  the `.sr-only` label of an icon-only header — otherwise resolves against the
+  page, escapes the scroller, and the page grows a horizontal scrollbar as
+  wide as the table at exactly the widths where the wrapper was meant to
+  contain it.
 
 ### Row actions
 
@@ -196,6 +231,7 @@ out. So it is specified here rather than left to be reinvented.
 
 ```css
 .table .col-action { width: 1%; text-align: end; }   /* shrink to content */
+.table td.col-action { padding-block: 3px; }         /* 26 + 6: the button must not set the row height */
 
 .row-action {
   min-height: 26px;
@@ -207,7 +243,9 @@ out. So it is specified here rather than left to be reinvented.
   font: inherit; font-size: 0.72rem; font-weight: 600;
   white-space: nowrap; cursor: pointer;
 }
-.row-action:hover:not(:disabled) { background: var(--paper-2); color: var(--paper-text); }
+@media (hover: hover) {
+  .row-action:hover:not(:disabled) { background: var(--paper-2); color: var(--paper-text); }
+}
 .row-action:active:not(:disabled) { background: var(--paper-3); }
 
 /* Inset, because the action column sits flush against the right edge of a
@@ -231,7 +269,10 @@ Four rules:
   out-shouts the data they act on, which is why this is one step down from
   `.btn-sm` in size and uses the muted text colour until hovered.
 - **One per row.** More than one and the column becomes a toolbar; put the
-  rest behind a single overflow menu.
+  rest behind a single overflow menu. The overflow trigger sits beside the
+  action and is not a second one — it is where the second one went. Give it
+  the same size and a real accessible name, because a bare `⋯` announces as
+  "button".
 - **A toggle carries `aria-pressed` and changes its label.** "Hold" becomes
   "Release". A button whose text never changes cannot tell a screen reader
   what it just did.
@@ -250,25 +291,28 @@ most waits.
   display: block;
   height: 11px;                                   /* the cap height of a row */
   border-radius: 3px;
-  background: linear-gradient(90deg,
-              var(--paper-3) 0%, var(--paper-2) 50%, var(--paper-3) 100%);
-  background-size: 200% 100%;
-  animation: skeleton-sweep 1.1s ease-in-out infinite;
+  background: var(--paper-3);
+  animation: skeleton-pulse 1.1s ease-in-out infinite;
 }
 .skeleton-cell.is-short { width: 45%; }
 .skeleton-cell.is-right { margin-inline-start: auto; width: 60%; }
 
-@keyframes skeleton-sweep {
-  from { background-position: 100% 0; }
-  to   { background-position: -100% 0; }
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
 }
 
 /* The global guard kills the animation and does not supply an end state.
    Without this the cells inherit whatever frame they stopped on. */
 @media (prefers-reduced-motion: reduce) {
-  .skeleton-cell { animation: none; background: var(--paper-3); opacity: 1; }
+  .skeleton-cell { animation: none; opacity: 1; }
 }
 ```
+
+A pulse, not a travelling highlight. A reloading table is a few hundred of
+these cells at once, and a highlight is a background repainted in every one of
+them on every frame — the many-elements case `core/04-motion.md` rules out.
+Opacity is composited, so the count stops mattering.
 
 The rules that make it honest:
 
@@ -281,8 +325,12 @@ The rules that make it honest:
 - **`aria-hidden` on the skeleton rows.** They carry no information, and a
   screen reader announcing eight rows of nothing is worse than silence. Put the
   word in the live region instead - the same one that carries the match count.
-- **The table header stays.** Only the body is unknown, and keeping the header
-  means the columns do not move when the data arrives.
+- **The table header stays, and so do its columns.** Only the body is unknown.
+  But an auto-layout table sizes its columns from the body, so with the data
+  gone every column re-flows to fit its header, and re-flows again when the
+  answer lands. Before swapping the rows out, copy each `th`'s measured width
+  into a `<colgroup>` and set `table-layout: fixed`; remove both when the data
+  arrives.
 
 ## KPI tiles
 
@@ -323,10 +371,12 @@ Three weights of the same idea. Pick by how loud it needs to be.
 
 @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-/* Louder — a filled pill */
+/* Louder — a filled pill. Hung from the top of the line with its own line
+   height, so in a table cell it sits inside the row instead of stretching it. */
 .pill { display: inline-flex; align-items: center; gap: 4px;
         padding: 2px 8px; border-radius: 999px;
-        font-size: 0.7rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        font-size: 0.7rem; font-weight: 600; white-space: nowrap; flex-shrink: 0;
+        line-height: 1; vertical-align: top; margin-top: 1px; }
 .pill-success { background: var(--pill-success-bg); color: var(--pill-success-text); }
 .pill-warning { background: var(--pill-warning-bg); color: var(--pill-warning-text); }
 .pill-danger  { background: var(--pill-danger-bg);  color: var(--pill-danger-text); }
@@ -346,9 +396,18 @@ text. A row of saturated pills in a table drowns the data next to them.
 
 ## Dropdown / popover
 
-See `02-shell.md` for positioning. Item spec:
+See `02-shell.md` for positioning and the open/closed states;
+`assets/erp-shell.css` ships all of it. The container, then the item:
 
 ```css
+.dropdown {
+  padding: 6px;
+  border: 1px solid var(--paper-border);
+  border-radius: var(--radius-float);
+  background: var(--paper); color: var(--paper-text);
+  box-shadow: var(--shadow-float);
+}
+
 .dropdown-item {
   display: flex; align-items: center; gap: 12px; width: 100%;
   padding: 10px 12px; border-radius: 8px;
@@ -358,12 +417,19 @@ See `02-shell.md` for positioning. Item spec:
   cursor: pointer;
   transition: background 0.12s ease, color 0.12s ease;
 }
-.dropdown-item:hover { background: var(--paper-3); }
 .dropdown-item .icon { width: 20px; height: 20px; color: var(--paper-text-3); flex-shrink: 0; }
-.dropdown-item:hover .icon { color: var(--brand); }
-
 .dropdown-item.is-danger { color: var(--state-danger-dark); }
-.dropdown-item.is-danger:hover { background: var(--danger-tint); }
+
+@media (hover: hover) {
+  .dropdown-item:hover { background: var(--paper-3); }
+  .dropdown-item:hover .icon { color: var(--brand); }
+  .dropdown-item.is-danger:hover { background: var(--danger-tint); }
+}
+.dropdown-item:active { background: var(--paper-border); }
+
+/* Inset: the item runs to within 6px of a container that clips nothing but
+   sits against the viewport edge under 640px. */
+.dropdown-item:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
 
 .dropdown-divider { height: 1px; background: var(--paper-border); margin: 4px 6px; }
 ```
@@ -399,6 +465,55 @@ summoned it.
 
 `overflow-wrap: anywhere` on the title: file names and IDs have no spaces to
 break at.
+
+## Dialog
+
+A card that floats, and the native element: `<dialog>` opened with
+`showModal()` supplies the focus handling `core/05-accessibility.md` asks for,
+which a positioned `<div>` has to reimplement and usually gets half of.
+
+```css
+.dialog {
+  width: min(30rem, calc(100vw - 32px));
+  padding: 20px 22px;
+  border: 1px solid var(--paper-border);
+  border-radius: var(--radius-float);
+  background: var(--paper); color: var(--paper-text);
+  box-shadow: var(--shadow-float);
+}
+.dialog::backdrop { background: var(--scrim); }
+```
+
+Card padding, the floating radius and shadow, a slate scrim. Actions bottom
+right, the primary last, and one primary — the card rule holds on every
+surface. Say in the body what will change and how many records it touches;
+an operator confirming the fortieth dialog of the day reads the number, not
+the title.
+
+## Toast
+
+For one job: an action that looked done and was not.
+
+```css
+.toast {
+  position: fixed; inset-block-end: 20px; inset-inline-end: 20px;
+  width: min(26rem, calc(100vw - 32px));
+  padding: 12px 14px;
+  border: 1px solid var(--paper-border-strong);
+  border-inline-start: 3px solid var(--state-danger);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  box-shadow: var(--shadow-float);
+}
+```
+
+`role="alert"`, the record's ID in the title, the actual reason in the body,
+and it stays until dismissed — a rollback notice that times out is a silent
+rollback with extra steps. Paper, like everything else that holds words.
+
+A success does not get one. It goes in the live line beside the match count:
+someone approving forty invoices needs to see the fortieth row, not forty
+toasts stacked over it.
 
 ## Filter row
 

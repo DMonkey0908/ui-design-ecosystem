@@ -89,6 +89,10 @@
       "note": "the shell - grid, sidebar, topbar, main; written entirely in theme tokens"
     },
     {
+      "file": "erp-shell.js",
+      "note": "the shell's behaviour - sidebar toggle, topbar menus, the active-item guard; no dependencies"
+    },
+    {
       "file": "page-template.html",
       "note": "the page template, including the pre-paint script"
     }

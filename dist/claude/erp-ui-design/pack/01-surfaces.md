@@ -15,7 +15,7 @@ permanently.
 | Job | Recede. Frame the work. | Hold the work. |
 | Background | `#0a0a0c` – `#1c1c21` | `#ffffff`, page `#f6f7f9` |
 | Text ramp | `#f1f1f4` / `#b9b9c2` / `#7f7f8a` | `#0f172a` / `#475569` / `#94a3b8` |
-| Border | `#2a2a32` | `#e2e8f0`, inputs `#cbd5e1` |
+| Border | `#2a2a32` | `#e2e8f0`, buttons `#cbd5e1`, form fields `#7d8ba0` |
 | Hover | `rgba(255,255,255,0.06)` | `#f7f8fa` |
 | Corner radius | 2–4px (sharp) | 6–12px (soft) |
 | Shadow | none, ever | only when it floats |
@@ -68,6 +68,7 @@ Ships as `assets/theme.css`. The accent's two values are the part to get right �
   --paper: #ffffff;  --paper-2: #f7f8fa;  --paper-3: #f1f3f5;  --paper-bg: #f6f7f9;
   --paper-text: #0f172a;  --paper-text-2: #475569;  --paper-text-3: #617085;
   --paper-border: #e2e8f0;  --paper-border-strong: #cbd5e1;
+  --paper-border-control: #7d8ba0;   /* a form field's edge: 3.46:1 on paper */
 
   /* ----- Semantic ----- */
   --state-success: #16a34a;        /* marks: dots, bars, pill fills */
@@ -105,18 +106,26 @@ this and make info a neutral grey.
 (`ui-monospace, SFMono-Regular, Menlo, Consolas`) for keys, paths, IDs and
 anything copyable.
 
-Base `font-size` on `body` is **13px** — the high-density standard. Shell in
-`em` so the frame scales with it; content in `rem`.
+The template makes no font request: an internal tool often runs where a
+third-party font host is blocked. Self-host Inter, or the fallback stack is
+what ships.
 
-| rem | px @13 | Used for |
+Base `font-size` on `body` is **13px** — the high-density standard — written
+`0.8125rem`. Shell in `em` so the frame scales with it; content in `rem`.
+
+The 13px is on `body`, not on the root, so **`1rem` is still 16px**. The px
+column below is what each step renders at; reading `0.8125rem` as "0.8125 of
+13" gives a 10.6px table that nobody can work in for a day.
+
+| Size | px | Used for |
 |---|---|---|
-| 0.72 | 9.4 | Tile labels, table headers, metadata terms |
-| 0.75 | 9.8 | Field labels, small buttons, link buttons, tooltips |
-| 0.8125 | 10.6 | Table body, buttons, notes, status text |
-| 0.875 | 11.4 | Inputs, definition values |
-| 1.0 | 13 | Card titles |
-| 1.25 | 16.3 | Tile values (the number itself) |
-| 1.5 | 19.5 | Page `h1` |
+| 0.72rem | 11.5 | Tile labels, table headers, metadata terms |
+| 0.75rem | 12 | Field labels, small buttons, link buttons, tooltips |
+| 0.8125rem | 13 | Table body, buttons, notes, status text |
+| 0.875rem | 14 | Inputs, definition values |
+| 1rem | 16 | Card titles |
+| 1.25rem | 20 | Tile values (the number itself) |
+| 1.5em | 19.5 | Page `h1` — in the shell stylesheet, so `em` against the body |
 
 Weights: 400 input text, 500 nav, 600 labels and buttons, 700 titles and values,
 800 badge counts only. Prose capped at `max-width: 72ch`.
@@ -158,6 +167,7 @@ Flat by default. Shadow is slate, never black, and only for things that float:
                   0 6px 12px -6px  rgba(15, 23, 42, 0.12);
 --shadow-tooltip: 0 8px 24px rgba(15, 23, 42, 0.14);
 --shadow-raised:  0 1px 2px rgba(15, 23, 42, 0.12);
+--scrim:          rgba(15, 23, 42, 0.45);   /* behind a dialog */
 ```
 
 The sidebar and topbar have **no shadow** — a 1px hairline separates them. A
@@ -181,13 +191,21 @@ Within core's bands, this domain runs at the fast end:
 ## Focus
 
 ```css
-/* On ink — inset, so the ring is not clipped by a flush cell */
-:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+/* On ink — the on-dark accent (5.87:1; --brand is 2.84:1 there), and inset,
+   so the ring is not clipped by a flush cell */
+:focus-visible { outline: 2px solid var(--brand-on-dark); outline-offset: -2px; }
 
-/* On paper — outset, softer, paired with a border shift on inputs */
+/* On paper — the accent itself, outset */
+.btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* A field already has an edge to change, so the border carries the contrast
+   (6.96:1) and the ring can be the soft one */
 input:focus-visible {
   outline: 2px solid var(--brand-a35);
   outline-offset: 1px;
   border-color: var(--brand);
 }
 ```
+
+`--brand-a35` is a halo, never the indicator: on paper it composites to
+1.94:1. Anything without a border of its own to recolour takes the solid ring.

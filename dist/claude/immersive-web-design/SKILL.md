@@ -211,7 +211,8 @@ If they hear the cost and still want it, build it. It is their product.
 
 1. Answer the three questions at the top of `02-scene.md` before opening a
    modelling tool. Two of the three usual requests end at "that is a video".
-2. Build the page first, with the poster image where the scene will go, and
+2. Build the page first, with the frame where the scene will go - holding the
+   poster, or empty at its ratio until one can be captured from the scene - and
    ship-check it in that state. This is the step that gets skipped, and it is
    the one the whole pack rests on.
 3. Load `assets/theme.css`, then `assets/scene.css`. Swap the accent pair and
@@ -264,8 +265,8 @@ Start with `core/10-visual-language.md`, `core/05-accessibility.md`, `core/08-fe
 | File | What it is |
 |---|---|
 | `assets/theme.css` | the token file - load first |
-| `assets/scene.css` | the scene frame, its four states, the stage layout and the plate |
-| `assets/scene-mount.js` | the reference mount in plain three.js - lazy import, capped pixel ratio, render on demand, context loss, disposal |
+| `assets/scene.css` | the scene frame, its four states, the stage layout, hotspots and the plate |
+| `assets/scene-mount.js` | the reference mount in plain three.js, for a glTF or a model built in code - lazy import, capped pixel ratio, render on demand, a per-frame hook for hotspots, context loss, disposal |
 
 Before calling any work done, run `core/99-review.md` and then
 `pack/05-checklist.md`.

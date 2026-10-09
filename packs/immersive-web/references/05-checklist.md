@@ -13,8 +13,9 @@ This file is what a page built around a scene needs on top.
 - [ ] The three questions in `02-scene.md` have written answers: the verb, why
       it could not be recorded, what the visitor learns.
 - [ ] The answer was not "watch it". If it was, this is a video.
-- [ ] The page was built and reviewed with the poster in place, before the
-      scene was mounted.
+- [ ] The page was reviewed with the scene absent: the poster in the frame, or
+      the empty frame at its ratio if the poster had yet to be captured from
+      the scene.
 - [ ] There is one scene on the page.
 
 ### The page without the scene
@@ -37,6 +38,8 @@ This file is what a page built around a scene needs on top.
 - [ ] A scroll-driven scene uses chapters on native scroll. No scroll-jacking,
       no smooth-scroll library owning the page.
 - [ ] Buttons on the stage use the stage accent with the dark label.
+- [ ] On a wide screen the stage colour reaches both edges; only its content is
+      capped.
 
 ### Loading
 - [ ] The engine is a dynamic import. Nothing from three.js is in the page's
@@ -52,7 +55,8 @@ This file is what a page built around a scene needs on top.
 - [ ] Critical path under 350KB; script on it under 30KB.
 - [ ] Engine, loader and controls under 250KB compressed.
 - [ ] Model under 2MB. Triangles, draw calls and texture count read from
-      `renderer.info`, not estimated, and within `03-budget.md`.
+      `renderer.info`, not estimated, and within `03-budget.md`. The draw-call
+      figure includes the shadow pass.
 - [ ] Texture format chosen by GPU memory, not file size; no 4096px textures.
 - [ ] Pixel ratio capped at 2, and 1.5 on a coarse pointer.
 - [ ] No animation loop. Frames are drawn on change only.
@@ -65,7 +69,9 @@ This file is what a page built around a scene needs on top.
 - [ ] `touch-action: pan-y` is set on the canvas after the controls are
       constructed.
 - [ ] Wheel zoom is off outside full-screen mode. Pinch-zoom of the page works.
-- [ ] Every view a drag can reach is a button in the view bar.
+- [ ] Every view a drag can reach is a button in the view bar. So is a toggle
+      that changes the picture and not the order - a cutaway, an exploded
+      state.
 - [ ] Every option is a form control outside the canvas, with a text label
       beside any swatch.
 - [ ] Hotspots are HTML buttons with visible labels, in reading order, and hide
@@ -86,7 +92,8 @@ This file is what a page built around a scene needs on top.
       poster, with no error message.
 - [ ] `webglcontextlost` calls `preventDefault()`, and the scene returns on
       restore.
-- [ ] The load button is removed with `hidden` when the scene cannot mount.
+- [ ] The load button ships `hidden`, and script reveals it only when the scene
+      can mount.
 - [ ] In a single-page app, leaving the route calls `dispose()`.
 
 ## Failure modes specific to this domain
@@ -142,7 +149,7 @@ company has a website.
 
 ## Refusals
 
-`PACK.md` lists what this pack pushes back on - the percentage preloader, the
+The table under *What this pack deliberately refuses* lists what this pack pushes back on - the percentage preloader, the
 whole site in the canvas, a scene per section, scroll-jacking, auto-rotation,
 real-time for a fixed fly-through, mouse-follow parallax, the unoptimised
 model, WebGPU for its own sake, a 3D hero for a subject that is not spatial -

@@ -27,6 +27,8 @@ This file is what an operational tool needs on top.
 - [ ] Last row has no bottom border.
 - [ ] The wrapper scrolls; columns are not squeezed.
 - [ ] Headers do not wrap.
+- [ ] Every body row is the same height: no pill, button or monospace ID is
+      setting it.
 
 ### The shell
 - [ ] The 3px transparent left border is reserved on **every** nav row.
@@ -36,12 +38,17 @@ This file is what an operational tool needs on top.
 - [ ] Topbar dropdowns are `position: fixed`, not absolute.
 - [ ] Collapsed sidebar keeps icons and the active rail; navigation is still
       navigation, not a hamburger.
+- [ ] Collapsed nav labels are clipped, not `display: none` — each link still
+      has a name.
+- [ ] A closed topbar menu is out of the tab order.
 - [ ] Both selector forms exist for every collapsed rule
       (`.is-collapsed` and `html.sb-collapsed`).
 
 ### Components
 - [ ] One primary button per card.
-- [ ] `:hover:not(:disabled)` on every button.
+- [ ] `:hover:not(:disabled)` on every button; disabled is a stated pair of
+      colours, not an opacity.
+- [ ] A form field's edge is `--paper-border-control`.
 - [ ] The `<label>` wraps its control; label quieter than the value.
 - [ ] KPI tile numbers are **not** coloured; judgement lives in the sub-line.
 - [ ] Status pills are tinted background with dark text, not saturated fill.
@@ -50,7 +57,8 @@ This file is what an operational tool needs on top.
 - [ ] Row actions are visible without hovering, one per row, quieter than a
       button, and a toggle changes its own label.
 - [ ] A reloading table shows skeleton rows in the real row structure, on a
-      ~300ms timer, with the header left in place.
+      ~300ms timer, with the header left in place and the column widths
+      pinned.
 - [ ] Non-matching rows dim on the chart rather than vanishing.
 
 ## Failure modes specific to this domain
@@ -60,7 +68,9 @@ Core covers the universal ones. These are the ERP-shaped versions.
 **The accent on the wrong surface.** The domain-specific instance: an active
 sidebar item painted in `--brand` instead of `--brand-on-dark`. It
 passes a brand review and is invisible against `#0a0a0c`. Check this first on
-any dark-chrome build.
+any dark-chrome build — the rail and the focus ring as well as the label. This
+pack's own shell once shipped its rail in `--brand`, with this paragraph
+sitting above it.
 
 **The border that only exists when active.** A left border added to the selected
 nav row shifts every label 3px as the selection moves. Reserve a transparent
@@ -94,6 +104,6 @@ If markup no longer ships, delete the rule and the markup together.
 
 ## Refusals
 
-The table in `PACK.md` lists what this pack pushes back on and what to offer
+The table under *What this pack deliberately refuses* lists what this pack pushes back on and what to offer
 instead. Name the cost, offer the alternative, then build whatever is decided —
 and record the decision so nobody re-litigates it next quarter.

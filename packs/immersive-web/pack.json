@@ -1,0 +1,78 @@
+{
+  "id": "immersive-web",
+  "name": "Immersive web",
+  "status": "draft",
+  "summary": "Public pages built around one real-time 3D scene the visitor can drive: product viewers and configurators, a 3D hero for a company site, a spatial subject taught in the browser - with three.js, React Three Fiber or model-viewer.",
+  "summaryVi": "Trang công khai dựng quanh một cảnh 3D thời gian thực mà khách tự điều khiển: xem và cấu hình sản phẩm, hero 3D cho trang doanh nghiệp, môn học có tính không gian - bằng three.js, React Three Fiber hoặc model-viewer.",
+  "optimisesFor": "The moment a stranger turns the object themselves - on a page that had already told them what it is before the scene arrived.",
+  "skill": {
+    "name": "immersive-web-design",
+    "description": "Design, build, restyle or review public web pages built around a real-time 3D scene - three.js, WebGL, WebGPU, React Three Fiber, model-viewer or Spline. Use it whenever a page gets a 3D product viewer or configurator, a 3D hero, a scroll-driven scene, a rotating model, an exploded view or a glTF/GLB embed; when asked to make a site more immersive, interactive or 'like those award-winning 3D sites'; when deciding whether something should be real-time 3D, a video or an image at all; when a canvas is slow, hot, janky on a phone, blank on iOS, heavy to load or hurting LCP; when wiring poster images, lazy loading, pixel-ratio caps, Draco or KTX2 compression, context loss or disposal; or when a 3D page needs a keyboard path, reduced-motion behaviour or a fallback. Covers product review and showcase pages, company and studio sites, and course pages for spatial subjects. Not for games, full-screen 3D applications and editors, ordinary marketing pages with no scene, or admin tools.",
+    "descriptionVi": "Thiết kế, dựng, chỉnh lại hoặc review trang web công khai có cảnh 3D thời gian thực - three.js, WebGL, WebGPU, React Three Fiber, model-viewer."
+  },
+  "when": [
+    "a product page where the visitor rotates, opens or configures the product in 3D",
+    "a company, studio or portfolio site whose hero is an interactive scene",
+    "a course or explainer page for a subject that is spatial - anatomy, mechanics, architecture, geography",
+    "a request for three.js, WebGL, WebGPU, React Three Fiber, model-viewer, a GLB embed or a scroll-driven 3D section",
+    "a question about whether something should be real-time 3D, a pre-rendered video or a still",
+    "a 3D page that is slow, hot, blank on a phone, or failing an accessibility or performance review"
+  ],
+  "notFor": [
+    "a marketing or landing page with no real-time scene - use the consumer-web pack, whose JavaScript budget this pack spends several times over",
+    "games and full-screen 3D applications - editors, CAD viewers, anatomy atlases a user works in for an hour; there the viewport is the product and the page-first rule here is wrong",
+    "internal tools, admin panels and dashboards - use the erp pack; a scene is decoration to an operator on their two-hundredth visit",
+    "installed mobile apps - use the mobile-app pack",
+    "a fixed camera fly-through nobody can steer - that is a video, and it should be shipped as one",
+    "charts and data visualisation, including 3D charts - core's chart rules cover them and a perspective axis breaks them"
+  ],
+  "keywords": [
+    "three.js",
+    "threejs",
+    "webgl",
+    "webgpu",
+    "3d website",
+    "3d product viewer",
+    "product configurator",
+    "react three fiber",
+    "model-viewer",
+    "gltf",
+    "scroll-driven scene",
+    "immersive"
+  ],
+  "surfaces": {
+    "chrome": "minimal - a header floating over the stage, on an opaque plate once anything scrolls beneath it",
+    "canvas": "the stage: a near-black surface the scene is lit against, with a light page surface for long-form sections",
+    "content": "HTML in its own lane beside the scene, or on an opaque plate over it - never set directly on a moving render",
+    "floating": "plates, the option picker and hotspot popovers - one luminance step above the stage, no shadow",
+    "accent": "one blue with a value per surface, reserved for the primary action and the selected option",
+    "semantic": "success/warning/danger, in forms and scene status only"
+  },
+  "platform": {
+    "input": [
+      "touch",
+      "fine-pointer"
+    ],
+    "minTarget": "44px",
+    "note": "Touch first, and touch is where a scene does the most damage: a canvas that takes every gesture is a hole in the page a thumb cannot scroll across. Vertical movement always belongs to the page."
+  },
+  "density": "low - 16px base, one scene per page, and at most one idea on the stage at a time",
+  "core": {
+    "include": "all",
+    "leadWith": ["10-visual-language", "05-accessibility", "08-feedback"],
+    "overrides": []
+  },
+  "references": [
+    { "file": "01-surfaces.md", "title": "Surfaces, palette and scales" },
+    { "file": "02-scene.md", "title": "The scene - whether to build it, and how to stage it" },
+    { "file": "03-budget.md", "title": "Budget - bytes, frames, loading and the device" },
+    { "file": "04-access.md", "title": "Access - keyboard, touch, reduced motion and failure" },
+    { "file": "05-checklist.md", "title": "Domain review checklist" }
+  ],
+  "assets": [
+    { "file": "theme.css", "note": "the token file - load first" },
+    { "file": "scene.css", "note": "the scene frame, its four states, the stage layout and the plate" },
+    { "file": "scene-mount.js", "note": "the reference mount in plain three.js - lazy import, capped pixel ratio, render on demand, context loss, disposal" }
+  ],
+  "customGpt": null
+}

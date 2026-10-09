@@ -1,0 +1,136 @@
+/* ==========================================================================
+   THEME - Immersive web. The single source of truth for the palette and scales.
+   Load this FIRST, before any other stylesheet.
+
+   The rule that shapes it: there are two surfaces, and they do different jobs.
+   The STAGE is near-black and is where the scene is lit. The PAGE is light and
+   is where anything long gets read - a spec table, a curriculum, a price.
+   Text never sits directly on the render; it sits in its own lane or on a plate.
+
+   Every text and control pair below was computed, not eyeballed. The ratios
+   are in references/01-surfaces.md. If you change a value, recompute its row.
+
+   TO REBRAND: change --accent and --accent-on-stage together, then the two
+   alpha steps. Nothing below that needs to move.
+   ========================================================================== */
+
+:root {
+    /* ----- Accent -------------------------------------------------------
+       One blue, reserved for the primary action and the selected option.
+       Two values, because it lands on two surfaces. */
+    --accent: #1d5fe0;
+    --accent-hover: #174cb8;
+    --accent-on-stage: #8ab4ff;
+
+    /* Text ON the accent fill. Dark on the stage value, light on the page
+       value - the fill flips, so its label has to. */
+    --text-on-accent: #ffffff;
+    --text-on-accent-stage: #0c0e13;
+
+    --accent-a35: rgba(29, 95, 224, 0.35);
+    --accent-stage-a35: rgba(138, 180, 255, 0.35);
+
+    /* ----- Stage: where the scene lives ---------------------------------
+       Not pure black. Depth is three luminance steps, never a shadow. */
+    --stage: #0c0e13;
+    --stage-2: #151921;          /* plates, the option picker */
+    --stage-3: #1f2530;          /* hover, raised, the selected row */
+    --plate: var(--stage-2);     /* opaque on purpose - see 01-surfaces.md */
+
+    --stage-text: #f3f5f8;
+    --stage-text-2: #b3bac6;
+    --stage-text-3: #8e97a6;     /* captions and meta - still 4.5:1 on all three */
+
+    --stage-line: rgba(255, 255, 255, 0.10);   /* structural, may be quiet */
+    --stage-control: #717b8c;                  /* the edge of a control: 3:1 */
+
+    /* ----- Page: where long things are read ----------------------------- */
+    --page: #f5f6f8;
+    --surface: #ffffff;
+
+    --text: #0f1218;
+    --text-2: #4b5362;
+    --text-3: #636c7c;
+
+    --line: #e1e4ea;
+    --control: #858d9b;
+
+    /* ----- Semantic: forms and scene status only ------------------------ */
+    --success: #1a7f45;
+    --warning: #946200;
+    --danger: #c4242f;
+    --success-on-stage: #4fd38a;
+    --warning-on-stage: #f2b93b;
+    --danger-on-stage: #ff7a7a;
+
+    /* ----- Type: one family and a monospace ----------------------------- */
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+
+    --t-hero: clamp(2.5rem, 7vw, 5rem);
+    --t-h2: clamp(1.75rem, 4vw, 2.75rem);
+    --t-h3: 1.375rem;
+    --t-lead: 1.25rem;
+    --t-body: 1.0625rem;
+    --t-small: 0.9375rem;
+    --t-caption: 0.8125rem;
+
+    /* ----- Space -------------------------------------------------------- */
+    --gap-section: clamp(4rem, 10vw, 8rem);
+    --gap-block: 2rem;
+    --gap-item: 1rem;
+    --gap-tight: 0.5rem;
+    --pad-page: clamp(1.25rem, 5vw, 2.5rem);
+    --measure: 60ch;
+    --width-page: 1280px;
+    --lane-text: minmax(20rem, 28rem);   /* the text lane beside the scene */
+
+    /* ----- The scene frame ---------------------------------------------- */
+    --scene-ratio: 4 / 3;                /* reserved before anything loads */
+    --stage-h: min(100svh, 56rem);
+    --target: 44px;
+
+    /* ----- Radii -------------------------------------------------------- */
+    --r-control: 8px;
+    --r-btn: 12px;
+    --r-plate: 20px;
+    --r-pill: 999px;
+
+    /* ----- Elevation: the page only. The stage uses luminance. ---------- */
+    --shadow-page: 0 12px 32px -12px rgba(15, 18, 24, 0.18);
+
+    /* ----- Motion -------------------------------------------------------
+       HTML only. The scene itself is either driven by the visitor, which has
+       no duration, or cut. */
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --d-fast: 150ms;
+    --d-state: 250ms;
+    --d-swap: 400ms;                     /* poster to canvas, once */
+}
+
+html {
+    font-size: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font: 400 var(--t-body) / 1.65 var(--font);
+}
+
+/* Anything inside a stage section takes the stage values. */
+.on-stage {
+    background: var(--stage);
+    color: var(--stage-text);
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+.on-stage :focus-visible {
+    outline-color: var(--accent-on-stage);
+}

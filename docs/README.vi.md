@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-b3121b.svg)](../LICENSE)
 <!-- PACKS:START:badge-vi -->
-[![Packs](https://img.shields.io/badge/3%20packs%2C%201%20stable-b3121b.svg)](#các-pack)
+[![Packs](https://img.shields.io/badge/4%20packs%2C%201%20stable-b3121b.svg)](#các-pack)
 <!-- PACKS:END:badge-vi -->
 [![Build](https://img.shields.io/badge/dist-generated-b3121b.svg)](ARCHITECTURE.md)
 
@@ -46,8 +46,8 @@ reference mà tác vụ cần.
 | Bản cài | Thường trực trong context |
 |---|---|
 | Claude skill | ~200 token (chỉ `description`, để định tuyến) |
-| Lean `GEMINI.md` / `AGENTS.md` | ~2.200 token |
-| Bản merged một file (Gems, Custom GPT) | ~30.700 token |
+| Lean `GEMINI.md` / `AGENTS.md` | ~2.300 token |
+| Bản merged một file (Gems, Custom GPT) | ~33.850 token |
 
 Giảm khoảng 93% so với dán cả hệ thống vào file context, tính trên **mọi**
 request — kể cả những request chẳng liên quan gì tới UI.
@@ -103,6 +103,7 @@ cài, và không coi build xanh là người dùng đã nói xong.
 |---|---|---|
 | [`consumer-web`](../packs/consumer-web/) | **Consumer web** - Trang công khai cho người lạ đọc: trang marketing, landing page, trang sản phẩm, tài liệu và nội dung biên tập. | `beta` |
 | [`erp`](../packs/erp/) | **ERP & back-office** - Phần mềm vận hành mật độ cao, chrome tối: admin panel, console vận hành, công cụ back-office, dashboard nội bộ. | `stable` |
+| [`immersive-web`](../packs/immersive-web/) | **Immersive web** - Trang công khai dựng quanh một cảnh 3D thời gian thực mà khách tự điều khiển: xem và cấu hình sản phẩm, hero 3D cho trang doanh nghiệp, môn học có tính không gian - bằng three.js, React Three Fiber hoặc model-viewer. | `draft` |
 | [`mobile-app`](../packs/mobile-app/) | **Mobile app** - Ứng dụng đã cài, cầm bằng một tay: iOS và Android, native hay cross-platform, dùng trong những phiên ngắn và hay bị ngắt quãng. | `beta` |
 <!-- PACKS:END:vi -->
 
@@ -113,7 +114,8 @@ dashboard. Xem [`AUTHORING.md`](AUTHORING.md) để thêm pack mới, và
 Các pack này **bất đồng với nhau có chủ đích**. `erp` tối ưu cho lần dùng thứ
 hai trăm của một người đã được đào tạo; `consumer-web` tối ưu cho năm giây đầu
 với một người lạ chẳng nợ bạn gì; `mobile-app` tối ưu cho một ngón cái, trên
-màn hình chắc chắn sẽ bị ngắt quãng. Gần như mọi quyết định cụ thể đều đảo
+màn hình chắc chắn sẽ bị ngắt quãng; `immersive-web` tiêu gấp nhiều lần ngân
+sách của một trang thường cho một cảnh 3D mà khách tự điều khiển. Gần như mọi quyết định cụ thể đều đảo
 ngược — mật độ, card có phải container mặc định không, dùng viền hay dùng khoảng
 trắng để phân tách, nút hành động chính nằm trên đỉnh hay dưới đáy màn hình. Đó
 chính là định nghĩa của một pack: một luận điểm mà lĩnh

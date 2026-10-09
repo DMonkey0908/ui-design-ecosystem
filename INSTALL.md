@@ -102,6 +102,35 @@ Skill name: `erp-ui-design`
 
 Keywords: `erp`, `admin panel`, `back-office`, `operations console`, `internal tool`, `dashboard`, `data table`, `dense`, `dark chrome`, `enterprise`
 
+### `immersive-web` - Immersive web *(draft)*
+
+Public pages built around one real-time 3D scene the visitor can drive: product viewers and configurators, a 3D hero for a company site, a spatial subject taught in the browser - with three.js, React Three Fiber or model-viewer.
+
+**Optimises for:** The moment a stranger turns the object themselves - on a page that had already told them what it is before the scene arrived.
+**Density:** low - 16px base, one scene per page, and at most one idea on the stage at a time
+
+**Choose it when the project is:**
+
+- a product page where the visitor rotates, opens or configures the product in 3D
+- a company, studio or portfolio site whose hero is an interactive scene
+- a course or explainer page for a subject that is spatial - anatomy, mechanics, architecture, geography
+- a request for three.js, WebGL, WebGPU, React Three Fiber, model-viewer, a GLB embed or a scroll-driven 3D section
+- a question about whether something should be real-time 3D, a pre-rendered video or a still
+- a 3D page that is slow, hot, blank on a phone, or failing an accessibility or performance review
+
+**Do NOT choose it for:**
+
+- a marketing or landing page with no real-time scene - use the consumer-web pack, whose JavaScript budget this pack spends several times over
+- games and full-screen 3D applications - editors, CAD viewers, anatomy atlases a user works in for an hour; there the viewport is the product and the page-first rule here is wrong
+- internal tools, admin panels and dashboards - use the erp pack; a scene is decoration to an operator on their two-hundredth visit
+- installed mobile apps - use the mobile-app pack
+- a fixed camera fly-through nobody can steer - that is a video, and it should be shipped as one
+- charts and data visualisation, including 3D charts - core's chart rules cover them and a perspective axis breaks them
+
+Skill name: `immersive-web-design`
+
+Keywords: `three.js`, `threejs`, `webgl`, `webgpu`, `3d website`, `3d product viewer`, `product configurator`, `react three fiber`, `model-viewer`, `gltf`, `scroll-driven scene`, `immersive`
+
 ### `mobile-app` - Mobile app *(beta)*
 
 Installed apps held in one hand: iOS and Android, native or cross-platform, used in short interrupted sessions.
@@ -155,8 +184,8 @@ human will use this with a different tool than you, install that tool's format.
 | Assistant | Install | Always in context |
 |---|---|---|
 | Claude Code, Claude Desktop | `dist/claude/<skill-name>/` -> `.claude/skills/<skill-name>/` | ~200 tokens (the description only) |
-| Gemini CLI / Code Assist | `dist/gemini/<id>-lean/` -> repo root | **~2,200 tokens** |
-| Codex, Cursor, any `AGENTS.md` tool | `dist/gpt/<id>-lean/` -> repo root | **~2,200 tokens** |
+| Gemini CLI / Code Assist | `dist/gemini/<id>-lean/` -> repo root | **~2,300 tokens** |
+| Codex, Cursor, any `AGENTS.md` tool | `dist/gpt/<id>-lean/` -> repo root | **~2,300 tokens** |
 | Gemini Gem | `dist/gemini/<id>.GEMINI.md` | whole file - paste-in only |
 | Custom GPT | `dist/gpt/<id>.custom-gpt-instructions.md` | Fenced block -> Instructions; `<id>.AGENTS.md` -> Knowledge |
 <!-- COST:END:install -->
@@ -169,7 +198,7 @@ the activation block, the thesis, the hard rules, and an index. The assistant
 opens the one reference its task needs, the way the Claude skill already does.
 
 <!-- COST:START:install-note -->
-That is **~2,200 tokens instead of ~30,700 tokens**, on every request, including every
+That is **~2,300 tokens instead of ~33,850 tokens**, on every request, including every
 request with nothing to do with UI.
 <!-- COST:END:install-note -->
 

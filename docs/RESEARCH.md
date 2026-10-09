@@ -118,6 +118,59 @@ against porting an interaction model across form factors. The lesson is not
 "use gestures", it is: *ask what this hardware does that no other hardware
 does, before deciding what the screen looks like.*
 
+## A measured survey: real-time 3D on public pages
+
+The evidence behind the `immersive-web` pack. Nineteen public pages were
+fetched once, on 8 October 2026, the way a browser makes its first request;
+the HTML was read before any script ran, and every script the HTML references
+directly was downloaded, compressed and searched as text.
+
+Five pages running a real-time scene, chosen across the three page types the
+pack covers:
+
+| Page | Kind | Words in the HTML | `<h1>` | Script, compressed | What was found |
+|---|---|---|---|---|---|
+| threejs-journey.com | Course sales | 3,054 | yes | 224KB | Three canvases as accents on an HTML page. Reduced motion checked only inside a confetti library. |
+| human.biodigital.com | Anatomy application | 11 | no | 1,303KB | Own engine, WebGL 2 with a WebGPU probe. Pixel ratio clamped between a minimum and a maximum. Sets `aria-label` and `aria-describedby` on the canvas. Reduced motion checked. |
+| lusion.co | Studio | 385 | yes | 490KB | three.js r158. A preloader with a percentage counter. Reads core count for device tiering. No reduced-motion check found. |
+| bruno-simon.com | Portfolio, as a driving game | 566 | no | 1,154KB | three.js r183 on `WebGPURenderer`. Pixel ratio capped at 2. Draco and KTX2. No reduced-motion check found. |
+| nothing.tech, Phone (3) | Product | 95 | yes | 407KB | `<model-viewer>` with a `.glb` from the CMS. No canvas in the HTML. Reduced motion checked. |
+
+Four pages that mark the edges:
+
+| Page | Words in the HTML | Script, compressed | Why it matters |
+|---|---|---|---|
+| apple.com, AirPods Max | 3,534 | 365KB | No canvas and no 3D engine: 3 `<video>` elements and 157 images. The product looks 3D and is not rendered. |
+| polestar.com, Polestar 4 | 1,668 | 479KB | The same decision: 7 `<video>` elements, 105 images. |
+| activetheory.net | 6 | 173KB | The `<noscript>` reads "Please enable javascript". |
+| igloo.inc | 2 | 6KB | A title and a loader. |
+
+The remaining ten - Sketchfab, GitHub, Stripe, modelviewer.dev, Utsubo, IKEA,
+Porsche's configurator, Rivian, GANT and Fairphone - were measured the same way
+and are not tabulated; they supported the pattern without adding to it.
+
+**Where they agree.** Every page with something to sell kept its headline in
+the HTML. Every team whose pixel-ratio handling could be read had capped it.
+Nobody running an engine was anywhere near a normal page's script budget.
+
+**Where they disagree, and the side the pack takes.** Whether the largest
+product pages should be real time at all (Apple and Polestar say no; the pack
+says only when the visitor steers). Whether the visitor waits for the scene
+before seeing the page (Lusion says yes; the pack says never). Whether reduced
+motion reaches the scene (three of five do not appear to; the pack requires
+it).
+
+**What this survey cannot say.** The script figure counts only files the HTML
+references, so anything imported later is missing and every number is a floor.
+"Not found" in minified code is weak evidence of absence. Nothing here measured
+frame rate, memory or battery on a device - the pack's device budgets are
+chosen starting values, and say so. One fetch on one day is a snapshot of
+sites that redesign often.
+
+A second measurement backs the pack's byte budget: its own reference mount,
+bundled against three.js r186.1, is 2KB on the critical path and 213KB behind
+it, with the optional Draco and KTX2 decoders adding 101KB and 281KB.
+
 ## Using this when writing a pack
 
 1. **Find five products in the domain**, in Mobbin or in use. Not the famous

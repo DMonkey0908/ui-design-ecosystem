@@ -1,0 +1,317 @@
+/* ==========================================================================
+   SCENE - Immersive web. The frame, its four states, the stage and the plate.
+   Load after theme.css. Every colour here is a token.
+
+   The frame is finished the moment its image paints. The canvas is stacked on
+   top of that image and stays invisible until scene-mount.js has drawn a frame.
+   ========================================================================== */
+
+/* ----- The frame -------------------------------------------------------- */
+
+.scene {
+    position: relative;
+    margin: 0;
+    aspect-ratio: var(--scene-ratio);   /* the box exists before a byte of 3D does */
+    background: var(--stage);
+    border-radius: var(--r-plate);
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.scene-poster,
+.scene-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.scene-poster {
+    object-fit: contain;
+}
+
+/* The canvas is transparent until it has something to show. It is in the
+   layout from the start, so revealing it moves nothing. */
+.scene-canvas {
+    opacity: 0;
+    pointer-events: none;
+    cursor: grab;
+}
+
+.scene-canvas:active {
+    cursor: grabbing;
+}
+
+.scene[data-state="ready"] .scene-canvas {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity var(--d-swap) var(--ease);
+}
+
+.scene[data-state="ready"] .scene-poster {
+    opacity: 0;
+    transition: opacity var(--d-swap) var(--ease);
+}
+
+/* ----- The load button: every scene that is not the hero ---------------- */
+
+.scene-load {
+    position: absolute;
+    inset-inline: 0;
+    bottom: var(--gap-item);
+    margin-inline: auto;
+    width: max-content;
+    min-height: var(--target);
+    padding: 0 1.25rem;
+    border: 1px solid var(--stage-control);
+    border-radius: var(--r-pill);
+    background: var(--plate);
+    color: var(--stage-text);
+    font: 600 var(--t-small) / 1 var(--font);
+    cursor: pointer;
+}
+
+.scene-load:hover {
+    background: var(--stage-3);
+}
+
+/* Gone once the scene is running, and gone for good if it cannot. */
+.scene[data-state="loading"] .scene-load,
+.scene[data-state="ready"] .scene-load,
+.scene[data-state="failed"] .scene-load {
+    display: none;
+}
+
+/* ----- Progress: on the frame, never over the page ---------------------- */
+
+.scene-progress {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--accent-on-stage);
+    transform-origin: left;
+    transform: scaleX(var(--scene-progress, 0));
+    opacity: 0;
+}
+
+.scene[data-state="loading"] .scene-progress {
+    opacity: 1;
+    transition: transform var(--d-state) linear;
+}
+
+/* ----- The view bar: every camera position a drag can reach ------------- */
+
+.scene-views {
+    position: absolute;
+    inset-inline: 0;
+    bottom: var(--gap-item);
+    display: none;
+    justify-content: center;
+    gap: var(--gap-tight);
+}
+
+.scene[data-state="ready"] .scene-views {
+    display: flex;
+}
+
+.scene-views button {
+    min-width: var(--target);
+    min-height: var(--target);
+    padding: 0 0.875rem;
+    border: 1px solid var(--stage-control);
+    border-radius: var(--r-pill);
+    background: var(--plate);
+    color: var(--stage-text);
+    font: 500 var(--t-small) / 1 var(--font);
+    cursor: pointer;
+}
+
+.scene-views button[aria-pressed="true"] {
+    border-color: var(--accent-on-stage);
+    color: var(--accent-on-stage);
+    background: var(--stage-3);
+}
+
+/* ----- The stage: scene and text in separate lanes ---------------------- */
+
+.stage {
+    display: grid;
+    grid-template-columns: var(--lane-text) minmax(0, 1fr);
+    gap: var(--gap-block);
+    align-items: center;
+    max-width: var(--width-page);
+    margin-inline: auto;
+    padding: var(--gap-section) var(--pad-page);
+}
+
+.stage > * {
+    min-width: 0;
+}
+
+.stage-text > p {
+    max-width: var(--measure);
+}
+
+/* A chaptered stage: the scene holds still while the text scrolls past it. */
+.stage--chapters {
+    align-items: start;
+}
+
+.stage--chapters .scene {
+    position: sticky;
+    top: calc((100svh - min(70svh, 40rem)) / 2);
+    height: min(70svh, 40rem);
+    aspect-ratio: auto;
+}
+
+.stage--chapters .chapter {
+    min-height: 70svh;
+    display: grid;
+    align-content: center;
+}
+
+/* One column on a phone, and the words come first: the headline is what a
+   stranger needs, and a scene above it pushes that off the screen. */
+@media (max-width: 800px) {
+    .stage {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stage .scene {
+        order: 2;
+    }
+
+    .stage--chapters .scene {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        height: 45svh;
+        border-radius: 0;
+        margin-inline: calc(var(--pad-page) * -1);
+        order: 0;
+    }
+
+    .stage--chapters .chapter {
+        min-height: 60svh;
+    }
+}
+
+/* ----- The primary action: its label flips with the surface ------------- */
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+    padding: 0 1.5rem;
+    border: 0;
+    border-radius: var(--r-btn);
+    background: var(--accent);
+    color: var(--text-on-accent);
+    font: 600 var(--t-body) / 1 var(--font);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background var(--d-fast) ease;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.on-stage .btn-primary {
+    background: var(--accent-on-stage);
+    color: var(--text-on-accent-stage);   /* white here is 2.09:1 */
+}
+
+.on-stage .btn-primary:hover {
+    background: var(--stage-text);
+}
+
+/* ----- Hotspots: HTML buttons over the canvas, placed by script --------- */
+
+.hotspot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(var(--x, 0), var(--y, 0)) translate(-50%, -50%);
+    min-height: var(--target);
+    padding: 0 0.875rem;
+    border: 1px solid var(--stage-control);
+    border-radius: var(--r-pill);
+    background: var(--plate);
+    color: var(--stage-text);
+    font: 500 var(--t-caption) / 1 var(--font);
+    cursor: pointer;
+}
+
+.hotspot[hidden] {
+    display: none;                        /* the point it marks is facing away */
+}
+
+/* ----- The plate: the only way text goes over a render ------------------ */
+
+.plate {
+    background: var(--plate);          /* opaque. A blur would let the scene set the contrast. */
+    color: var(--stage-text);
+    border: 1px solid var(--stage-line);
+    border-radius: var(--r-plate);
+    padding: var(--gap-block);
+}
+
+/* ----- The option picker: real form controls, outside the canvas -------- */
+
+.options {
+    display: grid;
+    gap: var(--gap-item);
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.options legend {
+    padding: 0;
+    font: 600 var(--t-small) / 1.4 var(--font);
+    color: var(--stage-text-2);
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-item);
+    min-height: var(--target);
+    padding: 0 var(--gap-item);
+    border: 1px solid var(--stage-control);
+    border-radius: var(--r-btn);
+    cursor: pointer;
+}
+
+.option:has(input:checked) {
+    border-color: var(--accent-on-stage);
+    background: var(--stage-3);
+}
+
+.option:has(input:focus-visible) {
+    outline: 2px solid var(--accent-on-stage);
+    outline-offset: 3px;
+}
+
+/* The swatch shows the colour; the label next to it names it. */
+.option-swatch {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--stage-control);
+    background: var(--swatch, transparent);
+    flex: none;
+}
+
+/* ----- Reduced motion ---------------------------------------------------
+   The swap from image to canvas becomes a cut. Stated values, not `revert`. */
+@media (prefers-reduced-motion: reduce) {
+    .scene[data-state="ready"] .scene-canvas,
+    .scene[data-state="ready"] .scene-poster,
+    .scene[data-state="loading"] .scene-progress {
+        transition: none;
+    }
+}

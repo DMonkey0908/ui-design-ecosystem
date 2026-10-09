@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-b3121b.svg)](LICENSE)
 <!-- PACKS:START:badge-en -->
-[![Packs](https://img.shields.io/badge/3%20packs%2C%201%20stable-b3121b.svg)](#the-packs)
+[![Packs](https://img.shields.io/badge/4%20packs%2C%201%20stable-b3121b.svg)](#the-packs)
 <!-- PACKS:END:badge-en -->
 [![Build](https://img.shields.io/badge/dist-generated-b3121b.svg)](docs/ARCHITECTURE.md)
 
@@ -47,8 +47,8 @@ assistant opens the one reference its task needs.
 | Install | Always in context |
 |---|---|
 | Claude skill | ~200 tokens (the description, for routing) |
-| Lean `GEMINI.md` / `AGENTS.md` | ~2,200 tokens |
-| Single merged file (Gems, Custom GPT) | ~30,700 tokens |
+| Lean `GEMINI.md` / `AGENTS.md` | ~2,300 tokens |
+| Single merged file (Gems, Custom GPT) | ~33,850 tokens |
 
 Roughly a 93% reduction against pasting the whole system into a context
 file, on every request, including the ones with nothing to do with UI.
@@ -104,6 +104,7 @@ never treat a passing build as the user saying they are done.
 |---|---|---|
 | [`consumer-web`](packs/consumer-web/) | **Consumer web** - Public-facing sites read by strangers: marketing pages, landing pages, product sites, documentation and editorial. | `beta` |
 | [`erp`](packs/erp/) | **ERP & back-office** - Dense, dark-chrome operational software: admin panels, operations consoles, back-office tools, internal dashboards. | `stable` |
+| [`immersive-web`](packs/immersive-web/) | **Immersive web** - Public pages built around one real-time 3D scene the visitor can drive: product viewers and configurators, a 3D hero for a company site, a spatial subject taught in the browser - with three.js, React Three Fiber or model-viewer. | `draft` |
 | [`mobile-app`](packs/mobile-app/) | **Mobile app** - Installed apps held in one hand: iOS and Android, native or cross-platform, used in short interrupted sessions. | `beta` |
 <!-- PACKS:END:en -->
 
@@ -114,7 +115,8 @@ dashboard. See [`docs/AUTHORING.md`](docs/AUTHORING.md) to add one, and
 These disagree on purpose. `erp` optimises for the two-hundredth use by a
 trained operator; `consumer-web` optimises for the first five seconds for a
 stranger who owes you nothing; `mobile-app` optimises for one thumb on a screen
-that will be interrupted. Nearly every concrete decision inverts — density,
+that will be interrupted; `immersive-web` spends several times a normal page's
+budget on one 3D scene the visitor can steer. Nearly every concrete decision inverts — density,
 whether a card is the default container, whether a border or space does the
 separating, whether the primary action belongs at the top of the screen or the
 bottom. That is what a pack is: a thesis another domain would reject. If two

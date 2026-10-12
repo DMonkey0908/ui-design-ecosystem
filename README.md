@@ -54,6 +54,39 @@ Same repo, same core rules, and almost no decision in common — which is the
 point. Every company, name and figure in them is invented. Sources, how to open
 each one, and what was not verified are in [`demos/`](demos/).
 
+### And one app that shipped
+
+The four pages above are generated. These screens are not: they come from
+**Green IoT**, a Flutter smart-home app released for Android — rooms, IoT
+nodes, IP cameras, an Android TV remote and a voice assistant.
+
+<table>
+<tr>
+<td width="25%" align="center" valign="top">
+<img src="docs/showcase/green-iot/home.png" width="200" alt="Green IoT home screen, light theme: a greeting, temperature and power tiles, a search field, two room cards with photos, and a tab bar with a raised add button in the centre">
+<br>Home
+</td>
+<td width="25%" align="center" valign="top">
+<img src="docs/showcase/green-iot/home-dark.png" width="200" alt="The same home screen in the dark theme: near-black surfaces, a lighter green accent, the room photos unchanged">
+<br>Home, dark theme
+</td>
+<td width="25%" align="center" valign="top">
+<img src="docs/showcase/green-iot/room.png" width="200" alt="Room screen: a photo of the living room across the top with temperature and power readouts over it, and a sheet below listing the one device in the room">
+<br>Room
+</td>
+<td width="25%" align="center" valign="top">
+<img src="docs/showcase/green-iot/assistant.png" width="200" alt="Voice assistant as a bottom sheet over the home screen: four example commands as chips and a large push-to-talk button at the bottom">
+<br>Voice assistant
+</td>
+</tr>
+</table>
+
+It was not built from a pack and has not been scored against one, so it says
+nothing about whether the skills work. It is here as the kind of product
+`mobile-app` is written for: a light and a dark theme, the add action in the
+tab bar under the thumb, the assistant in a sheet rather than on a screen of
+its own.
+
 ## Point your agent at it
 
 Tell your assistant to read this, and it will pick the pack that fits and

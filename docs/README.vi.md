@@ -55,6 +55,40 @@ Cùng một repo, cùng bộ luật core, và gần như không có quyết đ�
 bịa. Mã nguồn, cách mở từng demo, và những gì chưa được kiểm chứng nằm trong
 [`demos/`](../demos/).
 
+### Và một app đã phát hành
+
+Bốn trang ở trên là do trợ lý sinh ra. Mấy màn hình dưới đây thì không: chúng
+lấy từ **Green IoT**, một app nhà thông minh viết bằng Flutter, đã phát hành
+cho Android — phòng, node IoT, camera IP, điều khiển Android TV và trợ lý
+giọng nói.
+
+<table>
+<tr>
+<td width="25%" align="center" valign="top">
+<img src="showcase/green-iot/home.png" width="200" alt="Trang chủ Green IoT, giao diện sáng: lời chào, ô nhiệt độ và điện năng, ô tìm kiếm, hai card phòng có ảnh, và thanh tab với nút thêm nổi ở giữa">
+<br>Trang chủ
+</td>
+<td width="25%" align="center" valign="top">
+<img src="showcase/green-iot/home-dark.png" width="200" alt="Cùng trang chủ đó ở giao diện tối: bề mặt gần đen, màu nhấn xanh lá sáng hơn, ảnh phòng giữ nguyên">
+<br>Trang chủ, giao diện tối
+</td>
+<td width="25%" align="center" valign="top">
+<img src="showcase/green-iot/room.png" width="200" alt="Trang phòng: ảnh phòng khách phía trên với chỉ số nhiệt độ và điện năng đè lên, bên dưới là sheet liệt kê một thiết bị trong phòng">
+<br>Chi tiết phòng
+</td>
+<td width="25%" align="center" valign="top">
+<img src="showcase/green-iot/assistant.png" width="200" alt="Trợ lý giọng nói dạng bottom sheet phủ lên trang chủ: bốn câu lệnh mẫu dạng chip và một nút nhấn-để-nói lớn ở dưới cùng">
+<br>Trợ lý giọng nói
+</td>
+</tr>
+</table>
+
+App này không được dựng từ pack nào và chưa được chấm theo checklist nào, nên
+nó không nói lên điều gì về việc skill có hiệu quả hay không. Nó nằm ở đây như
+một ví dụ về loại sản phẩm mà `mobile-app` được viết ra để phục vụ: có giao
+diện sáng và tối, nút thêm nằm trên thanh tab ngay dưới ngón cái, trợ lý mở
+trong một sheet chứ không chiếm riêng một màn hình.
+
 ## Chỉ agent của bạn tới đây
 
 Bảo trợ lý của bạn đọc file này, nó sẽ tự chọn pack phù hợp và cài:

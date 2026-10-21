@@ -180,6 +180,7 @@ Start with `core/01-tokens.md`, `core/03-layout.md`, `core/99-review.md`.
 | `core/08-feedback.md` | Feedback |
 | `core/09-input.md` | Input |
 | `core/10-visual-language.md` | Visual language |
+| `core/11-restraint.md` | Restraint |
 | `core/99-review.md` | Review |
 
 ### Pack - this domain

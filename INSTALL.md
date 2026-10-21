@@ -198,7 +198,7 @@ the activation block, the thesis, the hard rules, and an index. The assistant
 opens the one reference its task needs, the way the Claude skill already does.
 
 <!-- COST:START:install-note -->
-That is **~2,600 tokens instead of ~37,300 tokens**, on every request, including every
+That is **~2,600 tokens instead of ~37,600 tokens**, on every request, including every
 request with nothing to do with UI.
 <!-- COST:END:install-note -->
 

@@ -1805,6 +1805,20 @@ waived by any domain.
 - [ ] A 3D scene has a frame budget, a poster frame and a non-visual path to
       the same information.
 
+#### Restraint
+- [ ] Every icon survives the deletion test: it replaces a word where there is
+      no room, is a platform-standard symbol, carries a state beside its text,
+      or distinguishes items scanned by shape.
+- [ ] No icon beside a heading that already names the section.
+- [ ] Icons in a set are all present or all absent, from one family, one size.
+- [ ] No emoji in headings, buttons, labels, statuses, empty states or system
+      messages. `grep -nP '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]'` over the
+      markup and strings comes back empty.
+- [ ] No gradient text, background blobs or glows that carry no meaning.
+- [ ] Every badge states something true that somebody will keep true.
+- [ ] No section, panel or control the request did not ask for.
+- [ ] Sample data is called sample data in the report.
+
 #### Accessibility
 - [ ] Nothing is mouse-only.
 - [ ] Tab order matches the visual order.
@@ -1905,6 +1919,12 @@ carrying the full value. On touch it is not degraded, it is absent.
 **Shadows carrying elevation on a dark surface.** There is nothing left to
 darken, so every layer lands on the same plane and a menu looks painted onto the
 panel behind it.
+
+**The default ornament.** An icon beside every heading, an emoji in the
+button, a gradient on the headline, three cards because three fills a row.
+Each was added because nothing said not to, and together they make the screen
+read as generated — which costs the trust the rest of the work earned. The
+deletion test in `11-restraint.md` catches every one.
 
 **Palette drift.** The most common way a system dies — not with a decision, but
 with a page written in a hurry, shipping literals that exist nowhere in the

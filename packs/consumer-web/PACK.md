@@ -83,6 +83,12 @@ Apply these without being asked.
   stop trusting.
 - **The page works before the JavaScript does.** Content in HTML, links that
   are links, forms that submit.
+- **Ornament is spent on one picture of the product.** A drawing, a
+  photograph or a diagram that shows what it is — not an icon over every
+  feature, not a glow behind the hero. Icons are for navigation, form states
+  and the platform symbols. A stranger judges the page in seconds, and a page
+  that looks like every template is judged as one. The test is
+  `core/11-restraint.md`.
 
 ## What this pack deliberately refuses
 
@@ -96,6 +102,8 @@ Say so briefly, offer the alternative, and build whatever is decided.
 | Every section a different colour | Nothing stands out, so the eye stops navigating | One accent; vary rhythm and scale instead |
 | A third brand family | Brand voice does not compound; page weight does | Use the second family's other weights |
 | Text baked into images | Unreadable to search, screen readers, and translation | Real text over an image, or an `svg` with a title |
+| A three-up grid of icon, title and blurb | The most recognisable template on the web, and the icons are drawn metaphors nobody decodes | The real number of features, each shown — a screenshot, a drawing, a figure — or as plain text |
+| Logo walls, testimonials or stats nobody supplied | A fabrication the first time anyone checks | Leave the section out, or mark the slot and ask for the real ones |
 | Infinite scroll on a marketing page | The footer becomes unreachable, and so does the pricing link | Pagination, or a shorter page |
 
 If they hear the cost and still want it, build it. It is their product.

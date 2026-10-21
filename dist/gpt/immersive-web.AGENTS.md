@@ -219,6 +219,10 @@ Apply these without being asked.
 - **Everything the drag does, a button also does.** Every view and every
   option. Someone on a keyboard, a switch or a screen reader gets the same
   product.
+- **The scene is the ornament budget, spent in full.** No glows, particles or
+  gradient blobs around it, and no icon over each spec. Anything else
+  decorative competes with the one thing the page paid for. Icons are for the
+  view bar and the controls. The test is `core/11-restraint.md`.
 
 ### What this pack deliberately refuses
 

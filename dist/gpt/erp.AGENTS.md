@@ -156,6 +156,12 @@ Apply these without being asked.
 - **The number on a KPI tile is never coloured.** Tinting it green or red passes
   judgement on a figure that may be neither; put the judgement in the sub-line
   where it can be worded.
+- **Icons are spent on navigation and actions.** The sidebar, topbar icon
+  buttons, dropdown items, row actions and status pills. Not on card heads,
+  KPI tiles, form labels or column headers: on a screen this dense a second
+  layer of glyphs is something to read past two hundred times a day, and it
+  dilutes the nav icons the collapsed sidebar depends on. The test is
+  `core/11-restraint.md`.
 
 ### What this pack deliberately refuses
 
@@ -170,6 +176,7 @@ whatever is decided.
 | 16px rounded cards | Reads consumer, not operational | 8px — soft without being playful |
 | Animated page transitions | Felt as lag at the 200th repetition | Instant navigation with a 150ms content fade |
 | Icon-only buttons, no label | A support ticket, in a tool people are trained on | An icon with a label, or a real accessible name |
+| An icon on every card head and KPI tile | The nav icons stop standing out, and every tile gets a glyph to read past | The title alone; icons stay in the navigation and on actions |
 
 If they hear the cost and still want it, build it. It is their product.
 

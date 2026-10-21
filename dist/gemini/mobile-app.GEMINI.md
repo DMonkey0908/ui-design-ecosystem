@@ -218,6 +218,12 @@ Apply these without being asked.
   are all restored, or the flow is short enough that losing it costs nothing.
 - **Nothing depends on hover.** There is no hover. A long-press is not a
   substitute — it is undiscoverable unless something teaches it.
+- **Icons are spent on the tab bar, the platform symbols and row types.** A
+  leading icon in a row earns its place when it tells one kind of row from
+  another — a transfer from a card payment — and not when every row has the
+  same one. Not beside section headers, not on buttons that are already
+  labelled. A phone screen has the least room of any, and a glyph that says
+  nothing takes it from one that does. The test is `core/11-restraint.md`.
 
 ### What this pack deliberately refuses
 
@@ -233,6 +239,7 @@ Say the cost briefly, offer the alternative, then build whatever is decided.
 | An onboarding carousel before first use | Five screens of promises before the app has earned any attention | Let them in, and teach each thing at the moment it is first needed |
 | A toast for an error that needs a decision | It leaves while they are still reading it | An inline error at the field, or a sheet carrying the action |
 | A small close button in a top corner | The hardest target on the screen, for the action people need most when lost | Drag-to-dismiss, plus a full-width Done in the reachable arc |
+| The same icon at the start of every row | A column of identical glyphs costs the row its widest cell and distinguishes nothing | An avatar, a type icon where types differ, or no leading element |
 | Tighter spacing "to fit more in" | Targets below the floor, and a screen that fails for anyone with imprecise hands | Cut content, or move the rest one tap deeper |
 
 If they hear the cost and still want it, build it. It is their product.

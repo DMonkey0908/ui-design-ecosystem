@@ -22,6 +22,7 @@ adds domain rules on top, or explicitly overrides a core one and says why.
 | `references/08-feedback.md` | Response-time bands, waiting affordances, optimistic updates, the anatomy of an interaction. |
 | `references/09-input.md` | Pointer precision, target size, hover as a capability, reach, focus as a cursor. |
 | `references/10-visual-language.md` | Pricing a named style - bento, heavy borders, translucency, real-time 3D - and the rules each needs to survive. |
+| `references/11-restraint.md` | The test every non-content element passes: when an icon earns its place, emoji, the decorative defaults, content nobody asked for. |
 | `references/99-review.md` | The checklist and the failure modes that recur in every domain. |
 
 Review is numbered `99` so it stays last as the set grows; a new reference

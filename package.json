@@ -7,8 +7,9 @@
   "type": "module",
   "scripts": {
     "build": "node tools/build.mjs",
-    "check": "node tools/build.mjs --check && node tools/dupcheck.mjs",
-    "dupcheck": "node tools/dupcheck.mjs"
+    "check": "node tools/build.mjs --check && node tools/restraint.mjs && node tools/dupcheck.mjs",
+    "dupcheck": "node tools/dupcheck.mjs",
+    "restraint": "node tools/restraint.mjs"
   },
   "engines": { "node": ">=18" }
 }

@@ -53,6 +53,15 @@ them.
   past a second where a skeleton at the real dimensions belongs.
 - Animate without honouring `prefers-reduced-motion`, including the end state.
 - Start a value axis anywhere but zero when magnitude is being compared.
+- Add an icon the user loses nothing without. An icon replaces a word where
+  there is no room for one, or carries a state beside the text; beside a
+  heading, on every card or in every row it is noise. `11-restraint.md`.
+- Put an emoji in the interface's own text — headings, buttons, labels,
+  statuses, empty states. It renders differently per platform, is read aloud
+  by name, and ignores every token.
+- Add a section, badge, figure or decoration the request did not ask for and
+  the data does not support. It is either a commitment nobody agreed to
+  maintain or a fabrication.
 
 ## When the request conflicts with a rule
 
@@ -128,6 +137,12 @@ Apply these without being asked.
 - **The number on a KPI tile is never coloured.** Tinting it green or red passes
   judgement on a figure that may be neither; put the judgement in the sub-line
   where it can be worded.
+- **Icons are spent on navigation and actions.** The sidebar, topbar icon
+  buttons, dropdown items, row actions and status pills. Not on card heads,
+  KPI tiles, form labels or column headers: on a screen this dense a second
+  layer of glyphs is something to read past two hundred times a day, and it
+  dilutes the nav icons the collapsed sidebar depends on. The test is
+  `core/11-restraint.md`.
 
 ## What this pack deliberately refuses
 
@@ -142,6 +157,7 @@ whatever is decided.
 | 16px rounded cards | Reads consumer, not operational | 8px — soft without being playful |
 | Animated page transitions | Felt as lag at the 200th repetition | Instant navigation with a 150ms content fade |
 | Icon-only buttons, no label | A support ticket, in a tool people are trained on | An icon with a label, or a real accessible name |
+| An icon on every card head and KPI tile | The nav icons stop standing out, and every tile gets a glyph to read past | The title alone; icons stay in the navigation and on actions |
 
 If they hear the cost and still want it, build it. It is their product.
 
@@ -180,6 +196,7 @@ Start with `core/01-tokens.md`, `core/03-layout.md`, `core/99-review.md`.
 | `core/08-feedback.md` | Feedback |
 | `core/09-input.md` | Input |
 | `core/10-visual-language.md` | Visual language |
+| `core/11-restraint.md` | Restraint |
 | `core/99-review.md` | Review |
 
 ### Pack - this domain

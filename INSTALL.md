@@ -184,8 +184,8 @@ human will use this with a different tool than you, install that tool's format.
 | Assistant | Install | Always in context |
 |---|---|---|
 | Claude Code, Claude Desktop | `dist/claude/<skill-name>/` -> `.claude/skills/<skill-name>/` | ~200 tokens (the description only) |
-| Gemini CLI / Code Assist | `dist/gemini/<id>-lean/` -> repo root | **~2,350 tokens** |
-| Codex, Cursor, any `AGENTS.md` tool | `dist/gpt/<id>-lean/` -> repo root | **~2,350 tokens** |
+| Gemini CLI / Code Assist | `dist/gemini/<id>-lean/` -> repo root | **~2,600 tokens** |
+| Codex, Cursor, any `AGENTS.md` tool | `dist/gpt/<id>-lean/` -> repo root | **~2,600 tokens** |
 | Gemini Gem | `dist/gemini/<id>.GEMINI.md` | whole file - paste-in only |
 | Custom GPT | `dist/gpt/<id>.custom-gpt-instructions.md` | Fenced block -> Instructions; `<id>.AGENTS.md` -> Knowledge |
 <!-- COST:END:install -->
@@ -198,7 +198,7 @@ the activation block, the thesis, the hard rules, and an index. The assistant
 opens the one reference its task needs, the way the Claude skill already does.
 
 <!-- COST:START:install-note -->
-That is **~2,350 tokens instead of ~35,300 tokens**, on every request, including every
+That is **~2,600 tokens instead of ~37,650 tokens**, on every request, including every
 request with nothing to do with UI.
 <!-- COST:END:install-note -->
 
@@ -432,14 +432,15 @@ a different session, say so and stop.
 
 Common, and not a failure. Install **core only**: roughly a hundred
 domain-neutral rules — tokens, typography, layout, motion, accessibility, i18n,
-charts, feedback, input, visual language, review — each with its consequence
-attached.
+charts, feedback, input, visual language, restraint, review — each with its
+consequence attached.
 
 ```bash
 BASE=https://raw.githubusercontent.com/DMonkey0908/ui-design-ecosystem/main
 mkdir -p .claude/skills/ui-core/core
 for f in 01-tokens 02-typography 03-layout 04-motion 05-accessibility 06-i18n \
-         07-charts 08-feedback 09-input 10-visual-language 99-review; do
+         07-charts 08-feedback 09-input 10-visual-language 11-restraint \
+         99-review; do
   curl -fsSL "$BASE/core/references/$f.md" -o ".claude/skills/ui-core/core/$f.md"
 done
 curl -fsSL "$BASE/core/CORE.md" -o .claude/skills/ui-core/core/CORE.md

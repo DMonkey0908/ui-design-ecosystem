@@ -53,6 +53,15 @@ them.
   past a second where a skeleton at the real dimensions belongs.
 - Animate without honouring `prefers-reduced-motion`, including the end state.
 - Start a value axis anywhere but zero when magnitude is being compared.
+- Add an icon the user loses nothing without. An icon replaces a word where
+  there is no room for one, or carries a state beside the text; beside a
+  heading, on every card or in every row it is noise. `11-restraint.md`.
+- Put an emoji in the interface's own text — headings, buttons, labels,
+  statuses, empty states. It renders differently per platform, is read aloud
+  by name, and ignores every token.
+- Add a section, badge, figure or decoration the request did not ask for and
+  the data does not support. It is either a commitment nobody agreed to
+  maintain or a fabrication.
 
 ## When the request conflicts with a rule
 
@@ -187,6 +196,10 @@ Apply these without being asked.
 - **Everything the drag does, a button also does.** Every view and every
   option. Someone on a keyboard, a switch or a screen reader gets the same
   product.
+- **The scene is the ornament budget, spent in full.** No glows, particles or
+  gradient blobs around it, and no icon over each spec. Anything else
+  decorative competes with the one thing the page paid for. Icons are for the
+  view bar and the controls. The test is `core/11-restraint.md`.
 
 ## What this pack deliberately refuses
 
@@ -248,6 +261,7 @@ Start with `core/10-visual-language.md`, `core/05-accessibility.md`, `core/08-fe
 | `core/08-feedback.md` | Feedback |
 | `core/09-input.md` | Input |
 | `core/10-visual-language.md` | Visual language |
+| `core/11-restraint.md` | Restraint |
 | `core/99-review.md` | Review |
 
 ### Pack - this domain

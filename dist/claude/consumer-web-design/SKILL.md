@@ -53,6 +53,15 @@ them.
   past a second where a skeleton at the real dimensions belongs.
 - Animate without honouring `prefers-reduced-motion`, including the end state.
 - Start a value axis anywhere but zero when magnitude is being compared.
+- Add an icon the user loses nothing without. An icon replaces a word where
+  there is no room for one, or carries a state beside the text; beside a
+  heading, on every card or in every row it is noise. `11-restraint.md`.
+- Put an emoji in the interface's own text — headings, buttons, labels,
+  statuses, empty states. It renders differently per platform, is read aloud
+  by name, and ignores every token.
+- Add a section, badge, figure or decoration the request did not ask for and
+  the data does not support. It is either a commitment nobody agreed to
+  maintain or a fabrication.
 
 ## When the request conflicts with a rule
 
@@ -157,6 +166,12 @@ Apply these without being asked.
   stop trusting.
 - **The page works before the JavaScript does.** Content in HTML, links that
   are links, forms that submit.
+- **Ornament is spent on one picture of the product.** A drawing, a
+  photograph or a diagram that shows what it is — not an icon over every
+  feature, not a glow behind the hero. Icons are for navigation, form states
+  and the platform symbols. A stranger judges the page in seconds, and a page
+  that looks like every template is judged as one. The test is
+  `core/11-restraint.md`.
 
 ## What this pack deliberately refuses
 
@@ -170,6 +185,8 @@ Say so briefly, offer the alternative, and build whatever is decided.
 | Every section a different colour | Nothing stands out, so the eye stops navigating | One accent; vary rhythm and scale instead |
 | A third brand family | Brand voice does not compound; page weight does | Use the second family's other weights |
 | Text baked into images | Unreadable to search, screen readers, and translation | Real text over an image, or an `svg` with a title |
+| A three-up grid of icon, title and blurb | The most recognisable template on the web, and the icons are drawn metaphors nobody decodes | The real number of features, each shown — a screenshot, a drawing, a figure — or as plain text |
+| Logo walls, testimonials or stats nobody supplied | A fabrication the first time anyone checks | Leave the section out, or mark the slot and ask for the real ones |
 | Infinite scroll on a marketing page | The footer becomes unreachable, and so does the pricing link | Pagination, or a shorter page |
 
 If they hear the cost and still want it, build it. It is their product.
@@ -212,6 +229,7 @@ Start with `core/02-typography.md`, `core/03-layout.md`, `core/05-accessibility.
 | `core/08-feedback.md` | Feedback |
 | `core/09-input.md` | Input |
 | `core/10-visual-language.md` | Visual language |
+| `core/11-restraint.md` | Restraint |
 | `core/99-review.md` | Review |
 
 ### Pack - this domain

@@ -53,6 +53,15 @@ them.
   past a second where a skeleton at the real dimensions belongs.
 - Animate without honouring `prefers-reduced-motion`, including the end state.
 - Start a value axis anywhere but zero when magnitude is being compared.
+- Add an icon the user loses nothing without. An icon replaces a word where
+  there is no room for one, or carries a state beside the text; beside a
+  heading, on every card or in every row it is noise. `11-restraint.md`.
+- Put an emoji in the interface's own text — headings, buttons, labels,
+  statuses, empty states. It renders differently per platform, is read aloud
+  by name, and ignores every token.
+- Add a section, badge, figure or decoration the request did not ask for and
+  the data does not support. It is either a commitment nobody agreed to
+  maintain or a fabrication.
 
 ## When the request conflicts with a rule
 
@@ -189,6 +198,12 @@ Apply these without being asked.
   are all restored, or the flow is short enough that losing it costs nothing.
 - **Nothing depends on hover.** There is no hover. A long-press is not a
   substitute — it is undiscoverable unless something teaches it.
+- **Icons are spent on the tab bar, the platform symbols and row types.** A
+  leading icon in a row earns its place when it tells one kind of row from
+  another — a transfer from a card payment — and not when every row has the
+  same one. Not beside section headers, not on buttons that are already
+  labelled. A phone screen has the least room of any, and a glyph that says
+  nothing takes it from one that does. The test is `core/11-restraint.md`.
 
 ## What this pack deliberately refuses
 
@@ -204,6 +219,7 @@ Say the cost briefly, offer the alternative, then build whatever is decided.
 | An onboarding carousel before first use | Five screens of promises before the app has earned any attention | Let them in, and teach each thing at the moment it is first needed |
 | A toast for an error that needs a decision | It leaves while they are still reading it | An inline error at the field, or a sheet carrying the action |
 | A small close button in a top corner | The hardest target on the screen, for the action people need most when lost | Drag-to-dismiss, plus a full-width Done in the reachable arc |
+| The same icon at the start of every row | A column of identical glyphs costs the row its widest cell and distinguishes nothing | An avatar, a type icon where types differ, or no leading element |
 | Tighter spacing "to fit more in" | Targets below the floor, and a screen that fails for anyone with imprecise hands | Cut content, or move the rest one tap deeper |
 
 If they hear the cost and still want it, build it. It is their product.
@@ -256,6 +272,7 @@ Start with `core/09-input.md`, `core/08-feedback.md`, `core/01-tokens.md`.
 | `core/08-feedback.md` | Feedback |
 | `core/09-input.md` | Input |
 | `core/10-visual-language.md` | Visual language |
+| `core/11-restraint.md` | Restraint |
 | `core/99-review.md` | Review |
 
 ### Pack - this domain

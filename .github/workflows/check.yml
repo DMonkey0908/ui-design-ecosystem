@@ -18,6 +18,11 @@ jobs:
           node-version: '20'
       - run: node tools/build.mjs --check
 
+      # Emoji, gradient text and icons in headings in the demos, eval runs and
+      # pack assets - the marks core/11-restraint.md forbids that a script can
+      # see. Fails, because a demo carrying them is evidence against the packs.
+      - run: node tools/restraint.mjs
+
       # Prints where a pack restates a core rule instead of pointing at it.
       # Always exits 0: the check is lexical and the rule is semantic, so the
       # output is for a reviewer to read, not for CI to judge.

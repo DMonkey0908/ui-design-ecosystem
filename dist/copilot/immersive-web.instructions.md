@@ -18,6 +18,9 @@ When creating or changing any interface, apply these before writing code.
 - `min-width: 0` on grid and flex children that can hold wide content; `minmax(0, 1fr)` on tracks.
 - Honour `prefers-reduced-motion`, and state the end value explicitly - `opacity: revert` yields 1, not your value.
 - Start a value axis at zero whenever magnitude is compared.
+- No icon the user loses nothing without: an icon replaces a word where there is no room, or carries a state beside the text - never one per heading, card or row.
+- No emoji in the interface's own text - headings, buttons, labels, statuses, empty states.
+- Add nothing the request did not ask for and the data does not support: no extra sections, badges, invented figures or decoration.
 - Say which rules shaped the result when you are done.
 
 Full system: https://raw.githubusercontent.com/DMonkey0908/ui-design-ecosystem/main/dist/gpt/immersive-web.AGENTS.md

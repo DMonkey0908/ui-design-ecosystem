@@ -114,10 +114,10 @@ reference mà tác vụ cần.
 | Bản cài | Thường trực trong context |
 |---|---|
 | Claude skill | ~200 token (chỉ `description`, để định tuyến) |
-| Lean `GEMINI.md` / `AGENTS.md` | ~2.350 token |
-| Bản merged một file (Gems, Custom GPT) | ~37.150 token |
+| Lean `GEMINI.md` / `AGENTS.md` | ~2.600 token |
+| Bản merged một file (Gems, Custom GPT) | ~37.300 token |
 
-Giảm khoảng 94% so với dán cả hệ thống vào file context, tính trên **mọi**
+Giảm khoảng 93% so với dán cả hệ thống vào file context, tính trên **mọi**
 request — kể cả những request chẳng liên quan gì tới UI.
 <!-- COST:END:vi -->
 

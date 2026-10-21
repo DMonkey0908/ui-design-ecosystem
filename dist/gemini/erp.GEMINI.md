@@ -70,6 +70,15 @@ them.
   past a second where a skeleton at the real dimensions belongs.
 - Animate without honouring `prefers-reduced-motion`, including the end state.
 - Start a value axis anywhere but zero when magnitude is being compared.
+- Add an icon the user loses nothing without. An icon replaces a word where
+  there is no room for one, or carries a state beside the text; beside a
+  heading, on every card or in every row it is noise. `11-restraint.md`.
+- Put an emoji in the interface's own text — headings, buttons, labels,
+  statuses, empty states. It renders differently per platform, is read aloud
+  by name, and ignores every token.
+- Add a section, badge, figure or decoration the request did not ask for and
+  the data does not support. It is either a commitment nobody agreed to
+  maintain or a fabrication.
 
 ### When the request conflicts with a rule
 
